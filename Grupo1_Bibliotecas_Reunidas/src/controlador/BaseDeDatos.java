@@ -84,13 +84,13 @@ public class BaseDeDatos {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             fechaFormateada = dateFormat.format(fechaActual);
             
-            String fechaEntregaPrevista = calcularFechaEntregaPrevista("fechaFormateada");            
+            String fechaEntregaPrevista = calcularFechaEntregaPrevista(fechaFormateada);            
 
             // Insertar la fecha actual en la base de datos
-            consulta.executeUpdate("INSERT INTO prestamos (id_socio, id_libro, id_biblioteca, fecha_prestamo, fecha_entrega_prevista, comentarios)"
-            		+ "VALUES ('" + id_socio + "', '" + id_libro + "', '" + id_biblioteca + "', '" + fechaFormateada + "', '" + fechaEntregaPrevista 
-            		+ "', '" + comentarios +  "')");
-						
+            consulta.executeUpdate("INSERT INTO prestamos (id_socio, id_libro, id_biblioteca, fecha_prestamo, fecha_entrega_prevista, fecha_entrega, comentarios) "
+            		+ "VALUES ('" + id_socio + "', '" + id_libro + "', '" + id_biblioteca + "', '" + fechaFormateada + "', '" + fechaEntregaPrevista + 
+            		"', NULL, '" + comentarios + "')");
+
 			JOptionPane.showMessageDialog(null, "Se ha insertado correctamente la fecha de prestamo y la fecha de entrega prevista en la tabla.");
 			
 		}catch(SQLException error) {
