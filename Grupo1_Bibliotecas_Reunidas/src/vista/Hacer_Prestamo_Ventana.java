@@ -17,6 +17,8 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import controlador.BaseDeDatos;
+import modelo.Libros;
+
 import java.awt.Color;
 import javax.swing.border.LineBorder;
 import java.awt.Font;
@@ -29,10 +31,11 @@ public class Hacer_Prestamo_Ventana extends JPanel {
 	private String libroSeleccionado = null;
 	private String bibliotecaSeleccionada = null;
 	private String textoComentario = null;
-	/**
-	 * Create the panel.
-	 */
-	public Hacer_Prestamo_Ventana(Ventana ventana, boolean esAdmin) {
+	
+	
+	//Con el boolean esAdmin no tienes que hacer nada, es para que al retornar al menú sepa qué tipo de usuario está en la app.
+	//Librito tiene toda la info del libro que se ha seleccionado en la tabla. A través del getter se obtienen sus datos.
+	public Hacer_Prestamo_Ventana(Ventana ventana, boolean esAdmin, Libros librito) {
 		setBackground(new Color(255, 255, 255));
 		setLayout(null);
 		BaseDeDatos bd = new BaseDeDatos();

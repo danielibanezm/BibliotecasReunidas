@@ -9,6 +9,8 @@ import java.awt.Color;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
@@ -16,7 +18,7 @@ import javax.swing.table.JTableHeader;
 
 import com.mysql.jdbc.CommunicationsException;
 
-
+import controlador.BaseDeDatos;
 import modelo.Libros;
 
 import javax.swing.border.EtchedBorder;
@@ -60,6 +62,10 @@ public class Libros_Ventana extends JPanel {
 	private JButton btnEditarLibro;
 	private JButton btnPrestamo_2;
 	private JButton btnMen;
+	private BaseDeDatos bd = new BaseDeDatos();
+	private Editar_Libro libros;
+	private Libros librito = new Libros();
+	private int filaTabla;
 	
 	public Libros_Ventana(Ventana ventana, boolean esAdmin) {
 
@@ -155,13 +161,22 @@ public class Libros_Ventana extends JPanel {
 		scrollPane.setBounds(23, 293, 1271, 327);
 		add(scrollPane);
 		
-		
 		// -- REALIZAR PRÉSTAMO --
 		JButton btnPrestamo = new JButton("Realizar préstamo");
 		btnPrestamo.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				ventana.nuevoPanel(new Hacer_Prestamo_Ventana(ventana, esAdmin));
+				
+				filaTabla = jtResultados.getSelectedRow();
+				if (filaTabla != -1) {  // Se ha seleccionado una fila
+
+					ventana.nuevoPanel(new Hacer_Prestamo_Ventana(ventana, esAdmin, librito));
+					
+				}else {
+		            //No se ha seleccionado ningún libro por lo tanto se muestra un error.
+		            JOptionPane.showMessageDialog(null, "Seleccione un libro para realizar un préstamo.", "Error", JOptionPane.ERROR_MESSAGE);
+		        }
+				
 			}
 		});
 		//-----------------------------------------------------
@@ -175,6 +190,10 @@ public class Libros_Ventana extends JPanel {
 		
 		// -- RESTABLECER BÚSQUEDA --
 		JButton btnBorrar = new JButton("Limpiar búsqueda");
+		btnBorrar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		btnBorrar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -192,7 +211,25 @@ public class Libros_Ventana extends JPanel {
 		btnBorrar.setBounds(1163, 652, 131, 37);
 		add(btnBorrar);
 		
+		// -- EDITAR LIBRO --
 		btnEditarLibro = new JButton("Editar libro");
+		btnEditarLibro.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				filaTabla = jtResultados.getSelectedRow();
+				if (filaTabla != -1) {  // Se ha seleccionado una fila
+					libros = new Editar_Libro(librito, modeloTabla);
+					libros.setVisible(true);
+					
+				}else {
+		            //No se ha seleccionado ningún libro por lo tanto se muestra un error.
+		            JOptionPane.showMessageDialog(null, "Seleccione un libro para editarlo", "Error", JOptionPane.ERROR_MESSAGE);
+		        }
+				
+			}
+		});
+		//--------------------------------------------
+		
 		btnEditarLibro.setForeground(new Color(9, 3, 62));
 		btnEditarLibro.setFont(new Font("Verdana", Font.PLAIN, 12));
 		btnEditarLibro.setBorder(null);
@@ -201,10 +238,21 @@ public class Libros_Ventana extends JPanel {
 		add(btnEditarLibro);
 		
 		btnPrestamo_2 = new JButton("Borrar libro");
+		
+		// -- ELIMINAR LIBRO --
 		btnPrestamo_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				filaTabla = jtResultados.getSelectedRow();
+				if (filaTabla != -1) {  // Se ha seleccionado una fila
+	
+				}else {
+		            //No se ha seleccionado ningún libro por lo tanto se muestra un error.
+		            JOptionPane.showMessageDialog(null, "Seleccione un libro para poder eliminarlo.", "Error", JOptionPane.ERROR_MESSAGE);
+		        }
 			}
 		});
+		//--------------------------------------------
+		
 		btnPrestamo_2.setForeground(new Color(9, 3, 62));
 		btnPrestamo_2.setFont(new Font("Verdana", Font.PLAIN, 12));
 		btnPrestamo_2.setBorder(null);
@@ -236,6 +284,48 @@ public class Libros_Ventana extends JPanel {
 		
 		//--------------------------	JTABLE --------------------------------------
 		jtResultados = new JTable();
+		
+		// -- SELECCIONAR LIBRO DE LA TABLA --
+		jtResultados.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(modeloTabla.getValueAt(jtResultados.getSelectedRow(),0) != null) {
+					librito.setIsbn(modeloTabla.getValueAt(jtResultados.getSelectedRow(),0).toString());
+				}
+				if(modeloTabla.getValueAt(jtResultados.getSelectedRow(),1) != null) {
+					librito.setTitulo(modeloTabla.getValueAt(jtResultados.getSelectedRow(),1).toString());
+				}
+				if(modeloTabla.getValueAt(jtResultados.getSelectedRow(),2) != null) {
+					librito.setAutores(modeloTabla.getValueAt(jtResultados.getSelectedRow(),2).toString());
+				}
+				if(modeloTabla.getValueAt(jtResultados.getSelectedRow(),3) != null) {
+					librito.setEditorial(modeloTabla.getValueAt(jtResultados.getSelectedRow(),3).toString());
+				}
+				if(modeloTabla.getValueAt(jtResultados.getSelectedRow(),4) != null) {
+					librito.setGenero(modeloTabla.getValueAt(jtResultados.getSelectedRow(),4).toString());
+				}
+				if(modeloTabla.getValueAt(jtResultados.getSelectedRow(),5) != null) {
+					librito.setIdioma(modeloTabla.getValueAt(jtResultados.getSelectedRow(),5).toString());
+				}
+				if(modeloTabla.getValueAt(jtResultados.getSelectedRow(),6) != null) {
+					librito.setEdicion(modeloTabla.getValueAt(jtResultados.getSelectedRow(),6).toString());
+				}
+				if(modeloTabla.getValueAt(jtResultados.getSelectedRow(),7) != null) {
+					librito.setPublicacion(modeloTabla.getValueAt(jtResultados.getSelectedRow(),7).toString());
+				}
+				if(modeloTabla.getValueAt(jtResultados.getSelectedRow(),8) != null) {
+					librito.setPais(modeloTabla.getValueAt(jtResultados.getSelectedRow(),8).toString());
+				}
+				if(modeloTabla.getValueAt(jtResultados.getSelectedRow(),9) != null) {
+					librito.setPaginas(modeloTabla.getValueAt(jtResultados.getSelectedRow(),9).toString());
+				}
+				if(modeloTabla.getValueAt(jtResultados.getSelectedRow(),10) != null) {
+					librito.setUbicacion(modeloTabla.getValueAt(jtResultados.getSelectedRow(),10).toString());
+				}
+			}
+		});
+		//----------------------------------------------------------------------------------------------------
+		
 		jtResultados.setForeground(new Color(36, 54, 69));
 		jtResultados.setFont(new Font("Verdana", Font.PLAIN, 13));
 		jtResultados.setBackground(new Color(255, 255, 255));
@@ -288,7 +378,7 @@ public class Libros_Ventana extends JPanel {
 		modeloTabla.setRowCount(0);
 		
 		//Recorremos los objetos del ArrayList que nos retorna el método de la clase BaseDeDatos:
-		for(Libros recorreLibros : cargaLibros(consulta, aux)) {
+		for(Libros recorreLibros : bd.cargaLibros(consulta, aux)) {
 			
 			//Object puede coger todo tipo de datos, hasta imágenes.
 			modeloTabla.addRow(new Object[] {
@@ -308,60 +398,5 @@ public class Libros_Ventana extends JPanel {
 			
 	}
 	
-	public ArrayList<Libros> cargaLibros(String consulta, String aux){
-		ArrayList<Libros> arrlLibros = new ArrayList <>();
-		
-		Connection conexion = null;
-		Statement consultita = null;
-		ResultSet registro = null;
-		
-		try {
-			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas","root","");
-			consultita = conexion.createStatement();
-			//Lanzamos la consulta:
-			registro = consultita.executeQuery("SELECT isbn_libro, titulo_libro, autores_libro,"
-					+ " editorial_libro, genero_libro, idioma_libro, edicion_libro, publicacion_libro,"
-					+ " pais_libro, numPaginas_libro, ubicacion_libro"
-					+ " FROM libros"
-					+ " WHERE " + consulta + " LIKE '%" + aux + "%'"
-					+ " ORDER BY " + consulta);
-			
-			if(registro==null) {
-			System.out.println("Base de datos vacía");
-			}
-			//While porque podría devolver más de una fila.
-			while(registro.next()){
-				Libros nuevoLibro = new Libros();
-				
-				nuevoLibro.setIsbn(registro.getString("isbn_libro"));
-				nuevoLibro.setTitulo(registro.getString("titulo_libro"));
-				nuevoLibro.setAutores(registro.getString("autores_libro"));
-				nuevoLibro.setEditorial(registro.getString("editorial_libro"));
-				nuevoLibro.setGenero(registro.getString("genero_libro"));
-				nuevoLibro.setIdioma(registro.getString("idioma_libro"));
-				nuevoLibro.setEdicion(registro.getString("edicion_libro"));
-				nuevoLibro.setPublicacion(registro.getString("publicacion_libro"));
-				nuevoLibro.setPais(registro.getString("pais_libro"));
-				nuevoLibro.setPaginas(registro.getString("numPaginas_libro"));
-				nuevoLibro.setUbicacion(registro.getString("ubicacion_libro"));
-				
-				arrlLibros.add(nuevoLibro);
-			}
-		
-		} catch (CommunicationsException e) {
-
-		} catch (SQLException e) {
-
-		}finally {
-			try {
-				conexion.close();
-			}catch(SQLException e) {
-
-			}catch(NullPointerException e) {
-				
-			}
-		}
-		
-		return arrlLibros;
-	}
+	
 }

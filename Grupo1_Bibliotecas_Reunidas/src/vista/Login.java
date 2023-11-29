@@ -17,6 +17,8 @@ import javax.swing.border.LineBorder;
 
 import com.mysql.jdbc.CommunicationsException;
 
+import controlador.BaseDeDatos;
+
 import javax.swing.UIManager;
 import javax.swing.border.CompoundBorder;
 import java.awt.event.ActionListener;
@@ -42,6 +44,7 @@ public class Login extends JPanel{
 	private JButton btnAceptar;
 	private Ventana ventana;
 	private boolean esAdmin = true;
+	private BaseDeDatos bd = new BaseDeDatos();
 
 	
 	//Modificamos el constructor para recibir una referencia de la instancia de "Ventana".
@@ -112,7 +115,7 @@ public class Login extends JPanel{
 				usuario = txtUsuario.getText();
 				contrasenia = new String(txtContrasenia.getPassword());
 				
-				correcto = compruebaUsuario(usuario, contrasenia);
+				correcto = bd.compruebaUsuario(usuario, contrasenia);
 				if(correcto) {
 					
 					//Comprobamos si el usuario es admin o no para habilitar el botón de usuarios en el menú.
@@ -144,86 +147,6 @@ public class Login extends JPanel{
 		lblerror.setBounds(575, 478, 239, 14);
 		add(lblerror);
 
-	}
-	
-	public boolean compruebaUsuario(String usuario, String contrasenia) {
-		String id = "";
-		boolean correcto = false;
-		Connection conexion = null;
-		Statement consulta = null;
-		ResultSet registro = null;
-		
-		try {
-			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas","root","");
-
-			consulta = conexion.createStatement();
-			registro = consulta.executeQuery("SELECT id_usuario"
-					+ " FROM usuarios"
-					+ " WHERE email_usuario = '" + usuario + "'");
-
-			if (registro.next()) {
-				id = registro.getString("id_usuario");
-				
-				correcto = compruebaContrasenia(id, contrasenia);
-				
-			}
-			
-		} catch (CommunicationsException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}finally {
-			try {
-				conexion.close();
-			}catch(SQLException e) {
-				System.out.println("SQLException");
-				
-			}catch(NullPointerException e) {
-				System.out.println("NullPointerException");
-			}
-		}
-
-		return correcto;
-	}
-	
-	public boolean compruebaContrasenia(String id, String contrasenia) {
-		boolean correcto = false;
-		String contra = "";
-		Connection conexion = null;
-		Statement consulta = null;
-		ResultSet registro = null;
-		
-		try {
-			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas","root","");
-
-			consulta = conexion.createStatement();
-			registro = consulta.executeQuery("SELECT material"
-					+ " FROM otros"
-					+ " WHERE id_otro = '" + id + "'");
-			
-			if (registro.next()) {
-				contra = registro.getString("material");
-				
-				if(contra.equals(contrasenia)) {
-					correcto = true;
-				}
-			}
-	
-		} catch (CommunicationsException e) {
-			
-		} catch (SQLException e) {
-			
-		}finally {
-			try {
-				conexion.close();
-			}catch(SQLException e) {
-				System.out.println("SQLException");
-			}catch(NullPointerException e) {
-				System.out.println("NullPointerException");
-			}
-		}
-		
-		return correcto;
 	}
 	
 }

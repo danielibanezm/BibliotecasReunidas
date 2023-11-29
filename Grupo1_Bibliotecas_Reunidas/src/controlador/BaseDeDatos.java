@@ -13,10 +13,17 @@ import java.util.Calendar;
 
 import javax.swing.JOptionPane;
 
+import com.mysql.jdbc.CommunicationsException;
+
+import modelo.Libros;
 import modelo.Prestamos;
+import vista.Editar_Libro;
+import vista.Ventana;
 
 
 public class BaseDeDatos {
+	
+	// -- MÉTODOS PRÉSTAMOS --
 	public ArrayList<Prestamos> cargaPrestamos(){
 		ArrayList<Prestamos> arrlPrestamos = new ArrayList <>();
 		
@@ -226,7 +233,7 @@ public class BaseDeDatos {
 				System.out.println("La base de datos está vacia.");
 			}
 			//Rellenamos todos los paises uno por uno si hay siguiente pais. Si no hay más paises, sale del bucle.
-			//While se pone porque podria devolver ás de una fila.
+			//While se pone porque podria devolver más de una fila.
 			while(registro.next()) {				
 				//Tomamos los datos de la columna name del objeto registro, convirtiendolo en String, para guardarlo en un objeto de tipo Paises				
 				auxiliar = registro.getString("id_biblioteca");				
@@ -247,4 +254,219 @@ public class BaseDeDatos {
 		}
 		return arrLCombo;
 	}
+	//------------------------------------------------------------------------------------------
+	
+	// -- MÉTODOS LOGIN --
+	
+	public boolean compruebaUsuario(String usuario, String contrasenia) {
+		String id = "";
+		boolean correcto = false;
+		Connection conexion = null;
+		Statement consulta = null;
+		ResultSet registro = null;
+		
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas","root","");
+
+			consulta = conexion.createStatement();
+			registro = consulta.executeQuery("SELECT id_usuario"
+					+ " FROM usuarios"
+					+ " WHERE email_usuario = '" + usuario + "'");
+
+			if (registro.next()) {
+				id = registro.getString("id_usuario");
+				
+				correcto = compruebaContrasenia(id, contrasenia);
+				
+			}
+			
+		} catch (CommunicationsException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				conexion.close();
+			}catch(SQLException e) {
+				System.out.println("SQLException");
+				
+			}catch(NullPointerException e) {
+				System.out.println("NullPointerException");
+			}
+		}
+
+		return correcto;
+	}
+	
+	public boolean compruebaContrasenia(String id, String contrasenia) {
+		boolean correcto = false;
+		String contra = "";
+		Connection conexion = null;
+		Statement consulta = null;
+		ResultSet registro = null;
+		
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas","root","");
+
+			consulta = conexion.createStatement();
+			registro = consulta.executeQuery("SELECT material"
+					+ " FROM otros"
+					+ " WHERE id_otro = '" + id + "'");
+			
+			if (registro.next()) {
+				contra = registro.getString("material");
+				
+				if(contra.equals(contrasenia)) {
+					correcto = true;
+				}
+			}
+	
+		} catch (CommunicationsException e) {
+			
+		} catch (SQLException e) {
+			
+		}finally {
+			try {
+				conexion.close();
+			}catch(SQLException e) {
+				System.out.println("SQLException");
+			}catch(NullPointerException e) {
+				System.out.println("NullPointerException");
+			}
+		}
+		
+		return correcto;
+	}
+	//------------------------------------------------------------------------------------------
+	
+	// -- MÉTODOS LIBROS --
+	
+	public ArrayList<Libros> cargaLibros(String consulta, String aux){
+		ArrayList<Libros> arrlLibros = new ArrayList <>();
+		
+		Connection conexion = null;
+		Statement consultita = null;
+		ResultSet registro = null;
+		
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas","root","");
+			consultita = conexion.createStatement();
+			//Lanzamos la consulta:
+			registro = consultita.executeQuery("SELECT isbn_libro, titulo_libro, autores_libro,"
+					+ " editorial_libro, genero_libro, idioma_libro, edicion_libro, publicacion_libro,"
+					+ " pais_libro, numPaginas_libro, ubicacion_libro"
+					+ " FROM libros"
+					+ " WHERE " + consulta + " LIKE '%" + aux + "%'"
+					+ " ORDER BY " + consulta);
+			
+			if(registro==null) {
+			System.out.println("Base de datos vacía");
+			}
+			//While porque podría devolver más de una fila.
+			while(registro.next()){
+				Libros nuevoLibro = new Libros();
+				
+				nuevoLibro.setIsbn(registro.getString("isbn_libro"));
+				nuevoLibro.setTitulo(registro.getString("titulo_libro"));
+				nuevoLibro.setAutores(registro.getString("autores_libro"));
+				nuevoLibro.setEditorial(registro.getString("editorial_libro"));
+				nuevoLibro.setGenero(registro.getString("genero_libro"));
+				nuevoLibro.setIdioma(registro.getString("idioma_libro"));
+				nuevoLibro.setEdicion(registro.getString("edicion_libro"));
+				nuevoLibro.setPublicacion(registro.getString("publicacion_libro"));
+				nuevoLibro.setPais(registro.getString("pais_libro"));
+				nuevoLibro.setPaginas(registro.getString("numPaginas_libro"));
+				nuevoLibro.setUbicacion(registro.getString("ubicacion_libro"));
+				
+				arrlLibros.add(nuevoLibro);
+			}
+		
+		} catch (CommunicationsException e) {
+
+		} catch (SQLException e) {
+
+		}finally {
+			try {
+				conexion.close();
+			}catch(SQLException e) {
+
+			}catch(NullPointerException e) {
+				
+			}
+		}
+		
+		return arrlLibros;
+	}
+	
+	public String obtenerIdLibro(Libros libro) {
+	    String id = "";
+	    Connection conexion = null;
+	    Statement consulta = null;
+	    ResultSet registro = null;
+
+	    try {
+	        conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
+
+	        consulta = conexion.createStatement();
+	        registro = consulta.executeQuery("SELECT id_libro"
+	                + " FROM libros"
+	                + " WHERE isbn_libro = '" + libro.getIsbn() + "'"
+	                + " AND titulo_libro = '" + libro.getTitulo() + "'"
+	                + " AND autores_libro = '" + libro.getAutores() + "'");
+
+	        if (registro.next()) {
+	            id = registro.getString("id_libro");
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        try {
+	            if (conexion != null) {
+	                conexion.close();
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
+
+	    return id;
+	}
+
+	public void editarLibro(Libros libro, String id) {
+	    Connection conexion = null;
+	    Statement consulta = null;
+
+	    try {
+	        conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
+	        consulta = conexion.createStatement();
+
+	        consulta.executeUpdate("UPDATE libros SET "
+                    + "isbn_libro='" + libro.getIsbn() + "', "
+                    + "titulo_libro='" + libro.getTitulo() + "', "
+                    + "autores_libro='" + libro.getAutores() + "', "
+                    + "editorial_libro='" + libro.getEditorial() + "', "
+                    + "genero_libro='" + libro.getGenero() + "', "
+                    + "idioma_libro='" + libro.getIdioma() + "', "
+                    + "edicion_libro='" + libro.getEdicion() + "', "
+                    + "ubicacion_libro='" + libro.getUbicacion() + "', "
+                    + "publicacion_libro='" + libro.getPublicacion() + "', "
+                    + "pais_libro='" + libro.getPais() + "', "
+                    + "numPaginas_libro='" + libro.getPaginas() + "' "
+                    + "WHERE id_libro='" + id + "'");
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        try {
+	            if (conexion != null) {
+	                conexion.close();
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
+	}
+	
+	//------------------------------------------------------------------------------------------
 }
