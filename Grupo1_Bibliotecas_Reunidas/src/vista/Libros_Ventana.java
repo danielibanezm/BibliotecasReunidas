@@ -39,17 +39,15 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 public class Libros_Ventana extends JPanel {
-	//Creamos un objeto de la clase ButtonGroup para poder agrupar nuestros radio buttons:
+	// Creamos un objeto de la clase ButtonGroup para poder agrupar nuestros radio
+	// buttons:
 	private ButtonGroup radioButton = new ButtonGroup();
-	
+
 	private String consulta = "";
-	
-	//Creamos un objeto para el modelo de nuestra tabla:
+
+	// Creamos un objeto para el modelo de nuestra tabla:
 	DefaultTableModel modeloTabla = new DefaultTableModel() {
-		public boolean isCellEditable(int row, int column) {
-			return false;
-		}
-	};
+		public boolean isCellEditable(int row,int column){return false;}};
 	private JRadioButton rdbtIsbn;
 	private JRadioButton rdbtAutor;
 	private JLabel lblBuscar;
@@ -60,18 +58,19 @@ public class Libros_Ventana extends JPanel {
 	private JTable jtResultados;
 	private JRadioButton rdbtTitulo;
 	private JButton btnEditarLibro;
-	private JButton btnPrestamo_2;
+	private JButton btnEliminar;
 	private JButton btnMen;
 	private BaseDeDatos bd = new BaseDeDatos();
 	private Editar_Libro libros;
 	private Libros librito = new Libros();
 	private int filaTabla;
-	
+	private String id;
+
 	public Libros_Ventana(Ventana ventana, boolean esAdmin) {
 
 		setBackground(new Color(255, 255, 255));
 		setLayout(null);
-		
+
 		lblConsultar = new JLabel("Consultar");
 		lblConsultar.setVerticalAlignment(SwingConstants.TOP);
 		lblConsultar.setHorizontalAlignment(SwingConstants.LEFT);
@@ -79,7 +78,7 @@ public class Libros_Ventana extends JPanel {
 		lblConsultar.setFont(new Font("Gabriola", Font.BOLD, 55));
 		lblConsultar.setBounds(540, 21, 239, 81);
 		add(lblConsultar);
-		
+
 		lblLibros = new JLabel("Libros");
 		lblLibros.setVerticalAlignment(SwingConstants.TOP);
 		lblLibros.setHorizontalAlignment(SwingConstants.LEFT);
@@ -87,10 +86,8 @@ public class Libros_Ventana extends JPanel {
 		lblLibros.setFont(new Font("Gabriola", Font.BOLD, 55));
 		lblLibros.setBounds(584, 65, 239, 81);
 		add(lblLibros);
-		
-		
-		
-		//	-----------------	Radio Buttons	------------------------
+
+		// ----------------- Radio Buttons ------------------------
 		rdbtTitulo = new JRadioButton("Título");
 		rdbtTitulo.setSelected(true);
 		rdbtTitulo.setContentAreaFilled(false);
@@ -98,14 +95,14 @@ public class Libros_Ventana extends JPanel {
 		rdbtTitulo.setFont(new Font("Verdana", Font.PLAIN, 12));
 		rdbtTitulo.setBounds(469, 146, 109, 23);
 		add(rdbtTitulo);
-		
+
 		rdbtIsbn = new JRadioButton("ISBN");
 		rdbtIsbn.setContentAreaFilled(false);
 		rdbtIsbn.setBackground(new Color(230, 217, 240));
 		rdbtIsbn.setFont(new Font("Verdana", Font.PLAIN, 12));
 		rdbtIsbn.setBounds(604, 146, 109, 23);
 		add(rdbtIsbn);
-		
+
 		rdbtAutor = new JRadioButton("Autor");
 		rdbtAutor.setContentAreaFilled(false);
 		rdbtAutor.setBorder(null);
@@ -113,81 +110,82 @@ public class Libros_Ventana extends JPanel {
 		rdbtAutor.setFont(new Font("Verdana", Font.PLAIN, 12));
 		rdbtAutor.setBounds(738, 146, 109, 23);
 		add(rdbtAutor);
-		
-		//Agrupamos nuestros radio buttons:
+
+		// Agrupamos nuestros radio buttons:
 		radioButton.add(rdbtTitulo);
 		radioButton.add(rdbtIsbn);
 		radioButton.add(rdbtAutor);
-		
-		//-------------------------------------------------------------
-		
+
+		// -------------------------------------------------------------
+
 		lblBuscar = new JLabel("Buscar por:");
 		lblBuscar.setForeground(new Color(9, 3, 62));
 		lblBuscar.setFont(new Font("Verdana", Font.BOLD, 12));
 		lblBuscar.setBounds(290, 150, 109, 14);
 		add(lblBuscar);
-		
+
 		// -- EVENTO TEXTFIELD --
 		textField = new JTextField();
 		textField.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
-				
-				if(rdbtTitulo.isSelected()) {
+
+				if (rdbtTitulo.isSelected()) {
 					consulta = "titulo_libro";
-				}else if(rdbtIsbn.isSelected()) {
+				} else if (rdbtIsbn.isSelected()) {
 					consulta = "isbn_libro";
-				}else if(rdbtAutor.isSelected()){
+				} else if (rdbtAutor.isSelected()) {
 					consulta = "autores_libro";
 				}
-				
+
 				rellenaTabla(consulta);
 			}
 		});
-		//--------------------------------------
-		
+		// --------------------------------------
+
 		textField.setBounds(469, 190, 428, 29);
 		add(textField);
 		textField.setColumns(10);
-		
+
 		lblResultados = new JLabel("Resultados:");
 		lblResultados.setForeground(new Color(9, 3, 62));
 		lblResultados.setFont(new Font("Verdana", Font.BOLD, 12));
 		lblResultados.setBounds(290, 251, 109, 14);
 		add(lblResultados);
-		
+
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBackground(new Color(255, 255, 255));
 		scrollPane.setBounds(23, 293, 1271, 327);
 		add(scrollPane);
-		
+
 		// -- REALIZAR PRÉSTAMO --
 		JButton btnPrestamo = new JButton("Realizar préstamo");
 		btnPrestamo.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				
+
 				filaTabla = jtResultados.getSelectedRow();
-				if (filaTabla != -1) {  // Se ha seleccionado una fila
+				if (filaTabla != -1) { // Se ha seleccionado una fila
 
 					ventana.nuevoPanel(new Hacer_Prestamo_Ventana(ventana, esAdmin, librito));
-					
-				}else {
-		            //No se ha seleccionado ningún libro por lo tanto se muestra un error.
-		            JOptionPane.showMessageDialog(null, "Seleccione un libro para realizar un préstamo.", "Error", JOptionPane.ERROR_MESSAGE);
-		        }
-				
+
+				} else {
+					// No se ha seleccionado ningún libro por lo tanto se muestra un error.
+					JOptionPane.showMessageDialog(null, "Seleccione un libro para realizar un préstamo.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+
 			}
 		});
-		//-----------------------------------------------------
-		
+		// -----------------------------------------------------
+
 		btnPrestamo.setForeground(Color.WHITE);
 		btnPrestamo.setFont(new Font("Verdana", Font.PLAIN, 12));
 		btnPrestamo.setBorder(null);
 		btnPrestamo.setBackground(new Color(130, 72, 172));
 		btnPrestamo.setBounds(23, 652, 131, 37);
 		add(btnPrestamo);
-		
+
 		// -- RESTABLECER BÚSQUEDA --
 		JButton btnBorrar = new JButton("Limpiar búsqueda");
 		btnBorrar.addActionListener(new ActionListener() {
@@ -202,65 +200,69 @@ public class Libros_Ventana extends JPanel {
 				rdbtTitulo.setSelected(true);
 			}
 		});
-		//------------------------------------------------------
-		
+		// ------------------------------------------------------
+
 		btnBorrar.setForeground(Color.WHITE);
 		btnBorrar.setFont(new Font("Verdana", Font.PLAIN, 12));
 		btnBorrar.setBorder(null);
 		btnBorrar.setBackground(new Color(130, 72, 172));
 		btnBorrar.setBounds(1163, 652, 131, 37);
 		add(btnBorrar);
-		
+
 		// -- EDITAR LIBRO --
 		btnEditarLibro = new JButton("Editar libro");
 		btnEditarLibro.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				filaTabla = jtResultados.getSelectedRow();
-				if (filaTabla != -1) {  // Se ha seleccionado una fila
-					libros = new Editar_Libro(librito, modeloTabla);
+				if (filaTabla != -1) { // Se ha seleccionado una fila
+					libros = new Editar_Libro(librito, modeloTabla, filaTabla);
 					libros.setVisible(true);
-					
-				}else {
-		            //No se ha seleccionado ningún libro por lo tanto se muestra un error.
-		            JOptionPane.showMessageDialog(null, "Seleccione un libro para editarlo", "Error", JOptionPane.ERROR_MESSAGE);
-		        }
-				
+
+				} else {
+					// No se ha seleccionado ningún libro por lo tanto se muestra un error.
+					JOptionPane.showMessageDialog(null, "Seleccione un libro para editarlo", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+
 			}
 		});
-		//--------------------------------------------
-		
+		// --------------------------------------------
+
 		btnEditarLibro.setForeground(new Color(9, 3, 62));
 		btnEditarLibro.setFont(new Font("Verdana", Font.PLAIN, 12));
 		btnEditarLibro.setBorder(null);
 		btnEditarLibro.setBackground(new Color(233, 210, 255));
 		btnEditarLibro.setBounds(529, 652, 87, 37);
 		add(btnEditarLibro);
-		
-		btnPrestamo_2 = new JButton("Borrar libro");
-		
+
+		btnEliminar = new JButton("Borrar libro");
+
 		// -- ELIMINAR LIBRO --
-		btnPrestamo_2.addActionListener(new ActionListener() {
+		btnEliminar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				filaTabla = jtResultados.getSelectedRow();
-				if (filaTabla != -1) {  // Se ha seleccionado una fila
-	
-				}else {
-		            //No se ha seleccionado ningún libro por lo tanto se muestra un error.
-		            JOptionPane.showMessageDialog(null, "Seleccione un libro para poder eliminarlo.", "Error", JOptionPane.ERROR_MESSAGE);
-		        }
+
+				if (filaTabla != -1) { // Se ha seleccionado una fila
+					eliminar(filaTabla);
+
+				} else {
+					// No se ha seleccionado ningún libro por lo tanto se muestra un error.
+					JOptionPane.showMessageDialog(null, "Seleccione un libro para poder eliminarlo.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
-		//--------------------------------------------
-		
-		btnPrestamo_2.setForeground(new Color(9, 3, 62));
-		btnPrestamo_2.setFont(new Font("Verdana", Font.PLAIN, 12));
-		btnPrestamo_2.setBorder(null);
-		btnPrestamo_2.setBackground(new Color(233, 210, 255));
-		btnPrestamo_2.setBounds(681, 652, 87, 37);
-		add(btnPrestamo_2);
-		
-		//	--	VOLVER AL MENÚ --
+		// --------------------------------------------
+
+		btnEliminar.setForeground(new Color(9, 3, 62));
+		btnEliminar.setFont(new Font("Verdana", Font.PLAIN, 12));
+		btnEliminar.setBorder(null);
+		btnEliminar.setBackground(new Color(233, 210, 255));
+		btnEliminar.setBounds(681, 652, 87, 37);
+		add(btnEliminar);
+
+		// -- VOLVER AL MENÚ --
 		btnMen = new JButton("MENÚ");
 		btnMen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -272,8 +274,8 @@ public class Libros_Ventana extends JPanel {
 				ventana.nuevoPanel(new Menu(ventana, esAdmin));
 			}
 		});
-		//------------------------------------------------------
-		
+		// ------------------------------------------------------
+
 		btnMen.setToolTipText("");
 		btnMen.setForeground(Color.BLACK);
 		btnMen.setFont(new Font("Verdana", Font.PLAIN, 11));
@@ -281,68 +283,68 @@ public class Libros_Ventana extends JPanel {
 		btnMen.setBackground(Color.WHITE);
 		btnMen.setBounds(23, 30, 79, 37);
 		add(btnMen);
-		
-		//--------------------------	JTABLE --------------------------------------
+
+		// -------------------------- JTABLE --------------------------------------
 		jtResultados = new JTable();
-		
+
 		// -- SELECCIONAR LIBRO DE LA TABLA --
 		jtResultados.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if(modeloTabla.getValueAt(jtResultados.getSelectedRow(),0) != null) {
-					librito.setIsbn(modeloTabla.getValueAt(jtResultados.getSelectedRow(),0).toString());
+				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 0) != null) {
+					librito.setIsbn(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 0).toString());
 				}
-				if(modeloTabla.getValueAt(jtResultados.getSelectedRow(),1) != null) {
-					librito.setTitulo(modeloTabla.getValueAt(jtResultados.getSelectedRow(),1).toString());
+				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 1) != null) {
+					librito.setTitulo(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 1).toString());
 				}
-				if(modeloTabla.getValueAt(jtResultados.getSelectedRow(),2) != null) {
-					librito.setAutores(modeloTabla.getValueAt(jtResultados.getSelectedRow(),2).toString());
+				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 2) != null) {
+					librito.setAutores(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 2).toString());
 				}
-				if(modeloTabla.getValueAt(jtResultados.getSelectedRow(),3) != null) {
-					librito.setEditorial(modeloTabla.getValueAt(jtResultados.getSelectedRow(),3).toString());
+				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 3) != null) {
+					librito.setEditorial(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 3).toString());
 				}
-				if(modeloTabla.getValueAt(jtResultados.getSelectedRow(),4) != null) {
-					librito.setGenero(modeloTabla.getValueAt(jtResultados.getSelectedRow(),4).toString());
+				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 4) != null) {
+					librito.setGenero(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 4).toString());
 				}
-				if(modeloTabla.getValueAt(jtResultados.getSelectedRow(),5) != null) {
-					librito.setIdioma(modeloTabla.getValueAt(jtResultados.getSelectedRow(),5).toString());
+				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 5) != null) {
+					librito.setIdioma(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 5).toString());
 				}
-				if(modeloTabla.getValueAt(jtResultados.getSelectedRow(),6) != null) {
-					librito.setEdicion(modeloTabla.getValueAt(jtResultados.getSelectedRow(),6).toString());
+				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 6) != null) {
+					librito.setEdicion(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 6).toString());
 				}
-				if(modeloTabla.getValueAt(jtResultados.getSelectedRow(),7) != null) {
-					librito.setPublicacion(modeloTabla.getValueAt(jtResultados.getSelectedRow(),7).toString());
+				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 7) != null) {
+					librito.setPublicacion(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 7).toString());
 				}
-				if(modeloTabla.getValueAt(jtResultados.getSelectedRow(),8) != null) {
-					librito.setPais(modeloTabla.getValueAt(jtResultados.getSelectedRow(),8).toString());
+				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 8) != null) {
+					librito.setPais(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 8).toString());
 				}
-				if(modeloTabla.getValueAt(jtResultados.getSelectedRow(),9) != null) {
-					librito.setPaginas(modeloTabla.getValueAt(jtResultados.getSelectedRow(),9).toString());
+				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 9) != null) {
+					librito.setPaginas(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 9).toString());
 				}
-				if(modeloTabla.getValueAt(jtResultados.getSelectedRow(),10) != null) {
-					librito.setUbicacion(modeloTabla.getValueAt(jtResultados.getSelectedRow(),10).toString());
+				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 10) != null) {
+					librito.setUbicacion(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 10).toString());
 				}
 			}
 		});
-		//----------------------------------------------------------------------------------------------------
-		
+		// ----------------------------------------------------------------------------------------------------
+
 		jtResultados.setForeground(new Color(36, 54, 69));
 		jtResultados.setFont(new Font("Verdana", Font.PLAIN, 13));
 		jtResultados.setBackground(new Color(255, 255, 255));
 		jtResultados.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		jtResultados.getTableHeader().setReorderingAllowed(false);
-		
-		//Cambiar la altura de las filas:
+
+		// Cambiar la altura de las filas:
 		jtResultados.setRowHeight(30);
 		scrollPane.setViewportView(jtResultados);
-		
-		//Le añadimos a nuestra tabla las columnas que va a tener:
-		modeloTabla.setColumnIdentifiers(new Object[]{"ISBN", "Título", "Autores", "Editorial",
-				"Género", "Idioma", "Edición", "Publicación", "Pais", "Nº Páginas", "Ubicación"});
-		//Le decimos que le establezca el modelo que hemos creado a nuestra tabla:
+
+		// Le añadimos a nuestra tabla las columnas que va a tener:
+		modeloTabla.setColumnIdentifiers(new Object[] { "ISBN", "Título", "Autores", "Editorial", "Género", "Idioma",
+				"Edición", "Publicación", "Pais", "Nº Páginas", "Ubicación" });
+		// Le decimos que le establezca el modelo que hemos creado a nuestra tabla:
 		jtResultados.setModel(modeloTabla);
-		
-		//Establecer el ancho de las columnas:
+
+		// Establecer el ancho de las columnas:
 		jtResultados.getColumnModel().getColumn(0).setPreferredWidth(40);
 		jtResultados.getColumnModel().getColumn(1).setPreferredWidth(110);
 		jtResultados.getColumnModel().getColumn(2).setPreferredWidth(80);
@@ -354,49 +356,80 @@ public class Libros_Ventana extends JPanel {
 		jtResultados.getColumnModel().getColumn(8).setPreferredWidth(10);
 		jtResultados.getColumnModel().getColumn(9).setPreferredWidth(10);
 		jtResultados.getColumnModel().getColumn(10).setPreferredWidth(80);
-		
+
 		JTableHeader encabezado = jtResultados.getTableHeader();
 		Color violeta = new Color(230, 217, 240);
 		Color darkBlue = new Color(9, 3, 62);
 		encabezado.setBackground(violeta);
 		encabezado.setForeground(darkBlue);
 		encabezado.setFont(new Font("Verdana", Font.BOLD, 13));
-		
-		//Que no se cambie el tamaño de las columnas.
+
+		// Que no se cambie el tamaño de las columnas.
 		jtResultados.getTableHeader().setResizingAllowed(false);
-		//Que no se cambie el orden de las columnas.
+		// Que no se cambie el orden de las columnas.
 		jtResultados.getTableHeader().setReorderingAllowed(false);
-			
-		//	-------------------------------------------------------------
+
+		// -------------------------------------------------------------
 
 	}
-	
+
 	public void rellenaTabla(String consulta) {
-		//Creamos una variable donde vamos a guardar lo que se haya escrito en el textField:
+		// Creamos una variable donde vamos a guardar lo que se haya escrito en el
+		// textField:
 		String aux = textField.getText().toString();
-		
+
 		modeloTabla.setRowCount(0);
-		
-		//Recorremos los objetos del ArrayList que nos retorna el método de la clase BaseDeDatos:
-		for(Libros recorreLibros : bd.cargaLibros(consulta, aux)) {
-			
-			//Object puede coger todo tipo de datos, hasta imágenes.
-			modeloTabla.addRow(new Object[] {
-				recorreLibros.getIsbn(),
-				recorreLibros.getTitulo(),
-				recorreLibros.getAutores(),
-				recorreLibros.getEditorial(),
-				recorreLibros.getGenero(),
-				recorreLibros.getIdioma(),
-				recorreLibros.getEdicion(),
-				recorreLibros.getPublicacion(),
-				recorreLibros.getPais(),
-				recorreLibros.getPaginas(),
-				recorreLibros.getUbicacion(),
-			});
+
+		// Recorremos los objetos del ArrayList que nos retorna el método de la clase
+		// BaseDeDatos:
+		for (Libros recorreLibros : bd.cargaLibros(consulta, aux)) {
+
+			// Object puede coger todo tipo de datos, hasta imágenes.
+			modeloTabla.addRow(new Object[] { recorreLibros.getIsbn(), recorreLibros.getTitulo(),
+					recorreLibros.getAutores(), recorreLibros.getEditorial(), recorreLibros.getGenero(),
+					recorreLibros.getIdioma(), recorreLibros.getEdicion(), recorreLibros.getPublicacion(),
+					recorreLibros.getPais(), recorreLibros.getPaginas(), recorreLibros.getUbicacion(), });
 		}
-			
+
+	}
+
+	public void eliminar(int filaTabla) {
+		BaseDeDatos bd = new BaseDeDatos();
+		int opcion = 0;
+		String id;
+		
+		opcion = preguntarEliminar();
+				
+		if(opcion == 0) {
+			id = bd.obtenerIdLibro(librito);
+			bd.eliminarLibro(id);
+
+			//Eliminamos la fila del modelo.
+			modeloTabla.removeRow(filaTabla);
+			confirmarEliminar();
+		}
+					
+	}
+
+	public int preguntarEliminar() {
+		String titulo1 = "Confirmación";
+		String titulo2 = "Cancelación";
+
+		int opcion = JOptionPane.showConfirmDialog(null, "¿Está seguro de eliminar el registro?", titulo1,
+				JOptionPane.YES_NO_OPTION);
+		if (opcion == 0) {
+
+		} else if (opcion == 1) {
+			JOptionPane.showMessageDialog(null, "No se va a eliminar el registro.", titulo2,
+					JOptionPane.INFORMATION_MESSAGE);
+		}
+
+		return opcion;
 	}
 	
-	
+	public void confirmarEliminar() {
+		String titulo = "Aviso";
+		JOptionPane.showMessageDialog(null, "Registro eliminado correctamente.", titulo, JOptionPane.INFORMATION_MESSAGE);
+	}
+
 }

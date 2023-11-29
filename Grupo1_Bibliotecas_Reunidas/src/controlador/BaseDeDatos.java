@@ -427,6 +427,8 @@ public class BaseDeDatos {
 	            }
 	        } catch (SQLException e) {
 	            e.printStackTrace();
+	        }catch(NullPointerException e) {
+	        	e.printStackTrace();
 	        }
 	    }
 
@@ -464,9 +466,36 @@ public class BaseDeDatos {
 	            }
 	        } catch (SQLException e) {
 	            e.printStackTrace();
+	        }catch(NullPointerException e) {
+	        	e.printStackTrace();
 	        }
 	    }
 	}
 	
+	public void eliminarLibro(String id) {
+		Connection conexion = null;
+		Statement consulta = null;
+		
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
+			consulta = conexion.createStatement();
+			
+			consulta.executeUpdate("delete from libros where id=" + id);
+			
+		} catch (CommunicationsException e) {
+			
+		} catch (SQLException e) {
+			
+		}finally {
+			try {
+				conexion.close();
+			}catch(SQLException e) {
+				
+			}catch(NullPointerException e) {
+				
+			}
+		}
+		
+	}
 	//------------------------------------------------------------------------------------------
 }
