@@ -22,6 +22,7 @@ import javax.swing.SwingConstants;
 
 public class Prestamos_Ventana extends JPanel {
 
+	private static final long serialVersionUID = 1L;
 	private JTable table;
 	DefaultTableModel modeloTabla = new DefaultTableModel();
 

@@ -47,7 +47,11 @@ public class Libros_Ventana extends JPanel {
 
 	// Creamos un objeto para el modelo de nuestra tabla:
 	DefaultTableModel modeloTabla = new DefaultTableModel() {
-		public boolean isCellEditable(int row,int column){return false;}};
+		public boolean isCellEditable(int row, int column) {
+			return false;
+		}
+	};
+
 	private JRadioButton rdbtIsbn;
 	private JRadioButton rdbtAutor;
 	private JLabel lblBuscar;
@@ -62,9 +66,11 @@ public class Libros_Ventana extends JPanel {
 	private JButton btnMen;
 	private BaseDeDatos bd = new BaseDeDatos();
 	private Editar_Libro libros;
+	private Insertar_Libro insertar = new Insertar_Libro();;
 	private Libros librito = new Libros();
 	private int filaTabla;
 	private String id;
+	private Errores err = new Errores();
 
 	public Libros_Ventana(Ventana ventana, boolean esAdmin) {
 
@@ -233,7 +239,7 @@ public class Libros_Ventana extends JPanel {
 		btnEditarLibro.setFont(new Font("Verdana", Font.PLAIN, 12));
 		btnEditarLibro.setBorder(null);
 		btnEditarLibro.setBackground(new Color(233, 210, 255));
-		btnEditarLibro.setBounds(529, 652, 87, 37);
+		btnEditarLibro.setBounds(633, 652, 87, 37);
 		add(btnEditarLibro);
 
 		btnEliminar = new JButton("Borrar libro");
@@ -259,8 +265,27 @@ public class Libros_Ventana extends JPanel {
 		btnEliminar.setFont(new Font("Verdana", Font.PLAIN, 12));
 		btnEliminar.setBorder(null);
 		btnEliminar.setBackground(new Color(233, 210, 255));
-		btnEliminar.setBounds(681, 652, 87, 37);
+		btnEliminar.setBounds(785, 652, 87, 37);
 		add(btnEliminar);
+
+		// -- AÑADIR LIBRO --
+		JButton btnNuevoLibro = new JButton("Añadir libro");
+		btnNuevoLibro.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+		        if (insertar != null) {
+		            insertar.setVisible(true);
+		        }
+		    }
+		});
+		// -------------------------------------------------
+
+		btnNuevoLibro.setForeground(new Color(9, 3, 62));
+		btnNuevoLibro.setFont(new Font("Verdana", Font.PLAIN, 12));
+		btnNuevoLibro.setBorder(null);
+		btnNuevoLibro.setBackground(new Color(233, 210, 255));
+		btnNuevoLibro.setBounds(491, 652, 87, 37);
+		add(btnNuevoLibro);
 
 		// -- VOLVER AL MENÚ --
 		btnMen = new JButton("MENÚ");
@@ -397,39 +422,16 @@ public class Libros_Ventana extends JPanel {
 		BaseDeDatos bd = new BaseDeDatos();
 		int opcion = 0;
 		String id;
-		
-		opcion = preguntarEliminar();
-				
-		if(opcion == 0) {
+
+		opcion = err.preguntarEliminar();
+
+		if (opcion == 0) {
 			id = bd.obtenerIdLibro(librito);
 			bd.eliminarLibro(id);
 
-			//Eliminamos la fila del modelo.
+			// Eliminamos la fila del modelo.
 			modeloTabla.removeRow(filaTabla);
-			confirmarEliminar();
-		}
-					
-	}
-
-	public int preguntarEliminar() {
-		String titulo1 = "Confirmación";
-		String titulo2 = "Cancelación";
-
-		int opcion = JOptionPane.showConfirmDialog(null, "¿Está seguro de eliminar el registro?", titulo1,
-				JOptionPane.YES_NO_OPTION);
-		if (opcion == 0) {
-
-		} else if (opcion == 1) {
-			JOptionPane.showMessageDialog(null, "No se va a eliminar el registro.", titulo2,
-					JOptionPane.INFORMATION_MESSAGE);
 		}
 
-		return opcion;
 	}
-	
-	public void confirmarEliminar() {
-		String titulo = "Aviso";
-		JOptionPane.showMessageDialog(null, "Registro eliminado correctamente.", titulo, JOptionPane.INFORMATION_MESSAGE);
-	}
-
 }

@@ -1,12 +1,10 @@
 package controlador;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -17,11 +15,11 @@ import com.mysql.jdbc.CommunicationsException;
 
 import modelo.Libros;
 import modelo.Prestamos;
-import vista.Editar_Libro;
-import vista.Ventana;
+import vista.Errores;
 
 
 public class BaseDeDatos {
+	private Errores err = new Errores();
 	
 	// -- MÉTODOS PRÉSTAMOS --
 	public ArrayList<Prestamos> cargaPrestamos(){
@@ -33,13 +31,11 @@ public class BaseDeDatos {
 		
 		try {
 			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bibliotecas_reunidas","root","");
-			//Generamos la consulta:
 			consulta = conexion.createStatement();
-			//Lanzamos la consulta:
 			registro = consulta.executeQuery("select * from prestamos");
 			
 			if(registro==null) {
-				System.out.println("La base de datos está vacia.");
+				err.baseDatosVacia();
 			}
 			//While se pone porque podría devolver más de una fila.
 			while(registro.next()){
@@ -58,14 +54,12 @@ public class BaseDeDatos {
 			}
 		
 		} catch (SQLException e) {
-			System.out.println("No se ha podido establecer la conexión.");
-			//e.printStackTrace();
+			err.baseDatosNoConexion();
 		}finally {
 			try {
 				conexion.close();
 			}catch(SQLException e) {
-				//e.printStackTrace();
-				System.out.println("No se ha podido cerrar la base de datos.");
+				err.baseDatosNoConexion();
 			}catch(NullPointerException e) {
 				
 			}
@@ -101,13 +95,12 @@ public class BaseDeDatos {
 			JOptionPane.showMessageDialog(null, "Se ha insertado correctamente la fecha de prestamo y la fecha de entrega prevista en la tabla.");
 			
 		}catch(SQLException error) {
-			JOptionPane.showMessageDialog(null, "No se ha podido conectar con la base de datos.");
-			error.printStackTrace();
+			err.baseDatosNoConexion();
 		}finally{
 			try {
 				conexion.close();
 			}catch(SQLException e) {
-				JOptionPane.showMessageDialog(null, "No se ha podido cerrar la base de datos");
+				err.baseDatosNoConexion();
 			}catch(NullPointerException e) {
 				
 			}
@@ -154,24 +147,20 @@ public class BaseDeDatos {
 			registro=consulta.executeQuery("SELECT id_socio FROM prestamos");			
 			
 			if(registro==null) {
-				System.out.println("La base de datos está vacia.");
+				err.baseDatosVacia();
 			}
-			//Rellenamos todos los paises uno por uno si hay siguiente pais. Si no hay más paises, sale del bucle.
-			//While se pone porque podria devolver ás de una fila.
-			while(registro.next()) {				
-				//Tomamos los datos de la columna name del objeto registro, convirtiendolo en String, para guardarlo en un objeto de tipo Paises				
+			while(registro.next()) {							
 				auxiliar = registro.getString("id_socio");				
 				arrLCombo.add(auxiliar);				
 			}
 			
 		}catch(SQLException error) {
-			JOptionPane.showMessageDialog(null, "No se ha podido conectar con la base de datos.");
-			error.printStackTrace();
+			err.baseDatosNoConexion();
 		}finally{
 			try {
 				conexion.close();
 			}catch(SQLException e) {
-				JOptionPane.showMessageDialog(null, "No se ha podido cerrar la base de datos");
+				err.baseDatosNoConexion();
 			}catch(NullPointerException e) {
 				
 			}
@@ -194,22 +183,16 @@ public class BaseDeDatos {
 			if(registro==null) {
 				System.out.println("La base de datos está vacia.");
 			}
-			//Rellenamos todos los paises uno por uno si hay siguiente pais. Si no hay más paises, sale del bucle.
-			//While se pone porque podria devolver ás de una fila.
 			while(registro.next()) {				
-				//Tomamos los datos de la columna name del objeto registro, convirtiendolo en String, para guardarlo en un objeto de tipo Paises				
 				auxiliar = registro.getString("id_libro");				
 				arrLCombo.add(auxiliar);				
 			}
 			
 		}catch(SQLException error) {
-			JOptionPane.showMessageDialog(null, "No se ha podido conectar con la base de datos.");
-			error.printStackTrace();
 		}finally{
 			try {
 				conexion.close();
 			}catch(SQLException e) {
-				JOptionPane.showMessageDialog(null, "No se ha podido cerrar la base de datos");
 			}catch(NullPointerException e) {
 				
 			}
@@ -232,22 +215,16 @@ public class BaseDeDatos {
 			if(registro==null) {
 				System.out.println("La base de datos está vacia.");
 			}
-			//Rellenamos todos los paises uno por uno si hay siguiente pais. Si no hay más paises, sale del bucle.
-			//While se pone porque podria devolver más de una fila.
 			while(registro.next()) {				
-				//Tomamos los datos de la columna name del objeto registro, convirtiendolo en String, para guardarlo en un objeto de tipo Paises				
 				auxiliar = registro.getString("id_biblioteca");				
 				arrLCombo.add(auxiliar);				
 			}
 			
 		}catch(SQLException error) {
-			JOptionPane.showMessageDialog(null, "No se ha podido conectar con la base de datos.");
-			error.printStackTrace();
 		}finally{
 			try {
 				conexion.close();
 			}catch(SQLException e) {
-				JOptionPane.showMessageDialog(null, "No se ha podido cerrar la base de datos");
 			}catch(NullPointerException e) {
 				
 			}
@@ -280,18 +257,15 @@ public class BaseDeDatos {
 				
 			}
 			
-		} catch (CommunicationsException e) {
-			e.printStackTrace();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			err.baseDatosNoConexion();
 		}finally {
 			try {
 				conexion.close();
 			}catch(SQLException e) {
-				System.out.println("SQLException");
+				err.baseDatosNoConexion();
 				
 			}catch(NullPointerException e) {
-				System.out.println("NullPointerException");
 			}
 		}
 
@@ -320,18 +294,15 @@ public class BaseDeDatos {
 					correcto = true;
 				}
 			}
-	
-		} catch (CommunicationsException e) {
-			
+
 		} catch (SQLException e) {
-			
+			err.baseDatosNoConexion();
 		}finally {
 			try {
 				conexion.close();
 			}catch(SQLException e) {
-				System.out.println("SQLException");
+				err.baseDatosNoConexion();
 			}catch(NullPointerException e) {
-				System.out.println("NullPointerException");
 			}
 		}
 		
@@ -360,7 +331,7 @@ public class BaseDeDatos {
 					+ " ORDER BY " + consulta);
 			
 			if(registro==null) {
-			System.out.println("Base de datos vacía");
+				err.baseDatosVacia();
 			}
 			//While porque podría devolver más de una fila.
 			while(registro.next()){
@@ -381,15 +352,13 @@ public class BaseDeDatos {
 				arrlLibros.add(nuevoLibro);
 			}
 		
-		} catch (CommunicationsException e) {
-
 		} catch (SQLException e) {
-
+			err.baseDatosNoConexion();
 		}finally {
 			try {
 				conexion.close();
 			}catch(SQLException e) {
-
+				err.baseDatosNoConexion();
 			}catch(NullPointerException e) {
 				
 			}
@@ -419,16 +388,15 @@ public class BaseDeDatos {
 	        }
 
 	    } catch (SQLException e) {
-	        e.printStackTrace();
+	    	err.baseDatosNoConexion();
 	    } finally {
 	        try {
 	            if (conexion != null) {
 	                conexion.close();
 	            }
 	        } catch (SQLException e) {
-	            e.printStackTrace();
+	        	err.baseDatosNoConexion();
 	        }catch(NullPointerException e) {
-	        	e.printStackTrace();
 	        }
 	    }
 
@@ -456,18 +424,19 @@ public class BaseDeDatos {
                     + "pais_libro='" + libro.getPais() + "', "
                     + "numPaginas_libro='" + libro.getPaginas() + "' "
                     + "WHERE id_libro='" + id + "'");
+	        
+	        err.confirmarUpdate();
 
 	    } catch (SQLException e) {
-	        e.printStackTrace();
+	    	err.baseDatosNoConexion();
 	    } finally {
 	        try {
 	            if (conexion != null) {
 	                conexion.close();
 	            }
 	        } catch (SQLException e) {
-	            e.printStackTrace();
+	        	err.baseDatosNoConexion();
 	        }catch(NullPointerException e) {
-	        	e.printStackTrace();
 	        }
 	    }
 	}
@@ -482,20 +451,87 @@ public class BaseDeDatos {
 			
 			consulta.executeUpdate("delete from libros where id=" + id);
 			
+			err.confirmarEliminar();
+			
 		} catch (CommunicationsException e) {
-			
+			err.baseDatosNoConexion();
 		} catch (SQLException e) {
-			
+			err.baseDatosNoConexion();
 		}finally {
 			try {
 				conexion.close();
 			}catch(SQLException e) {
-				
+				err.baseDatosNoConexion();
 			}catch(NullPointerException e) {
-				
 			}
 		}
 		
 	}
+	
+	public String obtenerUltimoIdLibro() {
+	    String ultimoId = "";
+	    Connection conexion = null;
+	    Statement consulta = null;
+	    ResultSet resultado = null;
+
+	    try {
+	        conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
+	        consulta = conexion.createStatement();
+
+	        resultado = consulta.executeQuery("SELECT MAX(id_libro) AS ultimoId FROM libros");
+
+	        if (resultado.next()) {
+	        	ultimoId = resultado.getString("ultimoId");
+	        }
+
+	    } catch (SQLException e) {
+	    	  e.printStackTrace();
+	    } finally {
+	        try {
+	            if (conexion != null) {
+	                conexion.close();
+	            }
+	        } catch (SQLException e) {
+	        	  e.printStackTrace();
+	        } catch (NullPointerException e) {
+	        	  e.printStackTrace();
+	        }
+	    }
+
+	    return ultimoId;
+	}
+	
+	public void insertarLibro(String id, Libros libro) {
+		Connection conexion = null;
+		Statement consulta = null;
+		
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
+			consulta = conexion.createStatement();
+			
+			consulta.executeUpdate("INSERT INTO LIBROS (id_libro, isbn_libro, titulo_libro, autores_libro, editorial_libro, "
+	                + "genero_libro, idioma_libro, edicion_libro, ubicacion_libro, publicacion_libro, "
+	                + "pais_libro, numPaginas_libro) values ('" + id + "', '" + libro.getIsbn() + "', '" + libro.getTitulo()
+	                + "', '" + libro.getAutores() + "', '" + libro.getEditorial() + "', '" + libro.getGenero() + "', '" + libro.getIdioma()
+	                + "', '" + libro.getEdicion() + "', '" + libro.getUbicacion() + "', '" + libro.getPublicacion()
+	                + "', '" + libro.getPais() + "', '" + libro.getPaginas() + "')");
+
+			err.confirmarInsert();
+				
+		} catch (SQLException e) {
+			e.printStackTrace();
+			err.baseDatosNoConexion();
+		}finally {
+			try {
+				conexion.close();
+			}catch(SQLException e) {
+				err.baseDatosNoConexion();
+			}catch(NullPointerException e) {	
+			}
+		}
+		
+	}
+	
 	//------------------------------------------------------------------------------------------
+
 }

@@ -43,6 +43,7 @@ public class Editar_Libro extends JDialog {
 
 	private Libros libro = new Libros();
 	private BaseDeDatos bd = new BaseDeDatos();
+	private Errores err = new Errores();
 
 	public Editar_Libro(Libros libro, DefaultTableModel modeloTabla, int filaTabla) {
 		setResizable(false);
@@ -224,14 +225,16 @@ public class Editar_Libro extends JDialog {
 					@Override
 					public void mouseClicked(MouseEvent e) {
 
-						if (!(txtIsbn.getText().isEmpty() || txtTitulo.getText().isEmpty() || txtAutores.getText().isEmpty()
-					            || txtEditorial.getText().isEmpty() || txtIdioma.getText().isEmpty() || txtEdicion.getText().isEmpty()
-					            || txtPublicacion.getText().isEmpty() || txtPais.getText().isEmpty() || txtPaginas.getText().isEmpty()
-					            || txtUbicacion.getText().isEmpty())) {
+						if (!(txtIsbn.getText().isEmpty() || txtTitulo.getText().isEmpty()
+								|| txtAutores.getText().isEmpty() || txtEditorial.getText().isEmpty()
+								|| txtIdioma.getText().isEmpty() || txtEdicion.getText().isEmpty()
+								|| txtPublicacion.getText().isEmpty() || txtPais.getText().isEmpty()
+								|| txtPaginas.getText().isEmpty() || txtUbicacion.getText().isEmpty())) {
 
 							editar(modeloTabla, libro, filaTabla);
 						} else {
-							JOptionPane.showMessageDialog(null, "Rellene todos los campos.", "Error",JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(null, "Rellene todos los campos.", "Error",
+									JOptionPane.ERROR_MESSAGE);
 						}
 
 					}
@@ -253,12 +256,17 @@ public class Editar_Libro extends JDialog {
 				btnCancelar.setBounds(749, 23, 111, 39);
 				btnCancelar.addMouseListener(new MouseAdapter() {
 
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		dispose();
-	}
+					@Override
+					public void mouseClicked(MouseEvent e) {
+						dispose();
+					}
 
-	});btnCancelar.setActionCommand("Cancel");buttonPane.add(btnCancelar);}}}
+				});
+				btnCancelar.setActionCommand("Cancel");
+				buttonPane.add(btnCancelar);
+			}
+		}
+	}
 
 	public Libros rellenaObjeto() {
 		Libros libro = new Libros();
@@ -280,18 +288,16 @@ public class Editar_Libro extends JDialog {
 
 	// Método para editar un libro
 	public void editar(DefaultTableModel modeloTabla, Libros libro, int filaTabla) {
-		Libros  libroEditado = new Libros();
+		Libros libroEditado = new Libros();
 		libroEditado = rellenaObjeto();
 		int opcion = 0;
 		String id = "";
 
-		opcion = preguntarEditar();
+		opcion = err.preguntarEditar();
 
-		
 		if (opcion == 0) {
 			id = bd.obtenerIdLibro(libro);
 			bd.editarLibro(libroEditado, id);
-			confirmarUpdate();
 
 			modeloTabla.setValueAt(libroEditado.getIsbn(), filaTabla, 0);
 			modeloTabla.setValueAt(libroEditado.getTitulo(), filaTabla, 1);
@@ -307,26 +313,5 @@ public class Editar_Libro extends JDialog {
 
 			dispose(); // Cerrar la ventana después de editar
 		}
-	}
-
-	public int preguntarEditar() {
-		String titulo1 = "Confirmación";
-		String titulo2 = "Cancelación";
-
-		int opcion = JOptionPane.showConfirmDialog(null, "¿Desea realmente editar el registro?", titulo1,
-				JOptionPane.YES_NO_OPTION);
-		if (opcion == 0) {
-
-		} else if (opcion == 1) {
-			JOptionPane.showMessageDialog(null, "La edición del registro se ha cancelado.", titulo2,
-					JOptionPane.INFORMATION_MESSAGE);
-		}
-
-		return opcion;
-	}
-
-	public void confirmarUpdate() {
-		String titulo = "Aviso";
-		JOptionPane.showMessageDialog(null, "Registro editado correctamente.", titulo, JOptionPane.INFORMATION_MESSAGE);
 	}
 }
