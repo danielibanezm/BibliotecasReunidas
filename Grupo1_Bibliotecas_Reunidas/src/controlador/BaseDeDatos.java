@@ -333,12 +333,13 @@ public class BaseDeDatos {
 			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas","root","");
 			consultita = conexion.createStatement();
 			//Lanzamos la consulta:
-			registro = consultita.executeQuery("SELECT isbn_libro, titulo_libro, autores_libro,"
-					+ " editorial_libro, genero_libro, idioma_libro, edicion_libro, publicacion_libro,"
-					+ " pais_libro, numPaginas_libro, ubicacion_libro"
-					+ " FROM libros"
+			registro = consultita.executeQuery("SELECT id_libro, id_biblioteca, titulo_libro, autores_libro, isbn_libro, editorial_libro,"
+					+ "genero_libro, idioma_libro, edicion_libro, ubicacion_libro, publicacion_libro, pais_libro,"
+					+ "numPaginas_libro, SUM(stock) AS stock_total"
+					+ "FROM	libros"
 					+ " WHERE " + consulta + " LIKE '%" + aux + "%'"
-					+ " ORDER BY " + consulta);
+					+ "GROUP BY id_biblioteca, titulo_libro, autores_libro, isbn_libro, editorial_libro, genero_libro, idioma_libro, edicion_libro, ubicacion_libro, publicacion_libro, pais_libro, numPaginas_libro;"
+					+ "ORDER BY " + consulta);
 			
 			if(registro==null) {
 				err.baseDatosVacia();
