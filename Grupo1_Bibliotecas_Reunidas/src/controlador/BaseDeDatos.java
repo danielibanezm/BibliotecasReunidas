@@ -77,22 +77,32 @@ public class BaseDeDatos {
 			conexion=DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
 			consulta=conexion.createStatement();
 			
-			 // Obtener la fecha actual con Calendar
-            Calendar calendar = Calendar.getInstance();
-            java.util.Date fechaActual = calendar.getTime();
-            
-            // Formatear la fecha actual como 'YYYY-MM-DD'
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            fechaFormateada = dateFormat.format(fechaActual);
-            
-            String fechaEntregaPrevista = calcularFechaEntregaPrevista(fechaFormateada);            
+			boolean esResultado = false;
+			
+			esResultado = consulta.execute("SELECT id_prestamo FROM prestamos WHERE id_libro = " + id_libro);
+			
+			if (!esResultado) {
+				 // Obtener la fecha actual con Calendar
+	            Calendar calendar = Calendar.getInstance();
+	            java.util.Date fechaActual = calendar.getTime();
+	            
+	            // Formatear la fecha actual como 'YYYY-MM-DD'
+	            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	            fechaFormateada = dateFormat.format(fechaActual);
+	            
+	            String fechaEntregaPrevista = calcularFechaEntregaPrevista(fechaFormateada);            
 
-            // Insertar la fecha actual en la base de datos
-            consulta.executeUpdate("INSERT INTO prestamos (id_socio, id_libro, id_biblioteca, fecha_prestamo, fecha_entrega_prevista, fecha_entrega, comentarios) "
-            		+ "VALUES ('" + id_socio + "', '" + id_libro + "', '" + id_biblioteca + "', '" + fechaFormateada + "', '" + fechaEntregaPrevista + 
-            		"', NULL, '" + comentarios + "')");
+	            // Insertar la fecha actual en la base de datos
+	            consulta.executeUpdate("INSERT INTO prestamos (id_socio, id_libro, id_biblioteca, fecha_prestamo, fecha_entrega_prevista, fecha_entrega, comentarios) "
+	            		+ "VALUES ('" + id_socio + "', '" + id_libro + "', '" + id_biblioteca + "', '" + fechaFormateada + "', '" + fechaEntregaPrevista + 
+	            		"', NULL, '" + comentarios + "')");
 
-			JOptionPane.showMessageDialog(null, "Se ha insertado correctamente la fecha de prestamo y la fecha de entrega prevista en la tabla.");
+				JOptionPane.showMessageDialog(null, "Se ha insertado correctamente la fecha de prestamo y la fecha de entrega prevista en la tabla.");
+				
+			} else {
+				JOptionPane.showMessageDialog(null, "Este ejemplar ya está prestado. Por favor, espere a que el otro usuario lo devuelva o escoja otro libro.");
+			}
+			
 			
 		}catch(SQLException error) {
 			err.baseDatosNoConexion();
