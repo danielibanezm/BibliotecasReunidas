@@ -91,11 +91,8 @@ public class Hacer_Prestamo extends JDialog {
 		btnInsertar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				nombreSocio = txtNombreSocio.getText();
-				System.out.println(nombreSocio);
 				apellidoSocio = txtApellidoSocio.getText();
-				System.out.println(apellidoSocio);
 				correoSocio = txtCorreoSocio.getText();
-				System.out.println(correoSocio);
 				
 				if (!bd.comprobarDatosSocio(nombreSocio, apellidoSocio, correoSocio)) {
 					JOptionPane.showMessageDialog(null, "Los datos introducidos son incorrectos y no se encuentran en la Base de Datos. Por favor, inténtelo de nuevo.");

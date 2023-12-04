@@ -78,7 +78,7 @@ public class BaseDeDatos {
 			boolean hayPrestamo = false;
 
 			ResultSet resultSet = consulta
-					.executeQuery("SELECT id_prestamo FROM prestamos WHERE id_libro = " + id_libro);
+					.executeQuery("SELECT id_prestamo FROM prestamos WHERE id_libro = '" + id_libro + "'");
 			hayPrestamo = resultSet.next();
 
 			if (!hayPrestamo) {
@@ -94,9 +94,9 @@ public class BaseDeDatos {
 
 				// Insertar la fecha actual en la base de datos
 				consulta.executeUpdate(
-						"INSERT INTO prestamos (id_biblioteca, id_socio, id_libro, fecha_prestamo, fecha_entrega_prevista, fecha_entrega) "
-								+ "VALUES ('" + id_biblioteca + "', '" + id_socio + "', '" + id_libro + "', '"
-								+ fechaFormateada + "', '" + fechaEntregaPrevista + "', NULL')");
+				        "INSERT INTO prestamos (id_biblioteca, id_socio, id_libro, fecha_prestamo, fecha_entrega_prevista, fecha_entrega) "
+				                + "VALUES ('" + id_biblioteca + "', '" + id_socio + "', '" + id_libro + "', '"
+				                + fechaFormateada + "', '" + fechaEntregaPrevista + "', NULL)");	
 
 				JOptionPane.showMessageDialog(null,
 						"Se ha insertado correctamente la fecha de prestamo y la fecha de entrega prevista en la tabla.");
@@ -107,18 +107,19 @@ public class BaseDeDatos {
 			}
 
 		} catch (SQLException error) {
-			error.printStackTrace();
+			//error.printStackTrace();
 			err.baseDatosNoConexion();
-		} finally {
-			try {
-				conexion.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-				err.baseDatosNoConexion();
-			} catch (NullPointerException e) {
-
-			}
+		}finally {
+		    try {
+		        if (conexion != null) {
+		            conexion.close();
+		        }
+		    } catch (SQLException e) {
+		       // e.printStackTrace();
+		        err.baseDatosNoConexion();
+		    }
 		}
+
 
 		return fechaFormateada;
 	}
@@ -143,7 +144,7 @@ public class BaseDeDatos {
 			return dateFormat.format(fechaEntregaPrevista);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			return null;
 		}
 	}
@@ -303,16 +304,14 @@ public class BaseDeDatos {
 				arrlLibros.add(nuevoLibro);
 			}
 
-		} catch (SQLException e) {
-			System.out.println("SQLException: " + e.getMessage());
-			System.out.println("SQLState: " + e.getSQLState());
-			System.out.println("VendorError: " + e.getErrorCode());
-			e.printStackTrace();
+		} catch (SQLException e) {			
+			//e.printStackTrace();
 			err.baseDatosNoConexion();
 		} finally {
 			try {
 				conexion.close();
 			} catch (SQLException e) {
+				//e.printStackTrace();
 				err.baseDatosNoConexion();
 			} catch (NullPointerException e) {
 
@@ -335,13 +334,14 @@ public class BaseDeDatos {
 			consulta = conexion.createStatement();
 			registro = consulta.executeQuery("SELECT id_socio" + " FROM socios" + " WHERE id_biblioteca = '" + idBib
 					+ "' " + " AND nombre_socio = '" + nombreSocio + "'" + " AND apellido_socio = '" + apellidoSocio
-					+ "'" + " AND correo_socio = '" + correoSocio + "'");
+					+ "'" + " AND email_socio = '" + correoSocio + "'");
 
 			if (registro.next()) {
 				id = registro.getString("id_socio");
 			}
 
 		} catch (SQLException e) {
+			//e.printStackTrace();
 			err.baseDatosNoConexion();
 		} finally {
 			try {
@@ -349,6 +349,7 @@ public class BaseDeDatos {
 					conexion.close();
 				}
 			} catch (SQLException e) {
+				//e.printStackTrace();
 				err.baseDatosNoConexion();
 			} catch (NullPointerException e) {
 			}
@@ -376,6 +377,7 @@ public class BaseDeDatos {
 			}
 
 		} catch (SQLException e) {
+			//e.printStackTrace();
 			err.baseDatosNoConexion();
 		} finally {
 			try {
@@ -383,6 +385,7 @@ public class BaseDeDatos {
 					conexion.close();
 				}
 			} catch (SQLException e) {
+				//e.printStackTrace();
 				err.baseDatosNoConexion();
 			} catch (NullPointerException e) {
 			}
@@ -409,22 +412,17 @@ public class BaseDeDatos {
 			resultadoNombre = consulta
 					.executeQuery("SELECT nombre_socio FROM socios WHERE nombre_socio = '" + nombre + "'");
 			nombreExiste = resultadoNombre.next();
-			System.out.println(nombreExiste);
 
 			resultadoApellido = consulta
 					.executeQuery("SELECT apellido_socio FROM socios WHERE apellido_socio = '" + apellido + "'");
 			apellidoExiste = resultadoApellido.next();
 
-			System.out.println(apellidoExiste);
-
 			resultadoCorreo = consulta
 					.executeQuery("SELECT email_socio FROM socios WHERE email_socio = '" + correo + "'");
 			correoExiste = resultadoCorreo.next();
 
-			System.out.println(correoExiste);
-
 		} catch (SQLException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			err.baseDatosNoConexion();
 		} finally {
 			try {
@@ -444,7 +442,7 @@ public class BaseDeDatos {
 					conexion.close();
 				}
 			} catch (SQLException e) {
-				e.printStackTrace();
+				//e.printStackTrace();
 				err.baseDatosNoConexion();
 			}
 		}
@@ -501,7 +499,7 @@ public class BaseDeDatos {
 			err.confirmarEliminar();
 
 		} catch (CommunicationsException e) {
-			err.baseDatosNoConexion();
+			err.baseDatosNoConexion();			
 		} catch (SQLException e) {
 			err.baseDatosNoConexion();
 		} finally {
@@ -532,16 +530,19 @@ public class BaseDeDatos {
 			}
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			err.baseDatosNoConexion();
+
 		} finally {
 			try {
 				if (conexion != null) {
 					conexion.close();
 				}
 			} catch (SQLException e) {
-				e.printStackTrace();
+				err.baseDatosNoConexion();
+				//e.printStackTrace();
 			} catch (NullPointerException e) {
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 		}
 
@@ -568,7 +569,7 @@ public class BaseDeDatos {
 			err.confirmarInsert();
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			err.baseDatosNoConexion();
 		} finally {
 			try {
