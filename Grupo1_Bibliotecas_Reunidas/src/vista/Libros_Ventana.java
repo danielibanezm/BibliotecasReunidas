@@ -364,16 +364,16 @@ public class Libros_Ventana extends JPanel {
 		scrollPane.setViewportView(jtResultados);
 
 		// Le añadimos a nuestra tabla las columnas que va a tener:
-		modeloTabla.setColumnIdentifiers(new Object[] { "ISBN", "Título", "Autores", "Editorial", "Género", "Idioma",
-				"Edición", "Publicación", "Pais", "Nº Páginas", "Ubicación" });
+		modeloTabla.setColumnIdentifiers(new Object[] { "ID Libro", "ID Biblioteca", "ISBN", "Título", "Autores", "Editorial", "Género", "Idioma",
+				"Edición", "Publicación", "Pais", "Nº Páginas", "Ubicación", "Stock Total" });
 		// Le decimos que le establezca el modelo que hemos creado a nuestra tabla:
 		jtResultados.setModel(modeloTabla);
 
 		// Establecer el ancho de las columnas:
-		jtResultados.getColumnModel().getColumn(0).setPreferredWidth(40);
-		jtResultados.getColumnModel().getColumn(1).setPreferredWidth(110);
-		jtResultados.getColumnModel().getColumn(2).setPreferredWidth(80);
-		jtResultados.getColumnModel().getColumn(3).setPreferredWidth(30);
+		jtResultados.getColumnModel().getColumn(0).setPreferredWidth(60);
+		jtResultados.getColumnModel().getColumn(1).setPreferredWidth(60);
+		jtResultados.getColumnModel().getColumn(2).setPreferredWidth(110);
+		jtResultados.getColumnModel().getColumn(3).setPreferredWidth(110);
 		jtResultados.getColumnModel().getColumn(4).setPreferredWidth(20);
 		jtResultados.getColumnModel().getColumn(5).setPreferredWidth(20);
 		jtResultados.getColumnModel().getColumn(6).setPreferredWidth(10);
@@ -381,6 +381,8 @@ public class Libros_Ventana extends JPanel {
 		jtResultados.getColumnModel().getColumn(8).setPreferredWidth(10);
 		jtResultados.getColumnModel().getColumn(9).setPreferredWidth(10);
 		jtResultados.getColumnModel().getColumn(10).setPreferredWidth(80);
+		jtResultados.getColumnModel().getColumn(11).setPreferredWidth(80);
+		jtResultados.getColumnModel().getColumn(12).setPreferredWidth(80);
 
 		JTableHeader encabezado = jtResultados.getTableHeader();
 		Color violeta = new Color(230, 217, 240);
@@ -410,10 +412,11 @@ public class Libros_Ventana extends JPanel {
 		for (Libros recorreLibros : bd.cargaLibros(consulta, aux)) {
 
 			// Object puede coger todo tipo de datos, hasta imágenes.
-			modeloTabla.addRow(new Object[] { recorreLibros.getIsbn(), recorreLibros.getTitulo(),
+			modeloTabla.addRow(new Object[] { recorreLibros.getIdLibro(), recorreLibros.getIdBiblioteca(), recorreLibros.getIsbn(), recorreLibros.getTitulo(),
 					recorreLibros.getAutores(), recorreLibros.getEditorial(), recorreLibros.getGenero(),
 					recorreLibros.getIdioma(), recorreLibros.getEdicion(), recorreLibros.getPublicacion(),
-					recorreLibros.getPais(), recorreLibros.getPaginas(), recorreLibros.getUbicacion(), });
+					recorreLibros.getPais(), recorreLibros.getPaginas(), recorreLibros.getUbicacion(), 
+					recorreLibros.getStockTotal()});
 		}
 
 	}

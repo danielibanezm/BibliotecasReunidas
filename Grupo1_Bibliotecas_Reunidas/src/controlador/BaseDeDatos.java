@@ -334,20 +334,22 @@ public class BaseDeDatos {
 			consultita = conexion.createStatement();
 			//Lanzamos la consulta:
 			registro = consultita.executeQuery("SELECT id_libro, id_biblioteca, titulo_libro, autores_libro, isbn_libro, editorial_libro,"
-					+ "genero_libro, idioma_libro, edicion_libro, ubicacion_libro, publicacion_libro, pais_libro,"
-					+ "numPaginas_libro, SUM(stock) AS stock_total"
-					+ "FROM	libros"
-					+ " WHERE " + consulta + " LIKE '%" + aux + "%'"
-					+ "GROUP BY id_biblioteca, titulo_libro, autores_libro, isbn_libro, editorial_libro, genero_libro, idioma_libro, edicion_libro, ubicacion_libro, publicacion_libro, pais_libro, numPaginas_libro;"
-					+ "ORDER BY " + consulta);
+				+ "genero_libro, idioma_libro, edicion_libro, ubicacion_libro, publicacion_libro, pais_libro,"
+				+ "numPaginas_libro, COUNT(*) AS stock_total "
+				+ "FROM	libros "
+				+ "WHERE " + consulta + " LIKE '%" + aux + "%' "
+				+ "GROUP BY id_biblioteca, titulo_libro, autores_libro, isbn_libro, editorial_libro, genero_libro, idioma_libro, edicion_libro, "
+				+ "ubicacion_libro, publicacion_libro, pais_libro, numPaginas_libro "
+				+ "ORDER BY " + consulta);
 			
-			if(registro==null) {
+			if(!registro.next()) {
 				err.baseDatosVacia();
 			}
 			//While porque podría devolver más de una fila.
 			while(registro.next()){
 				Libros nuevoLibro = new Libros();
-				
+				nuevoLibro.setIdLibro(registro.getString("id_libro"));
+				nuevoLibro.setIdBiblioteca(registro.getString("id_biblioteca"));
 				nuevoLibro.setIsbn(registro.getString("isbn_libro"));
 				nuevoLibro.setTitulo(registro.getString("titulo_libro"));
 				nuevoLibro.setAutores(registro.getString("autores_libro"));
@@ -359,11 +361,16 @@ public class BaseDeDatos {
 				nuevoLibro.setPais(registro.getString("pais_libro"));
 				nuevoLibro.setPaginas(registro.getString("numPaginas_libro"));
 				nuevoLibro.setUbicacion(registro.getString("ubicacion_libro"));
-				
+			    nuevoLibro.setStockTotal(registro.getInt("stock_total"));
+
 				arrlLibros.add(nuevoLibro);
 			}
 		
 		} catch (SQLException e) {
+			System.out.println("SQLException: " + e.getMessage());
+		    System.out.println("SQLState: " + e.getSQLState());
+		    System.out.println("VendorError: " + e.getErrorCode());
+		    e.printStackTrace();
 			err.baseDatosNoConexion();
 		}finally {
 			try {

@@ -1,6 +1,8 @@
 package modelo;
 
 public class Libros {
+	private String idLibro;
+	private String idBiblioteca;
 	private String isbn;
 	private String titulo;
 	private String autores;
@@ -12,8 +14,11 @@ public class Libros {
 	private String pais;
 	private String paginas;
 	private String ubicacion;
+	private int stockTotal;
 	
 	public Libros() {
+		idLibro = "";
+		idBiblioteca = "";
 		isbn = "";
 		titulo = "";
 		autores = "";
@@ -25,11 +30,13 @@ public class Libros {
 		pais = "";
 		paginas = "";
 		ubicacion = "";
+		stockTotal = 0;
 	}
 
-	public Libros(String isbn, String titulo, String autores, String editorial, String genero, String idioma,
-			String edicion, String publicacion, String pais, String paginas, String ubicacion) {
-
+	public Libros(String idLibro, String idBiblioteca, String isbn, String titulo, String autores, String editorial, String genero, String idioma,
+			String edicion, String publicacion, String pais, String paginas, String ubicacion, int stockTotal) {
+		this.idLibro = idLibro;
+		this.idBiblioteca = idBiblioteca;
 		this.isbn = isbn;
 		this.titulo = titulo;
 		this.autores = autores;
@@ -41,6 +48,23 @@ public class Libros {
 		this.pais = pais;
 		this.paginas = paginas;
 		this.ubicacion = ubicacion;
+		this.stockTotal = stockTotal;
+	}
+
+	public String getIdLibro() {
+		return idLibro;
+	}
+
+	public void setIdLibro(String idLibro) {
+		this.idLibro = idLibro;
+	}
+
+	public String getIdBiblioteca() {
+		return idBiblioteca;
+	}
+
+	public void setIdBiblioteca(String idBiblioteca) {
+		this.idBiblioteca = idBiblioteca;
 	}
 
 	public String getIsbn() {
@@ -129,6 +153,14 @@ public class Libros {
 
 	public void setUbicacion(String ubicacion) {
 		this.ubicacion = ubicacion;
+	}
+
+	public int getStockTotal() {
+		return stockTotal;
+	}
+
+	public void setStockTotal(int stockTotal) {
+		this.stockTotal = stockTotal;
 	}
 	
 	
