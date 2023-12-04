@@ -95,12 +95,14 @@ public class Hacer_Prestamo extends JDialog {
 				correoSocio = txtCorreoSocio.getText();
 				
 				if (!bd.comprobarDatosSocio(nombreSocio, apellidoSocio, correoSocio)) {
-					JOptionPane.showMessageDialog(null, "Los datos introducidos son incorrectos y no se encuentran en la Base de Datos. Por favor, inténtelo de nuevo.");
+					JOptionPane.showMessageDialog(null, "Los datos introducidos son incorrectos y no se encuentran en la Base de Datos. Por favor, inténtelo de nuevo.", "Error",
+							JOptionPane.ERROR_MESSAGE);
 				} else{
 					idSocio = bd.obtenerIdSocio(librito, nombreSocio, apellidoSocio, correoSocio, idBib);
 					idLibro = bd.obtenerIdLibro(librito, idBib);
 
 					bd.insertarPrestamo(idSocio, idLibro, idBib);
+					bd.borrarUnaUnidadStock(idLibro, idBib);
 				}								
 			}
 		});
