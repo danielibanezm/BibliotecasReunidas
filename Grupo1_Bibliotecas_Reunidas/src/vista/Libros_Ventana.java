@@ -66,6 +66,7 @@ public class Libros_Ventana extends JPanel {
 	private JButton btnMen;
 	private BaseDeDatos bd = new BaseDeDatos();
 	private Editar_Libro libros;
+	private Hacer_Prestamo prestamo;
 	private Insertar_Libro insertar = new Insertar_Libro();;
 	private Libros librito = new Libros();
 	private int filaTabla;
@@ -172,8 +173,8 @@ public class Libros_Ventana extends JPanel {
 
 				filaTabla = jtResultados.getSelectedRow();
 				if (filaTabla != -1) { // Se ha seleccionado una fila
-
-					ventana.nuevoPanel(new Hacer_Prestamo_Ventana(ventana, esAdmin, librito));
+					prestamo = new Hacer_Prestamo(librito);
+					prestamo.setVisible(true);
 
 				} else {
 					// No se ha seleccionado ningún libro por lo tanto se muestra un error.
