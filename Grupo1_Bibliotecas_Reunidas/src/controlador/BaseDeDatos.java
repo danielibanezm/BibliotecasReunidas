@@ -530,59 +530,20 @@ public class BaseDeDatos {
 			consulta.executeUpdate("delete from libros where id=" + id);
 
 			err.confirmarEliminar();
-
-		} catch (CommunicationsException e) {
-			err.baseDatosNoConexion();			
+	
 		} catch (SQLException e) {
 			err.baseDatosNoConexion();
 		} finally {
 			try {
 				conexion.close();
 			} catch (SQLException e) {
-				err.baseDatosNoConexion();
 			} catch (NullPointerException e) {
 			}
 		}
 
 	}
 
-	public String obtenerUltimoIdLibro() {
-		String ultimoId = "";
-		Connection conexion = null;
-		Statement consulta = null;
-		ResultSet resultado = null;
-
-		try {
-			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
-			consulta = conexion.createStatement();
-
-			resultado = consulta.executeQuery("SELECT MAX(id_libro) AS ultimoId FROM libros");
-
-			if (resultado.next()) {
-				ultimoId = resultado.getString("ultimoId");
-			}
-
-		} catch (SQLException e) {
-			//e.printStackTrace();
-			err.baseDatosNoConexion();
-
-		} finally {
-			try {
-				if (conexion != null) {
-					conexion.close();
-				}
-			} catch (SQLException e) {
-				err.baseDatosNoConexion();
-				//e.printStackTrace();
-			} catch (NullPointerException e) {
-				//e.printStackTrace();
-			}
-		}
-
-		return ultimoId;
-	}
-
-	public void insertarLibro(String id, Libros libro) {
+	public void insertarLibro(Libros libro, String idBib) {
 		Connection conexion = null;
 		Statement consulta = null;
 
@@ -591,23 +552,24 @@ public class BaseDeDatos {
 			consulta = conexion.createStatement();
 
 			consulta.executeUpdate(
-					"INSERT INTO LIBROS (id_libro, isbn_libro, titulo_libro, autores_libro, editorial_libro, "
+					"INSERT INTO LIBROS (id_biblioteca, isbn_libro, titulo_libro, autores_libro, editorial_libro, "
 							+ "genero_libro, idioma_libro, edicion_libro, ubicacion_libro, publicacion_libro, "
-							+ "pais_libro, numPaginas_libro) values ('" + id + "', '" + libro.getIsbn() + "', '"
+							+ "pais_libro, numPaginas_libro, stock_total) values ('" + idBib + "', '" + libro.getIsbn() + "', '"
 							+ libro.getTitulo() + "', '" + libro.getAutores() + "', '" + libro.getEditorial() + "', '"
 							+ libro.getGenero() + "', '" + libro.getIdioma() + "', '" + libro.getEdicion() + "', '"
 							+ libro.getUbicacion() + "', '" + libro.getPublicacion() + "', '" + libro.getPais() + "', '"
-							+ libro.getPaginas() + "')");
+							+ libro.getPaginas() + "', 1)");
 
 			err.confirmarInsert();
 
 		} catch (SQLException e) {
-			//e.printStackTrace();
+			e.printStackTrace();
 			err.baseDatosNoConexion();
 		} finally {
 			try {
 				conexion.close();
 			} catch (SQLException e) {
+				e.printStackTrace();
 				err.baseDatosNoConexion();
 			} catch (NullPointerException e) {
 			}

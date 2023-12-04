@@ -67,14 +67,15 @@ public class Libros_Ventana extends JPanel {
 	private BaseDeDatos bd = new BaseDeDatos();
 	private Editar_Libro libros;
 	private Hacer_Prestamo prestamo;
-	private Insertar_Libro insertar = new Insertar_Libro();;
+	private Insertar_Libro insertar;
 	private Libros librito = new Libros();
 	private int filaTabla;
 	private String id;
 	private Errores err = new Errores();
 
 	public Libros_Ventana(Ventana ventana, boolean esAdmin, String idBib) {
-
+		
+		Insertar_Libro insertar = new Insertar_Libro(idBib, modeloTabla, ventana, esAdmin);
 		setBackground(new Color(255, 255, 255));
 		setLayout(null);
 
@@ -444,6 +445,15 @@ public class Libros_Ventana extends JPanel {
 			// Eliminamos la fila del modelo.
 			modeloTabla.removeRow(filaTabla);
 		}
+	}
+	
+	public void actualizarse(Libros nuevoLib, DefaultTableModel modeloTabla) {
+		Object[] nuevaFila = { 0, 0, nuevoLib.getTitulo(), nuevoLib.getAutores(), nuevoLib.getIsbn(),
+				nuevoLib.getEditorial(), nuevoLib.getGenero(), nuevoLib.getIdioma(), nuevoLib.getEdicion(),
+				nuevoLib.getUbicacion(), nuevoLib.getPublicacion(), nuevoLib.getPais(), nuevoLib.getPaginas(), 1};
+		modeloTabla.addRow(nuevaFila);
 
+		// Refrescar la vista
+		modeloTabla.fireTableDataChanged();
 	}
 }
