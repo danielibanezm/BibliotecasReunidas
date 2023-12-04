@@ -21,7 +21,7 @@ public class Menu extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public Menu(Ventana ventana, boolean esAdmin) {
+	public Menu(Ventana ventana, boolean esAdmin, String idBib) {
 		this.ventana = ventana;
 		
 		setBackground(new Color(255, 255, 255));
@@ -32,7 +32,7 @@ public class Menu extends JPanel {
 		lblTitulo.setHorizontalAlignment(SwingConstants.LEFT);
 		lblTitulo.setForeground(new Color(130, 72, 172));
 		lblTitulo.setFont(new Font("Gabriola", Font.BOLD, 55));
-		lblTitulo.setBounds(601, 69, 239, 81);
+		lblTitulo.setBounds(656, 70, 239, 81);
 		add(lblTitulo);
 		
 		JLabel lblMen = new JLabel("Menú");
@@ -40,12 +40,12 @@ public class Menu extends JPanel {
 		lblMen.setHorizontalAlignment(SwingConstants.LEFT);
 		lblMen.setForeground(new Color(9, 3, 62));
 		lblMen.setFont(new Font("Gabriola", Font.BOLD, 55));
-		lblMen.setBounds(601, 111, 239, 81);
+		lblMen.setBounds(656, 112, 239, 81);
 		add(lblMen);
 		
 		JLabel lblNewLabel = new JLabel("");
 		lblNewLabel.setIcon(new ImageIcon(Menu.class.getResource("/img/lilLib.png")));
-		lblNewLabel.setBounds(479, 43, 181, 135);
+		lblNewLabel.setBounds(534, 44, 181, 135);
 		add(lblNewLabel);
 		
 		JButton btnLibros = new JButton("Libros");
@@ -54,7 +54,7 @@ public class Menu extends JPanel {
 		btnLibros.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				ventana.nuevoPanel(new Libros_Ventana(ventana, esAdmin));
+				ventana.nuevoPanel(new Libros_Ventana(ventana, esAdmin, idBib));
 			}
 		});
 		//--------------------------------------------
@@ -63,7 +63,7 @@ public class Menu extends JPanel {
 		btnLibros.setForeground(new Color(255, 255, 255));
 		btnLibros.setBackground(new Color(160, 113, 196));
 		btnLibros.setFont(new Font("Verdana", Font.PLAIN, 12));
-		btnLibros.setBounds(479, 328, 315, 37);
+		btnLibros.setBounds(534, 329, 315, 37);
 		add(btnLibros);
 		
 		//-- ACCIÓN BOTÓN SOCIOS --
@@ -71,7 +71,7 @@ public class Menu extends JPanel {
 		btnSocios.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				ventana.nuevoPanel(new Socios_Ventana(ventana, esAdmin));
+				ventana.nuevoPanel(new Socios_Ventana(ventana, esAdmin, idBib));
 			}
 		});
 		//------------------------------------------------
@@ -79,7 +79,7 @@ public class Menu extends JPanel {
 		btnSocios.setBackground(new Color(230, 217, 240));
 		btnSocios.setBorder(null);
 		btnSocios.setFont(new Font("Verdana", Font.PLAIN, 12));
-		btnSocios.setBounds(479, 244, 315, 37);
+		btnSocios.setBounds(534, 245, 315, 37);
 		add(btnSocios);
 		
 		//-- ACCIÓN BOTÓN PRÉSTAMOS --
@@ -87,7 +87,7 @@ public class Menu extends JPanel {
 		btnPrestamos.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				ventana.nuevoPanel(new Prestamos_Ventana(ventana, esAdmin));
+				ventana.nuevoPanel(new Prestamos_Ventana(ventana, esAdmin, idBib));
 			}
 		});
 		//---------------------------------------------------
@@ -96,7 +96,7 @@ public class Menu extends JPanel {
 		btnPrestamos.setBorder(null);
 		btnPrestamos.setFont(new Font("Verdana", Font.PLAIN, 12));
 		btnPrestamos.setToolTipText("");
-		btnPrestamos.setBounds(479, 413, 315, 37);
+		btnPrestamos.setBounds(534, 414, 315, 37);
 		add(btnPrestamos);
 		
 		//-- ACCIÓN BOTÓN MULTAS --
@@ -104,7 +104,7 @@ public class Menu extends JPanel {
 		btnReciMul.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				ventana.nuevoPanel(new Multas_Ventana(ventana, esAdmin));
+				ventana.nuevoPanel(new Multas_Ventana(ventana, esAdmin, idBib));
 			}
 		});
 		//-------------------------------------------------------
@@ -114,7 +114,7 @@ public class Menu extends JPanel {
 		btnReciMul.setBorder(null);
 		btnReciMul.setFont(new Font("Verdana", Font.PLAIN, 12));
 		btnReciMul.setToolTipText("");
-		btnReciMul.setBounds(479, 497, 315, 37);
+		btnReciMul.setBounds(534, 498, 315, 37);
 		add(btnReciMul);
 		
 		//-- ACCIÓN BOTÓN usuarios --
@@ -122,7 +122,7 @@ public class Menu extends JPanel {
 		btnUsuarios.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				ventana.nuevoPanel(new Usuarios_Ventana(ventana, esAdmin));	
+				ventana.nuevoPanel(new Usuarios_Ventana(ventana, esAdmin, idBib));	
 			}
 		});
 		//-----------------------------------------------------------
@@ -130,7 +130,7 @@ public class Menu extends JPanel {
 		btnUsuarios.setBorder(null);
 		btnUsuarios.setFont(new Font("Verdana", Font.PLAIN, 12));
 		btnUsuarios.setToolTipText("");
-		btnUsuarios.setBounds(479, 581, 315, 37);
+		btnUsuarios.setBounds(534, 582, 315, 37);
 		add(btnUsuarios);
 		
 		//Hacemos que el botón usuarios sea visible o no depende del perfil.
@@ -158,7 +158,7 @@ public class Menu extends JPanel {
 		btnSalir.setFont(new Font("Verdana", Font.PLAIN, 11));
 		btnSalir.setBorder(new LineBorder(new Color(88, 49, 117), 2, true));
 		btnSalir.setBackground(new Color(255, 255, 255));
-		btnSalir.setBounds(479, 664, 111, 37);
+		btnSalir.setBounds(534, 665, 111, 37);
 		add(btnSalir);
 
 	}

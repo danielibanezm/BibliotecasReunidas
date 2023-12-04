@@ -45,6 +45,7 @@ public class Login extends JPanel{
 	private Ventana ventana;
 	private boolean esAdmin = true;
 	private BaseDeDatos bd = new BaseDeDatos();
+	private String idBib = "";
 
 	
 	//Modificamos el constructor para recibir una referencia de la instancia de "Ventana".
@@ -57,7 +58,7 @@ public class Login extends JPanel{
 		
 		img = new JLabel("");
 		img.setIcon(new ImageIcon(Login.class.getResource("/img/Bib.png")));
-		img.setBounds(426, 80, 171, 177);
+		img.setBounds(517, 80, 171, 177);
 		add(img);
 		
 		lblTitulo = new JLabel("Librarium");
@@ -65,7 +66,7 @@ public class Login extends JPanel{
 		lblTitulo.setVerticalAlignment(SwingConstants.TOP);
 		lblTitulo.setHorizontalAlignment(SwingConstants.LEFT);
 		lblTitulo.setFont(new Font("Gabriola", Font.BOLD, 55));
-		lblTitulo.setBounds(602, 162, 239, 81);
+		lblTitulo.setBounds(693, 162, 239, 81);
 		add(lblTitulo);
 		
 		txtUsuario = new JTextField();
@@ -78,7 +79,7 @@ public class Login extends JPanel{
 		});
 		
 		txtUsuario.setBorder(new LineBorder(new Color(130, 72, 172), 3));
-		txtUsuario.setBounds(455, 331, 342, 37);
+		txtUsuario.setBounds(546, 331, 342, 37);
 		add(txtUsuario);
 		txtUsuario.setColumns(10);
 		
@@ -93,19 +94,19 @@ public class Login extends JPanel{
 		
 		txtContrasenia.setBorder(new LineBorder(new Color(130, 72, 172), 3));
 		txtContrasenia.setColumns(10);
-		txtContrasenia.setBounds(455, 428, 342, 37);
+		txtContrasenia.setBounds(546, 428, 342, 37);
 		add(txtContrasenia);
 		
 		JLabel lblUsuario = new JLabel("Usuario:");
 		lblUsuario.setForeground(new Color(9, 3, 62));
 		lblUsuario.setFont(new Font("Verdana", Font.PLAIN, 12));
-		lblUsuario.setBounds(455, 306, 117, 14);
+		lblUsuario.setBounds(546, 306, 117, 14);
 		add(lblUsuario);
 		
 		JLabel lblContrasenia = new JLabel("Contraseña:");
 		lblContrasenia.setForeground(new Color(9, 3, 62));
 		lblContrasenia.setFont(new Font("Verdana", Font.PLAIN, 12));
-		lblContrasenia.setBounds(455, 403, 153, 14);
+		lblContrasenia.setBounds(546, 403, 153, 14);
 		add(lblContrasenia);
 		
 		//-- ACCIÓN ACEPTAR --
@@ -123,8 +124,9 @@ public class Login extends JPanel{
 						esAdmin = false;
 					}
 					
+					idBib = bd.obtenBiblioteca(usuario);
 					//Utilizamos la referencia a Ventana para cambiar al panel Menu
-		            ventana.nuevoPanel(new Menu(ventana, esAdmin));
+					ventana.nuevoPanel(new Menu(ventana, esAdmin, idBib));
 					
 				}else {
 					lblerror.setText("Usuario o contraseña incorrecto.");
@@ -138,7 +140,7 @@ public class Login extends JPanel{
 		btnAceptar.setBorder(null);
 		btnAceptar.setForeground(new Color(255, 255, 255));
 		btnAceptar.setBackground(new Color(130, 72, 172));
-		btnAceptar.setBounds(455, 516, 117, 37);
+		btnAceptar.setBounds(546, 516, 117, 37);
 		add(btnAceptar);
 		
 		lblerror = new JLabel("");

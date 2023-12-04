@@ -36,8 +36,9 @@ public class Ventana extends JFrame {
 	 * Create the frame.
 	 */
 	public Ventana() {
+		setResizable(false);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Ventana.class.getResource("/img/libro.png")));
-		setMinimumSize(new Dimension(1348, 782));
+		setMinimumSize(new Dimension(1400, 800));
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setBounds(100, 100, 1348, 782);
 		contentPane = new JPanel();

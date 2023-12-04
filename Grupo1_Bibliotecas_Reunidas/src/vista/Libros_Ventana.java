@@ -73,7 +73,7 @@ public class Libros_Ventana extends JPanel {
 	private String id;
 	private Errores err = new Errores();
 
-	public Libros_Ventana(Ventana ventana, boolean esAdmin) {
+	public Libros_Ventana(Ventana ventana, boolean esAdmin, String idBib) {
 
 		setBackground(new Color(255, 255, 255));
 		setLayout(null);
@@ -145,7 +145,7 @@ public class Libros_Ventana extends JPanel {
 					consulta = "autores_libro";
 				}
 
-				rellenaTabla(consulta);
+				rellenaTabla(consulta, idBib);
 			}
 		});
 		// --------------------------------------
@@ -162,7 +162,7 @@ public class Libros_Ventana extends JPanel {
 
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBackground(new Color(255, 255, 255));
-		scrollPane.setBounds(23, 293, 1271, 327);
+		scrollPane.setBounds(23, 293, 1318, 327);
 		add(scrollPane);
 
 		// -- REALIZAR PRÉSTAMO --
@@ -173,7 +173,7 @@ public class Libros_Ventana extends JPanel {
 
 				filaTabla = jtResultados.getSelectedRow();
 				if (filaTabla != -1) { // Se ha seleccionado una fila
-					prestamo = new Hacer_Prestamo(librito);
+					prestamo = new Hacer_Prestamo(librito, idBib);
 					prestamo.setVisible(true);
 
 				} else {
@@ -213,7 +213,7 @@ public class Libros_Ventana extends JPanel {
 		btnBorrar.setFont(new Font("Verdana", Font.PLAIN, 12));
 		btnBorrar.setBorder(null);
 		btnBorrar.setBackground(new Color(130, 72, 172));
-		btnBorrar.setBounds(1163, 652, 131, 37);
+		btnBorrar.setBounds(1212, 652, 131, 37);
 		add(btnBorrar);
 
 		// -- EDITAR LIBRO --
@@ -223,7 +223,7 @@ public class Libros_Ventana extends JPanel {
 			public void mouseClicked(MouseEvent e) {
 				filaTabla = jtResultados.getSelectedRow();
 				if (filaTabla != -1) { // Se ha seleccionado una fila
-					libros = new Editar_Libro(librito, modeloTabla, filaTabla);
+					libros = new Editar_Libro(librito, modeloTabla, filaTabla, idBib);
 					libros.setVisible(true);
 
 				} else {
@@ -240,7 +240,7 @@ public class Libros_Ventana extends JPanel {
 		btnEditarLibro.setFont(new Font("Verdana", Font.PLAIN, 12));
 		btnEditarLibro.setBorder(null);
 		btnEditarLibro.setBackground(new Color(233, 210, 255));
-		btnEditarLibro.setBounds(633, 652, 87, 37);
+		btnEditarLibro.setBounds(679, 652, 87, 37);
 		add(btnEditarLibro);
 
 		btnEliminar = new JButton("Borrar libro");
@@ -251,7 +251,7 @@ public class Libros_Ventana extends JPanel {
 				filaTabla = jtResultados.getSelectedRow();
 
 				if (filaTabla != -1) { // Se ha seleccionado una fila
-					eliminar(filaTabla);
+					eliminar(filaTabla, idBib);
 
 				} else {
 					// No se ha seleccionado ningún libro por lo tanto se muestra un error.
@@ -266,7 +266,7 @@ public class Libros_Ventana extends JPanel {
 		btnEliminar.setFont(new Font("Verdana", Font.PLAIN, 12));
 		btnEliminar.setBorder(null);
 		btnEliminar.setBackground(new Color(233, 210, 255));
-		btnEliminar.setBounds(785, 652, 87, 37);
+		btnEliminar.setBounds(831, 652, 87, 37);
 		add(btnEliminar);
 
 		// -- AÑADIR LIBRO --
@@ -274,10 +274,10 @@ public class Libros_Ventana extends JPanel {
 		btnNuevoLibro.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-		        if (insertar != null) {
-		            insertar.setVisible(true);
-		        }
-		    }
+				if (insertar != null) {
+					insertar.setVisible(true);
+				}
+			}
 		});
 		// -------------------------------------------------
 
@@ -285,7 +285,7 @@ public class Libros_Ventana extends JPanel {
 		btnNuevoLibro.setFont(new Font("Verdana", Font.PLAIN, 12));
 		btnNuevoLibro.setBorder(null);
 		btnNuevoLibro.setBackground(new Color(233, 210, 255));
-		btnNuevoLibro.setBounds(491, 652, 87, 37);
+		btnNuevoLibro.setBounds(537, 652, 87, 37);
 		add(btnNuevoLibro);
 
 		// -- VOLVER AL MENÚ --
@@ -297,7 +297,7 @@ public class Libros_Ventana extends JPanel {
 		btnMen.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				ventana.nuevoPanel(new Menu(ventana, esAdmin));
+				ventana.nuevoPanel(new Menu(ventana, esAdmin, idBib));
 			}
 		});
 		// ------------------------------------------------------
@@ -318,37 +318,44 @@ public class Libros_Ventana extends JPanel {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 0) != null) {
-					librito.setIsbn(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 0).toString());
+					librito.setIdLibro(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 0).toString());
 				}
 				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 1) != null) {
-					librito.setTitulo(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 1).toString());
+					librito.setIdBiblioteca(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 1).toString());
 				}
+
 				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 2) != null) {
-					librito.setAutores(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 2).toString());
+					librito.setIsbn(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 2).toString());
 				}
 				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 3) != null) {
-					librito.setEditorial(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 3).toString());
+					librito.setTitulo(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 3).toString());
 				}
 				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 4) != null) {
-					librito.setGenero(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 4).toString());
+					librito.setAutores(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 4).toString());
 				}
 				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 5) != null) {
-					librito.setIdioma(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 5).toString());
+					librito.setEditorial(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 5).toString());
 				}
 				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 6) != null) {
-					librito.setEdicion(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 6).toString());
+					librito.setGenero(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 6).toString());
 				}
 				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 7) != null) {
-					librito.setPublicacion(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 7).toString());
+					librito.setIdioma(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 7).toString());
 				}
 				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 8) != null) {
-					librito.setPais(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 8).toString());
+					librito.setEdicion(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 8).toString());
 				}
 				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 9) != null) {
-					librito.setPaginas(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 9).toString());
+					librito.setPublicacion(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 9).toString());
 				}
 				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 10) != null) {
-					librito.setUbicacion(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 10).toString());
+					librito.setPais(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 10).toString());
+				}
+				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 11) != null) {
+					librito.setPaginas(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 11).toString());
+				}
+				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 12) != null) {
+					librito.setUbicacion(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 12).toString());
 				}
 			}
 		});
@@ -365,25 +372,26 @@ public class Libros_Ventana extends JPanel {
 		scrollPane.setViewportView(jtResultados);
 
 		// Le añadimos a nuestra tabla las columnas que va a tener:
-		modeloTabla.setColumnIdentifiers(new Object[] { "ID Libro", "ID Biblioteca", "ISBN", "Título", "Autores", "Editorial", "Género", "Idioma",
-				"Edición", "Publicación", "Pais", "Nº Páginas", "Ubicación", "Stock Total" });
+		modeloTabla.setColumnIdentifiers(new Object[] { "IDL", "IDB", "ISBN", "Título", "Autores", "Editorial",
+				"Género", "Idioma", "Edición", "Publicación", "Pais", "Nº Páginas", "Ubicación", "Stock" });
 		// Le decimos que le establezca el modelo que hemos creado a nuestra tabla:
 		jtResultados.setModel(modeloTabla);
 
 		// Establecer el ancho de las columnas:
-		jtResultados.getColumnModel().getColumn(0).setPreferredWidth(60);
-		jtResultados.getColumnModel().getColumn(1).setPreferredWidth(60);
+		jtResultados.getColumnModel().getColumn(0).setPreferredWidth(5);
+		jtResultados.getColumnModel().getColumn(1).setPreferredWidth(5);
 		jtResultados.getColumnModel().getColumn(2).setPreferredWidth(110);
-		jtResultados.getColumnModel().getColumn(3).setPreferredWidth(110);
-		jtResultados.getColumnModel().getColumn(4).setPreferredWidth(20);
-		jtResultados.getColumnModel().getColumn(5).setPreferredWidth(20);
-		jtResultados.getColumnModel().getColumn(6).setPreferredWidth(10);
-		jtResultados.getColumnModel().getColumn(7).setPreferredWidth(30);
-		jtResultados.getColumnModel().getColumn(8).setPreferredWidth(10);
-		jtResultados.getColumnModel().getColumn(9).setPreferredWidth(10);
-		jtResultados.getColumnModel().getColumn(10).setPreferredWidth(80);
-		jtResultados.getColumnModel().getColumn(11).setPreferredWidth(80);
-		jtResultados.getColumnModel().getColumn(12).setPreferredWidth(80);
+		jtResultados.getColumnModel().getColumn(3).setPreferredWidth(120);
+		jtResultados.getColumnModel().getColumn(4).setPreferredWidth(80);
+		jtResultados.getColumnModel().getColumn(5).setPreferredWidth(30);
+		jtResultados.getColumnModel().getColumn(6).setPreferredWidth(20);
+		jtResultados.getColumnModel().getColumn(7).setPreferredWidth(20);
+		jtResultados.getColumnModel().getColumn(8).setPreferredWidth(20);
+		jtResultados.getColumnModel().getColumn(9).setPreferredWidth(40);
+		jtResultados.getColumnModel().getColumn(10).setPreferredWidth(20);
+		jtResultados.getColumnModel().getColumn(11).setPreferredWidth(20);
+		jtResultados.getColumnModel().getColumn(12).setPreferredWidth(100);
+		jtResultados.getColumnModel().getColumn(13).setPreferredWidth(5);
 
 		JTableHeader encabezado = jtResultados.getTableHeader();
 		Color violeta = new Color(230, 217, 240);
@@ -401,7 +409,7 @@ public class Libros_Ventana extends JPanel {
 
 	}
 
-	public void rellenaTabla(String consulta) {
+	public void rellenaTabla(String consulta, String idBib) {
 		// Creamos una variable donde vamos a guardar lo que se haya escrito en el
 		// textField:
 		String aux = textField.getText().toString();
@@ -410,19 +418,19 @@ public class Libros_Ventana extends JPanel {
 
 		// Recorremos los objetos del ArrayList que nos retorna el método de la clase
 		// BaseDeDatos:
-		for (Libros recorreLibros : bd.cargaLibros(consulta, aux)) {
+		for (Libros recorreLibros : bd.cargaLibros(consulta, aux, idBib)) {
 
 			// Object puede coger todo tipo de datos, hasta imágenes.
-			modeloTabla.addRow(new Object[] { recorreLibros.getIdLibro(), recorreLibros.getIdBiblioteca(), recorreLibros.getIsbn(), recorreLibros.getTitulo(),
-					recorreLibros.getAutores(), recorreLibros.getEditorial(), recorreLibros.getGenero(),
-					recorreLibros.getIdioma(), recorreLibros.getEdicion(), recorreLibros.getPublicacion(),
-					recorreLibros.getPais(), recorreLibros.getPaginas(), recorreLibros.getUbicacion(), 
-					recorreLibros.getStockTotal()});
+			modeloTabla.addRow(new Object[] { recorreLibros.getIdLibro(), recorreLibros.getIdBiblioteca(),
+					recorreLibros.getIsbn(), recorreLibros.getTitulo(), recorreLibros.getAutores(),
+					recorreLibros.getEditorial(), recorreLibros.getGenero(), recorreLibros.getIdioma(),
+					recorreLibros.getEdicion(), recorreLibros.getPublicacion(), recorreLibros.getPais(),
+					recorreLibros.getPaginas(), recorreLibros.getUbicacion(), recorreLibros.getStockTotal() });
 		}
 
 	}
 
-	public void eliminar(int filaTabla) {
+	public void eliminar(int filaTabla, String idBib) {
 		BaseDeDatos bd = new BaseDeDatos();
 		int opcion = 0;
 		String id;
@@ -430,7 +438,7 @@ public class Libros_Ventana extends JPanel {
 		opcion = err.preguntarEliminar();
 
 		if (opcion == 0) {
-			id = bd.obtenerIdLibro(librito);
+			id = bd.obtenerIdLibro(librito, idBib);
 			bd.eliminarLibro(id);
 
 			// Eliminamos la fila del modelo.

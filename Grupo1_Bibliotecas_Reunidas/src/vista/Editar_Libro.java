@@ -45,7 +45,7 @@ public class Editar_Libro extends JDialog {
 	private BaseDeDatos bd = new BaseDeDatos();
 	private Errores err = new Errores();
 
-	public Editar_Libro(Libros libro, DefaultTableModel modeloTabla, int filaTabla) {
+	public Editar_Libro(Libros libro, DefaultTableModel modeloTabla, int filaTabla, String idBib) {
 		setResizable(false);
 		setModal(true);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Editar_Libro.class.getResource("/img/libro.png")));
@@ -231,7 +231,7 @@ public class Editar_Libro extends JDialog {
 								|| txtPublicacion.getText().isEmpty() || txtPais.getText().isEmpty()
 								|| txtPaginas.getText().isEmpty() || txtUbicacion.getText().isEmpty())) {
 
-							editar(modeloTabla, libro, filaTabla);
+							editar(modeloTabla, libro, filaTabla, idBib);
 						} else {
 							JOptionPane.showMessageDialog(null, "Rellene todos los campos.", "Error",
 									JOptionPane.ERROR_MESSAGE);
@@ -287,7 +287,7 @@ public class Editar_Libro extends JDialog {
 	}
 
 	// Método para editar un libro
-	public void editar(DefaultTableModel modeloTabla, Libros libro, int filaTabla) {
+	public void editar(DefaultTableModel modeloTabla, Libros libro, int filaTabla, String idBib) {
 		Libros libroEditado = new Libros();
 		libroEditado = rellenaObjeto();
 		int opcion = 0;
@@ -296,7 +296,7 @@ public class Editar_Libro extends JDialog {
 		opcion = err.preguntarEditar();
 
 		if (opcion == 0) {
-			id = bd.obtenerIdLibro(libro);
+			id = bd.obtenerIdLibro(libro, idBib);
 			bd.editarLibro(libroEditado, id);
 
 			modeloTabla.setValueAt(libroEditado.getIsbn(), filaTabla, 0);

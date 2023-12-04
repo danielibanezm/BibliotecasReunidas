@@ -15,7 +15,7 @@ public class Usuarios_Ventana extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public Usuarios_Ventana(Ventana ventana, boolean esAdmin) {
+	public Usuarios_Ventana(Ventana ventana, boolean esAdmin, String idBib) {
 		setBackground(new Color(255, 255, 255));
 		setLayout(null);
 		
@@ -24,7 +24,7 @@ public class Usuarios_Ventana extends JPanel {
 		btnMen.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				ventana.nuevoPanel(new Menu(ventana, esAdmin));
+				ventana.nuevoPanel(new Menu(ventana, esAdmin, idBib));
 			}
 		});
 		//--------------------------------------------------------

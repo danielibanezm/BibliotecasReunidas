@@ -15,7 +15,7 @@ public class Socios_Ventana extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public Socios_Ventana(Ventana ventana, boolean esAdmin) {
+	public Socios_Ventana(Ventana ventana, boolean esAdmin, String idBib) {
 		setLayout(null);
 		
 		//		--	VOLVER AL MENÚ --
@@ -23,7 +23,7 @@ public class Socios_Ventana extends JPanel {
 		btnMen.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				ventana.nuevoPanel(new Menu(ventana, esAdmin));
+				ventana.nuevoPanel(new Menu(ventana, esAdmin, idBib));
 			}
 		});
 		//------------------------------------------------------------

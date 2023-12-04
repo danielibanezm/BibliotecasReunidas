@@ -48,7 +48,7 @@ public class Hacer_Prestamo extends JDialog {
 	
 	//Con el boolean esAdmin no tienes que hacer nada, es para que al retornar al menú sepa qué tipo de usuario está en la app.
 	//Librito tiene toda la info del libro que se ha seleccionado en la tabla. A través del getter se obtienen sus datos.
-	public Hacer_Prestamo(Libros librito) {
+	public Hacer_Prestamo(Libros librito, String idBib) {
 		setResizable(false);
 		setModal(true);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Editar_Libro.class.getResource("/img/libro.png")));
@@ -100,11 +100,10 @@ public class Hacer_Prestamo extends JDialog {
 				if (!bd.comprobarDatosSocio(nombreSocio, apellidoSocio, correoSocio)) {
 					JOptionPane.showMessageDialog(null, "Los datos introducidos son incorrectos y no se encuentran en la Base de Datos. Por favor, inténtelo de nuevo.");
 				} else{
-					idSocio = bd.obtenerIdSocio(librito, nombreSocio, apellidoSocio, correoSocio);
-					idLibro = bd.obtenerIdLibro(librito);
-					idBiblioteca = bd.obtenerIdBiblioteca(librito);
+					idSocio = bd.obtenerIdSocio(librito, nombreSocio, apellidoSocio, correoSocio, idBib);
+					idLibro = bd.obtenerIdLibro(librito, idBib);
 
-					bd.insertarPrestamo(idSocio, idLibro, idBiblioteca);
+					bd.insertarPrestamo(idSocio, idLibro, idBib);
 				}								
 			}
 		});

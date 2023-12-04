@@ -29,7 +29,7 @@ public class Prestamos_Ventana extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public Prestamos_Ventana(Ventana ventana, boolean esAdmin) {
+	public Prestamos_Ventana(Ventana ventana, boolean esAdmin, String idBib) {
 		BaseDeDatos baseDatos = new BaseDeDatos();
 		setBackground(new Color(255, 255, 255));
 		setLayout(null);
@@ -38,7 +38,7 @@ public class Prestamos_Ventana extends JPanel {
 		JButton btnMen = new JButton("MENÚ");
 		btnMen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ventana.nuevoPanel(new Menu(ventana, esAdmin));
+				ventana.nuevoPanel(new Menu(ventana, esAdmin, idBib));
 			}
 		});
 		//-------------------------------------------------------
