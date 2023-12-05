@@ -40,24 +40,24 @@ public class BaseDeDatos {
 			// While se pone porque podría devolver más de una fila.
 			while (registro.next()) {
 				Prestamos nuevoPrestamo = new Prestamos();
-
 				nuevoPrestamo.setId_prestamo(registro.getString("id_prestamo"));
+				nuevoPrestamo.setId_biblioteca(registro.getString("id_biblioteca"));
 				nuevoPrestamo.setId_socio(registro.getString("id_socio"));
 				nuevoPrestamo.setId_libro(registro.getString("id_libro"));
-				nuevoPrestamo.setId_biblioteca(registro.getString("id_biblioteca"));
 				nuevoPrestamo.setFecha_prestamo(registro.getString("fecha_prestamo"));
 				nuevoPrestamo.setFecha_entrega_prevista(registro.getString("fecha_entrega_prevista"));
-				nuevoPrestamo.setFecha_entrega(registro.getString("fecha_entrega"));
 
 				arrlPrestamos.add(nuevoPrestamo);
 			}
 
 		} catch (SQLException e) {
+			//e.printStackTrace();
 			err.baseDatosNoConexion();
 		} finally {
 			try {
 				conexion.close();
 			} catch (SQLException e) {
+				//e.printStackTrace();
 				err.baseDatosNoConexion();
 			} catch (NullPointerException e) {
 
@@ -65,6 +65,112 @@ public class BaseDeDatos {
 		}
 
 		return arrlPrestamos;
+	}
+	
+	public String obtenerTituloLibro(String idLibro, String idBiblioteca) {
+		String titulo = "";
+		Connection conexion = null;
+		Statement consulta = null;
+		ResultSet registro = null;
+
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
+
+			consulta = conexion.createStatement();
+			registro = consulta.executeQuery("SELECT titulo_libro FROM libros WHERE id_libro = '" + idLibro + "' AND"
+					+ " id_biblioteca = '" + idBiblioteca + "'");
+
+			if (registro.next()) {
+				titulo = registro.getString("titulo_libro");
+			}
+
+		} catch (SQLException e) {
+			//e.printStackTrace();
+			err.baseDatosNoConexion();
+		} finally {
+			try {
+				if (conexion != null) {
+					conexion.close();
+				}
+			} catch (SQLException e) {
+				//e.printStackTrace();
+				err.baseDatosNoConexion();
+			} catch (NullPointerException e) {
+			}
+		}
+
+		return titulo;
+	}
+	
+	public String obtenerNombreSocio(String idSocio, String idBiblioteca) {
+		String nombre = "";
+		Connection conexion = null;
+		Statement consulta = null;
+		ResultSet registro = null;
+
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
+
+			consulta = conexion.createStatement();
+			registro = consulta.executeQuery("SELECT nombre_socio FROM socios WHERE id_socio = '" + idSocio + "' AND"
+					+ " id_biblioteca = '" + idBiblioteca + "'");
+
+			if (registro.next()) {
+				nombre = registro.getString("nombre_socio");
+			}
+
+		} catch (SQLException e) {
+			//e.printStackTrace();
+			err.baseDatosNoConexion();
+		} finally {
+			try {
+				if (conexion != null) {
+					conexion.close();
+				}
+			} catch (SQLException e) {
+				//e.printStackTrace();
+				err.baseDatosNoConexion();
+			} catch (NullPointerException e) {
+			}
+		}
+
+		return nombre;
+	}
+	
+	public String obtenerApellidoSocio(String idSocio, String idBiblioteca) {
+		String apellido = "";
+		Connection conexion = null;
+		Statement consulta = null;
+		ResultSet registro = null;
+
+
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
+
+			consulta = conexion.createStatement();
+			registro = consulta.executeQuery("SELECT apellido_socio FROM socios WHERE id_socio = '" + idSocio + "' AND"
+					+ " id_biblioteca = '" + idBiblioteca + "'");
+
+			if (registro.next()) {
+				apellido = registro.getString("apellido_socio");
+			}
+
+		} catch (SQLException e) {
+			//e.printStackTrace();
+			err.baseDatosNoConexion();
+		} finally {
+			try {
+				if (conexion != null) {
+					conexion.close();
+				}
+			} catch (SQLException e) {
+				//e.printStackTrace();
+				err.baseDatosNoConexion();
+			} catch (NullPointerException e) {
+			}
+		}
+
+		return apellido;
 	}
 
 	public String insertarPrestamo(String id_socio, String id_libro, String id_biblioteca) {
@@ -76,13 +182,13 @@ public class BaseDeDatos {
 			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
 			consulta = conexion.createStatement();
 
-			boolean hayPrestamo = false;
+			boolean prestamoExiste = false;
 
 			ResultSet resultSet = consulta
 					.executeQuery("SELECT id_prestamo FROM prestamos WHERE id_libro = '" + id_libro + "'");
-			hayPrestamo = resultSet.next();
+			prestamoExiste = resultSet.next();
 
-			if (!hayPrestamo) {
+			if (!prestamoExiste) {
 				// Obtener la fecha actual con Calendar
 				Calendar calendar = Calendar.getInstance();
 				java.util.Date fechaActual = calendar.getTime();
@@ -240,16 +346,13 @@ public class BaseDeDatos {
 
 			consulta = conexion.createStatement();
 
-			resultadoNombre = consulta
-					.executeQuery("SELECT nombre_socio FROM socios WHERE nombre_socio = '" + nombre + "'");
+			resultadoNombre = consulta.executeQuery("SELECT nombre_socio FROM socios WHERE nombre_socio = '" + nombre + "'");
 			nombreExiste = resultadoNombre.next();
 
-			resultadoApellido = consulta
-					.executeQuery("SELECT apellido_socio FROM socios WHERE apellido_socio = '" + apellido + "'");
+			resultadoApellido = consulta.executeQuery("SELECT apellido_socio FROM socios WHERE apellido_socio = '" + apellido + "'");
 			apellidoExiste = resultadoApellido.next();
 
-			resultadoCorreo = consulta
-					.executeQuery("SELECT email_socio FROM socios WHERE email_socio = '" + correo + "'");
+			resultadoCorreo = consulta.executeQuery("SELECT email_socio FROM socios WHERE email_socio = '" + correo + "'");
 			correoExiste = resultadoCorreo.next();
 
 		} catch (SQLException e) {

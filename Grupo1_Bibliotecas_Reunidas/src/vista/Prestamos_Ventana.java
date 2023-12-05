@@ -19,6 +19,8 @@ import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.SwingConstants;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class Prestamos_Ventana extends JPanel {
 
@@ -30,7 +32,7 @@ public class Prestamos_Ventana extends JPanel {
 	 * Create the panel.
 	 */
 	public Prestamos_Ventana(Ventana ventana, boolean esAdmin, String idBib) {
-		BaseDeDatos baseDatos = new BaseDeDatos();
+		BaseDeDatos bd = new BaseDeDatos();
 		setBackground(new Color(255, 255, 255));
 		setLayout(null);
 		
@@ -61,7 +63,7 @@ public class Prestamos_Ventana extends JPanel {
 		// ----- CREAR TABLA ----
 		
 		//Le añadimos a nuestra tabla las columnas que va a tener:
-		modeloTabla.setColumnIdentifiers(new Object[]{"ID", "Socio", "Libro", "Biblioteca", "F.Préstamo","F.Entrega prevista", "F.Entrega", "Comentarios"});
+		modeloTabla.setColumnIdentifiers(new Object[]{"ID Prestamo", "Nombre Socio", "Apellido Socio", "ID Libro", "Titulo Libro", "Fecha Préstamo","Fecha Entrega prevista"});
 		//Le decimos que le establezca el modelo que hemos creado a nuestra tabla:
 		table.setModel(modeloTabla);
 		
@@ -90,13 +92,19 @@ public class Prestamos_Ventana extends JPanel {
 		//Cambiar la altura de las filas:
 		table.setRowHeight(30);
 		
-		JButton btnRegistrarDevolucin = new JButton("Registrar devolución");
-		btnRegistrarDevolucin.setForeground(Color.WHITE);
-		btnRegistrarDevolucin.setFont(new Font("Verdana", Font.PLAIN, 12));
-		btnRegistrarDevolucin.setBorder(null);
-		btnRegistrarDevolucin.setBackground(new Color(130, 72, 172));
-		btnRegistrarDevolucin.setBounds(52, 551, 156, 37);
-		add(btnRegistrarDevolucin);
+		JButton btnRegistrarDevolucion = new JButton("Registrar devolución");
+		btnRegistrarDevolucion.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+			}
+		});
+		btnRegistrarDevolucion.setForeground(Color.WHITE);
+		btnRegistrarDevolucion.setFont(new Font("Verdana", Font.PLAIN, 12));
+		btnRegistrarDevolucion.setBorder(null);
+		btnRegistrarDevolucion.setBackground(new Color(130, 72, 172));
+		btnRegistrarDevolucion.setBounds(52, 551, 156, 37);
+		add(btnRegistrarDevolucion);
 	
 		
 		//Establecer el ancho de las columnas:
@@ -104,10 +112,9 @@ public class Prestamos_Ventana extends JPanel {
 		table.getColumnModel().getColumn(1).setPreferredWidth(60);
 		table.getColumnModel().getColumn(2).setPreferredWidth(60);
 		table.getColumnModel().getColumn(3).setPreferredWidth(60);
-		table.getColumnModel().getColumn(4).setPreferredWidth(120);
+		table.getColumnModel().getColumn(4).setPreferredWidth(200);
 		table.getColumnModel().getColumn(5).setPreferredWidth(120);
 		table.getColumnModel().getColumn(6).setPreferredWidth(120);
-		table.getColumnModel().getColumn(7).setPreferredWidth(200);
 		
 		JTableHeader encabezado = table.getTableHeader();
 		Color violeta = new Color(230, 217, 240);
@@ -123,18 +130,22 @@ public class Prestamos_Ventana extends JPanel {
 		
 		//Variable para hacer el if de población.
 		//Recorremos los objetos del ArrayList que nos retorna el método de la clase BaseDatos:
-		for(Prestamos recorrePrestamos : baseDatos.cargaPrestamos()) {
-
+		for(Prestamos recorrePrestamos : bd.cargaPrestamos()) {
+			String idBiblioteca = recorrePrestamos.getId_biblioteca();
+			String idLibro = recorrePrestamos.getId_libro();			
+			String tituloLibro = bd.obtenerTituloLibro(idLibro, idBiblioteca);
+			String nombreSocio = bd.obtenerNombreSocio(recorrePrestamos.getId_socio(), idBiblioteca);
+			String apellidoSocio = bd.obtenerApellidoSocio(recorrePrestamos.getId_socio(), idBiblioteca);
+			
 			//Object puede coger todo tipo de datos, hasta imágenes.
 			modeloTabla.addRow(new Object[] {
 				recorrePrestamos.getId_prestamo(),
-				recorrePrestamos.getId_socio(),
+				nombreSocio,
+				apellidoSocio,
 				recorrePrestamos.getId_libro(),
-				recorrePrestamos.getId_biblioteca(),
+				tituloLibro,
 				recorrePrestamos.getFecha_prestamo(),
 				recorrePrestamos.getFecha_entrega_prevista(),
-				recorrePrestamos.getFecha_entrega(),
-				recorrePrestamos.getComentarios()					
 			});
 		}
 
