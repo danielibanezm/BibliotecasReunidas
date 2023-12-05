@@ -21,6 +21,7 @@ import javax.swing.JTextField;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 public class Insertar_Libro extends JDialog {
 
@@ -41,6 +42,8 @@ public class Insertar_Libro extends JDialog {
 	private BaseDeDatos bd = new BaseDeDatos();
 	private Errores err = new Errores();
 	private Libros_Ventana libven;
+	private ArrayList<Libros> arrlLibros = new ArrayList<>();
+	private ComprobarCampos comprobar = new ComprobarCampos();
 
 	public Insertar_Libro(String idBib, DefaultTableModel modeloTabla, Ventana ventana, boolean esAdmin) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Insertar_Libro.class.getResource("/img/libro.png")));
@@ -202,25 +205,32 @@ public class Insertar_Libro extends JDialog {
 				btnGuardar.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent e) {
-
-						if (!(txtIsbn.getText().isEmpty() || txtTitulo.getText().isEmpty()
-								|| txtAutores.getText().isEmpty() || txtEditorial.getText().isEmpty()
-								|| txtIdioma.getText().isEmpty() || txtEdicion.getText().isEmpty()
-								|| txtPublicacion.getText().isEmpty() || txtPais.getText().isEmpty()
-								|| txtPaginas.getText().isEmpty() || txtGenero.getText().isEmpty()
-								|| txtUbicacion.getText().isEmpty())) {
+						
+						if (camposLlenos() && comprobar.validarCampos(txtIsbn, txtTitulo, txtAutores, txtEditorial, txtIdioma, txtEdicion, txtPublicacion,
+								txtPais, txtPaginas, txtUbicacion)) {
 
 							nuevoLib = rellenaObjeto();
+							arrlLibros = bd.obtenerTodosLosLibros(idBib);
 
-							insertar(nuevoLib, idBib);
-							libven = new Libros_Ventana(ventana, esAdmin, idBib);
-							libven.actualizarse(nuevoLib, modeloTabla);
-							
+							if (comprobarLibro(nuevoLib, arrlLibros)) {
+								insertar(nuevoLib, idBib);
+								libven = new Libros_Ventana(ventana, esAdmin, idBib);
+								libven.actualizarse(nuevoLib, modeloTabla);
+
+							} else {
+								JOptionPane.showMessageDialog(null,
+										"Ya existen tres ejemplares con el mismo ISBN y título."
+												+ " No es posible insertar este libro.",
+										"Error", JOptionPane.ERROR_MESSAGE);
+							}
+
 						} else {
 							JOptionPane.showMessageDialog(null, "Rellene todos los campos.", "Error",
 									JOptionPane.ERROR_MESSAGE);
 						}
 					}
+
+					
 				});
 				// ------------------------------------------------
 
@@ -263,6 +273,13 @@ public class Insertar_Libro extends JDialog {
 		}
 	}
 
+	public boolean camposLlenos() {
+		return !(txtIsbn.getText().isEmpty() || txtTitulo.getText().isEmpty() || txtAutores.getText().isEmpty()
+				|| txtEditorial.getText().isEmpty() || txtIdioma.getText().isEmpty() || txtEdicion.getText().isEmpty()
+				|| txtPublicacion.getText().isEmpty() || txtPais.getText().isEmpty() || txtPaginas.getText().isEmpty()
+				|| txtGenero.getText().isEmpty() || txtUbicacion.getText().isEmpty());
+	}
+
 	public Libros rellenaObjeto() {
 		Libros libro = new Libros();
 
@@ -274,7 +291,6 @@ public class Insertar_Libro extends JDialog {
 		libro.setIdioma(txtIdioma.getText());
 		libro.setEdicion(txtEdicion.getText());
 
-		// COREGIR PUBLICACION YA QUE TIENE QUE SER UN DATE
 		libro.setPublicacion(txtPublicacion.getText());
 		libro.setPais(txtPais.getText());
 		libro.setPaginas(txtPaginas.getText());
@@ -294,5 +310,24 @@ public class Insertar_Libro extends JDialog {
 
 		}
 	}
+
+	public boolean comprobarLibro(Libros nuevoLib, ArrayList<Libros> arrlLibros) {
+	    int contador = 0;
+
+	    for (Libros recorrer : arrlLibros) {
+	    	
+	        if (recorrer.getIsbn().trim().equalsIgnoreCase(nuevoLib.getIsbn().trim())
+	                && recorrer.getTitulo().trim().equalsIgnoreCase(nuevoLib.getTitulo().trim())) {
+	            contador++;
+
+	            if (contador >= 3) {
+	                return false; //Ya hay tres libros con el mismo ISBN y título
+	            }
+	        }
+	    }
+
+	    return true; //Se puede insertar el libro
+	}
+	
 
 }

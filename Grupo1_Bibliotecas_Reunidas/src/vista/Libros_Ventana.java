@@ -178,7 +178,7 @@ public class Libros_Ventana extends JPanel {
 					prestamo.setVisible(true);
 
 				} else {
-					// No se ha seleccionado ningún libro por lo tanto se muestra un error.
+					//No se ha seleccionado ningún libro por lo tanto se muestra un error.
 					JOptionPane.showMessageDialog(null, "Seleccione un libro para realizar un préstamo.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
@@ -319,44 +319,37 @@ public class Libros_Ventana extends JPanel {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 0) != null) {
-					librito.setIdLibro(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 0).toString());
+					librito.setIsbn(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 0).toString());
 				}
 				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 1) != null) {
-					librito.setIdBiblioteca(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 1).toString());
+					librito.setTitulo(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 1).toString());
 				}
-
 				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 2) != null) {
-					librito.setIsbn(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 2).toString());
+					librito.setAutores(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 2).toString());
 				}
 				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 3) != null) {
-					librito.setTitulo(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 3).toString());
+					librito.setEditorial(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 3).toString());
 				}
 				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 4) != null) {
-					librito.setAutores(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 4).toString());
+					librito.setGenero(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 4).toString());
 				}
 				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 5) != null) {
-					librito.setEditorial(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 5).toString());
+					librito.setIdioma(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 5).toString());
 				}
 				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 6) != null) {
-					librito.setGenero(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 6).toString());
+					librito.setEdicion(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 6).toString());
 				}
 				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 7) != null) {
-					librito.setIdioma(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 7).toString());
+					librito.setPublicacion(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 7).toString());
 				}
 				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 8) != null) {
-					librito.setEdicion(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 8).toString());
+					librito.setPais(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 8).toString());
 				}
 				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 9) != null) {
-					librito.setPublicacion(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 9).toString());
+					librito.setPaginas(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 9).toString());
 				}
 				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 10) != null) {
-					librito.setPais(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 10).toString());
-				}
-				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 11) != null) {
-					librito.setPaginas(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 11).toString());
-				}
-				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 12) != null) {
-					librito.setUbicacion(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 12).toString());
+					librito.setUbicacion(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 10).toString());
 				}
 			}
 		});
@@ -373,26 +366,25 @@ public class Libros_Ventana extends JPanel {
 		scrollPane.setViewportView(jtResultados);
 
 		// Le añadimos a nuestra tabla las columnas que va a tener:
-		modeloTabla.setColumnIdentifiers(new Object[] { "IDL", "IDB", "ISBN", "Título", "Autores", "Editorial",
+		modeloTabla.setColumnIdentifiers(new Object[] {"ISBN", "Título", "Autores", "Editorial",
 				"Género", "Idioma", "Edición", "Publicación", "Pais", "Nº Páginas", "Ubicación", "Stock" });
 		// Le decimos que le establezca el modelo que hemos creado a nuestra tabla:
 		jtResultados.setModel(modeloTabla);
 
 		// Establecer el ancho de las columnas:
-		jtResultados.getColumnModel().getColumn(0).setPreferredWidth(5);
-		jtResultados.getColumnModel().getColumn(1).setPreferredWidth(5);
-		jtResultados.getColumnModel().getColumn(2).setPreferredWidth(110);
-		jtResultados.getColumnModel().getColumn(3).setPreferredWidth(120);
-		jtResultados.getColumnModel().getColumn(4).setPreferredWidth(80);
+		jtResultados.getColumnModel().getColumn(0).setPreferredWidth(110);
+		jtResultados.getColumnModel().getColumn(1).setPreferredWidth(120);
+		jtResultados.getColumnModel().getColumn(2).setPreferredWidth(80);
+		jtResultados.getColumnModel().getColumn(3).setPreferredWidth(30);
+		jtResultados.getColumnModel().getColumn(4).setPreferredWidth(30);
 		jtResultados.getColumnModel().getColumn(5).setPreferredWidth(30);
-		jtResultados.getColumnModel().getColumn(6).setPreferredWidth(20);
-		jtResultados.getColumnModel().getColumn(7).setPreferredWidth(20);
+		jtResultados.getColumnModel().getColumn(6).setPreferredWidth(30);
+		jtResultados.getColumnModel().getColumn(7).setPreferredWidth(50);
 		jtResultados.getColumnModel().getColumn(8).setPreferredWidth(20);
-		jtResultados.getColumnModel().getColumn(9).setPreferredWidth(40);
-		jtResultados.getColumnModel().getColumn(10).setPreferredWidth(20);
-		jtResultados.getColumnModel().getColumn(11).setPreferredWidth(20);
-		jtResultados.getColumnModel().getColumn(12).setPreferredWidth(100);
-		jtResultados.getColumnModel().getColumn(13).setPreferredWidth(5);
+		jtResultados.getColumnModel().getColumn(9).setPreferredWidth(10);
+		jtResultados.getColumnModel().getColumn(10).setPreferredWidth(90);
+		jtResultados.getColumnModel().getColumn(11).setPreferredWidth(5);
+
 
 		JTableHeader encabezado = jtResultados.getTableHeader();
 		Color violeta = new Color(230, 217, 240);
@@ -422,8 +414,7 @@ public class Libros_Ventana extends JPanel {
 		for (Libros recorreLibros : bd.cargaLibros(consulta, aux, idBib)) {
 
 			// Object puede coger todo tipo de datos, hasta imágenes.
-			modeloTabla.addRow(new Object[] { recorreLibros.getIdLibro(), recorreLibros.getIdBiblioteca(),
-					recorreLibros.getIsbn(), recorreLibros.getTitulo(), recorreLibros.getAutores(),
+			modeloTabla.addRow(new Object[] {recorreLibros.getIsbn(), recorreLibros.getTitulo(), recorreLibros.getAutores(),
 					recorreLibros.getEditorial(), recorreLibros.getGenero(), recorreLibros.getIdioma(),
 					recorreLibros.getEdicion(), recorreLibros.getPublicacion(), recorreLibros.getPais(),
 					recorreLibros.getPaginas(), recorreLibros.getUbicacion(), recorreLibros.getStockTotal() });

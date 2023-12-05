@@ -43,7 +43,8 @@ public class Editar_Libro extends JDialog {
 	private Libros libro = new Libros();
 	private BaseDeDatos bd = new BaseDeDatos();
 	private Errores err = new Errores();
-
+	private ComprobarCampos comprobar = new ComprobarCampos();
+	
 	public Editar_Libro(Libros libro, DefaultTableModel modeloTabla, int filaTabla, String idBib) {
 		setResizable(false);
 		setModal(true);
@@ -206,9 +207,7 @@ public class Editar_Libro extends JDialog {
 			txtPais.setText(libro.getPais());
 			txtPaginas.setText(libro.getPaginas());
 			txtUbicacion.setText(libro.getUbicacion());
-		} else {
-			System.out.println("Estoy vacío");
-		}
+		} 
 		// -----------------------------------------
 
 		{
@@ -220,23 +219,17 @@ public class Editar_Libro extends JDialog {
 			{
 				// -- BOTÓN GUARDAR --
 				btnGuardar = new JButton("Guardar");
+
 				btnGuardar.addMouseListener(new MouseAdapter() {
-					@Override
-					public void mouseClicked(MouseEvent e) {
-
-						if (!(txtIsbn.getText().isEmpty() || txtTitulo.getText().isEmpty()
-								|| txtAutores.getText().isEmpty() || txtEditorial.getText().isEmpty()
-								|| txtIdioma.getText().isEmpty() || txtEdicion.getText().isEmpty()
-								|| txtPublicacion.getText().isEmpty() || txtPais.getText().isEmpty()
-								|| txtPaginas.getText().isEmpty() || txtUbicacion.getText().isEmpty())) {
-
-							editar(modeloTabla, libro, filaTabla, idBib);
-						} else {
-							JOptionPane.showMessageDialog(null, "Rellene todos los campos.", "Error",
-									JOptionPane.ERROR_MESSAGE);
-						}
-
-					}
+				    @Override
+				    public void mouseClicked(MouseEvent e) {
+				        if (camposLlenos() && comprobar.validarCampos(txtIsbn, txtTitulo, txtAutores, txtEditorial, txtIdioma, txtEdicion, txtPublicacion,
+								txtPais, txtPaginas, txtUbicacion)) {
+				            // Resto del código para insertar el libro
+				        } else {
+				            JOptionPane.showMessageDialog(null, "Verifica los campos antes de guardar.", "Error", JOptionPane.ERROR_MESSAGE);
+				        }
+				    }
 				});
 				// ------------------------------------------
 
@@ -284,6 +277,12 @@ public class Editar_Libro extends JDialog {
 
 		return libro;
 	}
+	public boolean camposLlenos() {
+		return !(txtIsbn.getText().isEmpty() || txtTitulo.getText().isEmpty() || txtAutores.getText().isEmpty()
+				|| txtEditorial.getText().isEmpty() || txtIdioma.getText().isEmpty() || txtEdicion.getText().isEmpty()
+				|| txtPublicacion.getText().isEmpty() || txtPais.getText().isEmpty() || txtPaginas.getText().isEmpty()
+				|| txtGenero.getText().isEmpty() || txtUbicacion.getText().isEmpty());
+	}
 
 	// Método para editar un libro
 	public void editar(DefaultTableModel modeloTabla, Libros libro, int filaTabla, String idBib) {
@@ -313,4 +312,5 @@ public class Editar_Libro extends JDialog {
 			dispose(); // Cerrar la ventana después de editar
 		}
 	}
+	
 }

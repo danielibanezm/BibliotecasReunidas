@@ -15,6 +15,7 @@ import com.mysql.jdbc.CommunicationsException;
 
 import modelo.Libros;
 import modelo.Prestamos;
+import modelo.Socios;
 import vista.Errores;
 
 public class BaseDeDatos {
@@ -527,17 +528,19 @@ public class BaseDeDatos {
 			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
 			consulta = conexion.createStatement();
 
-			consulta.executeUpdate("delete from libros where id=" + id);
+			consulta.executeUpdate("DELETE FROM libros WHERE id_libro = '" + id + "'");
 
 			err.confirmarEliminar();
 	
 		} catch (SQLException e) {
-			err.baseDatosNoConexion();
+			e.printStackTrace();
 		} finally {
 			try {
 				conexion.close();
 			} catch (SQLException e) {
+				e.printStackTrace();
 			} catch (NullPointerException e) {
+				e.printStackTrace();
 			}
 		}
 
@@ -576,7 +579,124 @@ public class BaseDeDatos {
 		}
 
 	}
+	
+	public ArrayList<Libros> obtenerTodosLosLibros(String idBib) {
+		ArrayList<Libros> arrlLibros = new ArrayList<>();
+
+		Connection conexion = null;
+		Statement consultita = null;
+		ResultSet registro = null;
+
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
+			consultita = conexion.createStatement();
+			// Lanzamos la consulta:
+			registro = consultita.executeQuery(
+					"SELECT id_libro, id_biblioteca, isbn_libro, titulo_libro, autores_libro, editorial_libro,"
+							+ "genero_libro, idioma_libro, edicion_libro, publicacion_libro, pais_libro, numPaginas_libro"
+							+ ", ubicacion_libro, stock_total " + "FROM	libros " + "WHERE id_biblioteca = '" + idBib + "' ");
+
+			if (!registro.next()) {
+				err.baseDatosVacia();
+			}
+			// While porque podría devolver más de una fila.
+			while (registro.next()) {
+				Libros nuevoLibro = new Libros();
+				nuevoLibro.setIdLibro(registro.getString("id_libro"));
+				nuevoLibro.setIdBiblioteca(registro.getString("id_biblioteca"));
+				nuevoLibro.setIsbn(registro.getString("isbn_libro"));
+				nuevoLibro.setTitulo(registro.getString("titulo_libro"));
+				nuevoLibro.setAutores(registro.getString("autores_libro"));
+				nuevoLibro.setEditorial(registro.getString("editorial_libro"));
+				nuevoLibro.setGenero(registro.getString("genero_libro"));
+				nuevoLibro.setIdioma(registro.getString("idioma_libro"));
+				nuevoLibro.setEdicion(registro.getString("edicion_libro"));
+				nuevoLibro.setPublicacion(registro.getString("publicacion_libro"));
+				nuevoLibro.setPais(registro.getString("pais_libro"));
+				nuevoLibro.setPaginas(registro.getString("numPaginas_libro"));
+				nuevoLibro.setUbicacion(registro.getString("ubicacion_libro"));
+				nuevoLibro.setStockTotal(registro.getInt("stock_total"));
+
+				arrlLibros.add(nuevoLibro);
+			}
+
+		} catch (SQLException e) {			
+			//e.printStackTrace();
+			err.baseDatosNoConexion();
+		} finally {
+			try {
+				conexion.close();
+			} catch (SQLException e) {
+				//e.printStackTrace();
+				err.baseDatosNoConexion();
+			} catch (NullPointerException e) {
+
+			}
+		}
+
+		return arrlLibros;
+	}
 
 	// ------------------------------------------------------------------------------------------
 
+	// -- MÉTODOS SOCIOS --
+	
+	public ArrayList<Socios> cargaSocios(String consulta, String aux, String idBib) {
+		ArrayList<Socios> arrlSocios = new ArrayList<>();
+
+		Connection conexion = null;
+		Statement consultita = null;
+		ResultSet registro = null;
+
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
+			consultita = conexion.createStatement();
+			// Lanzamos la consulta:
+			registro = consultita.executeQuery(
+					"SELECT id_socio, id_biblioteca, nombre_socio, apellido_socio, dni_socio, direccion_socio,"
+							+ "tlf_socio, email_socio, lista_negra, fechaNad_socio"
+							+ " FROM socios " + "WHERE " + consulta
+							+ " LIKE '%" + aux + "%' " + "AND id_biblioteca = '" + idBib + "' "
+							+ "ORDER BY " + consulta);
+
+			if (!registro.next()) {
+				err.baseDatosVacia();
+			}
+			// While porque podría devolver más de una fila.
+			while (registro.next()) {
+				Socios nuevoSocio = new Socios();
+				
+				nuevoSocio.setIdSocio(registro.getString("id_socio"));
+				nuevoSocio.setIdBiblioteca(registro.getString("id_biblioteca"));
+				nuevoSocio.setNombre(registro.getString("nombre_socio"));
+				nuevoSocio.setApellido(registro.getString("apellido_socio"));
+				nuevoSocio.setDni(registro.getString("dni_socio"));
+				nuevoSocio.setDireccion(registro.getString("direccion_socio"));
+				nuevoSocio.setTelefono(registro.getString("tlf_socio"));
+				nuevoSocio.setEmail(registro.getString("email_socio"));
+				nuevoSocio.setListaNegra(registro.getBoolean("lista_negra"));
+				nuevoSocio.setFechaNacimiento(registro.getString("fechaNad_socio"));
+				
+				arrlSocios.add(nuevoSocio);
+			}
+
+		} catch (SQLException e) {			
+			//e.printStackTrace();
+			err.baseDatosNoConexion();
+		} finally {
+			try {
+				conexion.close();
+			} catch (SQLException e) {
+				//e.printStackTrace();
+				err.baseDatosNoConexion();
+			} catch (NullPointerException e) {
+
+			}
+		}
+
+		return arrlSocios;
+	}
+	
+	
+	// ------------------------------------------------------------------------------------------
 }
