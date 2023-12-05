@@ -441,7 +441,7 @@ public class BaseDeDatos {
 			registro = consultita.executeQuery(
 					"SELECT id_libro, id_biblioteca, titulo_libro, autores_libro, isbn_libro, editorial_libro,"
 							+ "genero_libro, idioma_libro, edicion_libro, ubicacion_libro, publicacion_libro, pais_libro,"
-							+ "numPaginas_libro, COUNT(*) AS stock_total " + "FROM	libros " + "WHERE " + consulta
+							+ "numPaginas_libro, SUM(stock_total) AS stock_total " + "FROM	libros " + "WHERE " + consulta
 							+ " LIKE '%" + aux + "%' " + "AND id_biblioteca = '" + idBib + "' "
 							+ "GROUP BY id_biblioteca, titulo_libro, autores_libro, isbn_libro, editorial_libro, genero_libro, idioma_libro, edicion_libro, "
 							+ "ubicacion_libro, publicacion_libro, pais_libro, numPaginas_libro " + "ORDER BY "
