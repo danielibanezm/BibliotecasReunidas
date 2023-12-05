@@ -206,7 +206,7 @@ public class Insertar_Libro extends JDialog {
 					@Override
 					public void mouseClicked(MouseEvent e) {
 						
-						if (camposLlenos() && comprobar.validarCampos(txtIsbn, txtTitulo, txtAutores, txtEditorial, txtIdioma, txtEdicion, txtPublicacion,
+						if (camposLlenos() && comprobar.validarCamposLibros(txtIsbn, txtTitulo, txtAutores, txtEditorial, txtIdioma, txtEdicion, txtPublicacion,
 								txtPais, txtPaginas, txtUbicacion)) {
 
 							nuevoLib = rellenaObjeto();

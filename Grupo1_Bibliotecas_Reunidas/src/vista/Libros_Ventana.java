@@ -431,7 +431,7 @@ public class Libros_Ventana extends JPanel {
 
 		if (opcion == 0) {
 			id = bd.obtenerIdLibro(librito, idBib);
-			bd.eliminarLibro(id);
+			bd.eliminarLibro(id, idBib);
 
 			// Eliminamos la fila del modelo.
 			modeloTabla.removeRow(filaTabla);
@@ -439,7 +439,7 @@ public class Libros_Ventana extends JPanel {
 	}
 	
 	public void actualizarse(Libros nuevoLib, DefaultTableModel modeloTabla) {
-		Object[] nuevaFila = { 0, 0, nuevoLib.getTitulo(), nuevoLib.getAutores(), nuevoLib.getIsbn(),
+		Object[] nuevaFila = {nuevoLib.getTitulo(), nuevoLib.getAutores(), nuevoLib.getIsbn(),
 				nuevoLib.getEditorial(), nuevoLib.getGenero(), nuevoLib.getIdioma(), nuevoLib.getEdicion(),
 				nuevoLib.getUbicacion(), nuevoLib.getPublicacion(), nuevoLib.getPais(), nuevoLib.getPaginas(), 1};
 		modeloTabla.addRow(nuevaFila);

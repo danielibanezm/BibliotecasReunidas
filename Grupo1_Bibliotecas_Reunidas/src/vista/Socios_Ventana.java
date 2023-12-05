@@ -32,6 +32,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class Socios_Ventana extends JPanel {
 	// Creamos un objeto de la clase ButtonGroup para poder agrupar nuestros radio
@@ -112,6 +114,11 @@ public class Socios_Ventana extends JPanel {
 		add(lblBuscar);
 
 		rdbtNombre = new JRadioButton("Nombre");
+		rdbtNombre.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				textField.setText("");
+			}
+		});
 		rdbtNombre.setSelected(true);
 		rdbtNombre.setFont(new Font("Verdana", Font.PLAIN, 12));
 		rdbtNombre.setContentAreaFilled(false);
@@ -120,6 +127,11 @@ public class Socios_Ventana extends JPanel {
 		add(rdbtNombre);
 
 		rdbtDni = new JRadioButton("DNI");
+		rdbtDni.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				textField.setText("");
+			}
+		});
 		rdbtDni.setFont(new Font("Verdana", Font.PLAIN, 12));
 		rdbtDni.setContentAreaFilled(false);
 		rdbtDni.setBackground(new Color(230, 217, 240));
@@ -127,6 +139,11 @@ public class Socios_Ventana extends JPanel {
 		add(rdbtDni);
 
 		rdbtEmail = new JRadioButton("Email");
+		rdbtEmail.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				textField.setText("");
+			}
+		});
 		rdbtEmail.setFont(new Font("Verdana", Font.PLAIN, 12));
 		rdbtEmail.setContentAreaFilled(false);
 		rdbtEmail.setBorder(null);
@@ -371,74 +388,13 @@ public class Socios_Ventana extends JPanel {
 		opcion = err.preguntarEliminar();
 
 		if (opcion == 0) {
-			id = obtenerIdSocio(socio, idBib);
-			eliminarSocio(id, idBib);
+			id = bd.obtenerIdSocio(socio, idBib);
+			bd.eliminarSocio(id, idBib);
 
 			// Eliminamos la fila del modelo.
 			modeloTabla.removeRow(filaTabla);
 		}
 	}
 
-	public String obtenerIdSocio(Socios socio, String idBib) {
-		String id = "";
-		Connection conexion = null;
-		Statement consulta = null;
-		ResultSet registro = null;
-
-		try {
-			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
-
-			consulta = conexion.createStatement();
-			registro = consulta.executeQuery("SELECT id_socio" + " FROM socios" + " WHERE nombre_socio = '"
-					+ socio.getNombre() + "'" + " AND apellido_socio = '" + socio.getApellido() + "'"
-					+ " AND dni_socio = '" + socio.getDni() + "'" + " AND id_biblioteca = '" + idBib + "' ");
-
-			if (registro.next()) {
-				id = registro.getString("id_socio");
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-			err.baseDatosNoConexion();
-		} finally {
-			try {
-				if (conexion != null) {
-					conexion.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-				err.baseDatosNoConexion();
-			} catch (NullPointerException e) {
-			}
-		}
-
-		return id;
-	}
-
-	public void eliminarSocio(String id, String idBib) {
-		Connection conexion = null;
-		Statement consulta = null;
-
-		try {
-			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
-			consulta = conexion.createStatement();
-
-			consulta.executeUpdate(
-					"DELETE FROM socios WHERE id_socio = '" + id + "'" + " AND id_biblioteca = '" + idBib + "' ");
-
-			err.confirmarEliminar();
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				conexion.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			} catch (NullPointerException e) {
-				e.printStackTrace();
-			}
-		}
-
-	}
+	
 }

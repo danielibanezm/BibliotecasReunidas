@@ -9,11 +9,13 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+import controlador.BaseDeDatos;
 import modelo.Libros;
 import modelo.Socios;
 import java.awt.Color;
 import java.awt.Font;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.JTextField;
 import javax.swing.JCheckBox;
@@ -33,6 +35,11 @@ public class Editar_Socio extends JDialog {
 	private JTextField txtTelf;
 	private JTextField txtEmail;
 	private JTextField txtNacimiento;
+
+	private BaseDeDatos bd = new BaseDeDatos();
+	private Errores err = new Errores();
+	private ComprobarCampos comprobar = new ComprobarCampos();
+	private JCheckBox chckListaNegra;
 
 	public Editar_Socio(Socios socio, DefaultTableModel modeloTabla, int filaTabla, String idBib) {
 		setBounds(100, 100, 1146, 587);
@@ -141,7 +148,7 @@ public class Editar_Socio extends JDialog {
 		lblListaNegra.setBounds(167, 393, 134, 19);
 		contentPanel.add(lblListaNegra);
 
-		JCheckBox chckListaNegra = new JCheckBox("");
+		chckListaNegra = new JCheckBox("");
 		chckListaNegra.setBackground(new Color(255, 255, 255));
 		chckListaNegra.setBounds(323, 389, 97, 23);
 		contentPanel.add(chckListaNegra);
@@ -155,9 +162,9 @@ public class Editar_Socio extends JDialog {
 			txtEmail.setText(socio.getEmail());
 			txtTelf.setText(socio.getTelefono());
 			txtNacimiento.setText(socio.getFechaNacimiento());
-			if(socio.isListaNegra()) {
+			if (socio.isListaNegra()) {
 				chckListaNegra.setSelected(true);
-			}else {
+			} else {
 				chckListaNegra.setSelected(false);
 			}
 		}
@@ -175,10 +182,18 @@ public class Editar_Socio extends JDialog {
 			btnGuardar.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
+					
+					if (camposLlenos() && comprobar.validarCamposSocios(txtNombre, txtApellido, txtDni, txtDireccion, txtEmail,
+							txtTelf, txtNacimiento)) {
+			            
+						editar(modeloTabla, filaTabla, idBib);
+			        } else {
+			            JOptionPane.showMessageDialog(null, "Verifica los campos antes de guardar.", "Error", JOptionPane.ERROR_MESSAGE);
+			        }
 				}
 			});
-			//----------------------------------------
-			
+			// ----------------------------------------
+
 			btnGuardar.setFont(new Font("Verdana", Font.PLAIN, 12));
 			btnGuardar.setBackground(Color.WHITE);
 			btnGuardar.setActionCommand("OK");
@@ -193,13 +208,73 @@ public class Editar_Socio extends JDialog {
 					dispose();
 				}
 			});
-			//-------------------------------------------
-			
+			// -------------------------------------------
+
 			btnCancelar.setFont(new Font("Verdana", Font.PLAIN, 12));
 			btnCancelar.setBackground(Color.WHITE);
 			btnCancelar.setActionCommand("Cancel");
 			btnCancelar.setBounds(747, 21, 111, 39);
 			buttonPane.add(btnCancelar);
+		}
+	}
+
+	public Socios rellenaObjeto() {
+		Socios socio = new Socios();
+
+		socio.setNombre(txtNombre.getText());
+		socio.setApellido(txtApellido.getText());
+		socio.setDni(txtDni.getText());
+		socio.setDireccion(txtDireccion.getText());
+		socio.setEmail(txtEmail.getText());
+		socio.setTelefono(txtTelf.getText());
+		socio.setFechaNacimiento(txtNacimiento.getText());
+
+		if (chckListaNegra.isSelected()) {
+			socio.setListaNegra(true);
+		} else {
+			socio.setListaNegra(false);
+		}
+
+		return socio;
+	}
+	
+	public boolean camposLlenos() {
+		return !(txtNombre.getText().isEmpty() || txtApellido.getText().isEmpty() || txtDni.getText().isEmpty()
+				|| txtDireccion.getText().isEmpty() || txtEmail.getText().isEmpty() || txtTelf.getText().isEmpty()
+				|| txtNacimiento.getText().isEmpty());
+	}
+
+	public void editar(DefaultTableModel modeloTabla, int filaTabla, String idBib) {
+		Socios socioEditado = new Socios();
+		socioEditado = rellenaObjeto();
+		int opcion = 0;
+		String id = "";
+		String listaNegra = "";
+
+		opcion = err.preguntarEditar();
+
+		if (opcion == 0) {
+			id = bd.obtenerIdSocio(socioEditado, idBib);
+			bd.editarSocio(socioEditado, id, idBib);
+
+			modeloTabla.setValueAt(socioEditado.getNombre(), filaTabla, 0);
+			modeloTabla.setValueAt(socioEditado.getApellido(), filaTabla, 1);
+			modeloTabla.setValueAt(socioEditado.getDni(), filaTabla, 2);
+			modeloTabla.setValueAt(socioEditado.getDireccion(), filaTabla, 3);
+			modeloTabla.setValueAt(socioEditado.getEmail(), filaTabla, 4);
+			modeloTabla.setValueAt(socioEditado.getTelefono(), filaTabla, 5);
+			modeloTabla.setValueAt(socioEditado.getFechaNacimiento(), filaTabla, 6);
+			
+			if(socioEditado.isListaNegra()) {
+				listaNegra = "Sí";
+			}else {
+				listaNegra = "No";
+			}
+			
+			modeloTabla.setValueAt(listaNegra, filaTabla, 7);
+
+
+			dispose();
 		}
 	}
 }

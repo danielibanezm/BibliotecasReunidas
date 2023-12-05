@@ -223,9 +223,11 @@ public class Editar_Libro extends JDialog {
 				btnGuardar.addMouseListener(new MouseAdapter() {
 				    @Override
 				    public void mouseClicked(MouseEvent e) {
-				        if (camposLlenos() && comprobar.validarCampos(txtIsbn, txtTitulo, txtAutores, txtEditorial, txtIdioma, txtEdicion, txtPublicacion,
+				        if (camposLlenos() && comprobar.validarCamposLibros(txtIsbn, txtTitulo, txtAutores, txtEditorial, txtIdioma, txtEdicion, txtPublicacion,
 								txtPais, txtPaginas, txtUbicacion)) {
-				            // Resto del código para insertar el libro
+				           
+				        	editar(modeloTabla, libro, filaTabla, idBib);
+				        	
 				        } else {
 				            JOptionPane.showMessageDialog(null, "Verifica los campos antes de guardar.", "Error", JOptionPane.ERROR_MESSAGE);
 				        }
@@ -277,6 +279,7 @@ public class Editar_Libro extends JDialog {
 
 		return libro;
 	}
+	
 	public boolean camposLlenos() {
 		return !(txtIsbn.getText().isEmpty() || txtTitulo.getText().isEmpty() || txtAutores.getText().isEmpty()
 				|| txtEditorial.getText().isEmpty() || txtIdioma.getText().isEmpty() || txtEdicion.getText().isEmpty()
@@ -295,7 +298,7 @@ public class Editar_Libro extends JDialog {
 
 		if (opcion == 0) {
 			id = bd.obtenerIdLibro(libro, idBib);
-			bd.editarLibro(libroEditado, id);
+			bd.editarLibro(libroEditado, id, idBib);
 
 			modeloTabla.setValueAt(libroEditado.getIsbn(), filaTabla, 0);
 			modeloTabla.setValueAt(libroEditado.getTitulo(), filaTabla, 1);
