@@ -444,7 +444,6 @@ public class Libros_Ventana extends JPanel {
 				nuevoLib.getUbicacion(), nuevoLib.getPublicacion(), nuevoLib.getPais(), nuevoLib.getPaginas(), 1};
 		modeloTabla.addRow(nuevaFila);
 
-		// Refrescar la vista
 		modeloTabla.fireTableDataChanged();
 	}
 }

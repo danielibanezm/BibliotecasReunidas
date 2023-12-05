@@ -17,7 +17,14 @@ import modelo.Socios;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
@@ -31,13 +38,13 @@ public class Socios_Ventana extends JPanel {
 	// buttons:
 	private ButtonGroup radioButton = new ButtonGroup();
 	// Creamos un objeto para el modelo de nuestra tabla:
-	
+
 	DefaultTableModel modeloTabla = new DefaultTableModel() {
 		public boolean isCellEditable(int row, int column) {
 			return false;
 		}
 	};
-	
+
 	private String consulta = "";
 
 	private static final long serialVersionUID = 1L;
@@ -51,10 +58,16 @@ public class Socios_Ventana extends JPanel {
 	private JButton btnBorrar;
 	private JTable jtResultados;
 	private JTextField textField;
-	
+	private Socios socio = new Socios();
+	private int filaTabla;
+
 	private BaseDeDatos bd = new BaseDeDatos();
+	private Errores err = new Errores();
+	private Editar_Socio editarSocio;
 
 	public Socios_Ventana(Ventana ventana, boolean esAdmin, String idBib) {
+		Insertar_Socio insertarSocio = new Insertar_Socio(idBib, modeloTabla, ventana, esAdmin);
+		
 		setBackground(new Color(255, 255, 255));
 		setLayout(null);
 
@@ -139,7 +152,7 @@ public class Socios_Ventana extends JPanel {
 			}
 		});
 		// --------------------------------------
-		
+
 		textField.setColumns(10);
 		textField.setBounds(478, 193, 428, 29);
 		add(textField);
@@ -155,49 +168,141 @@ public class Socios_Ventana extends JPanel {
 		scrollPane.setBounds(32, 296, 1318, 327);
 		add(scrollPane);
 
+		// -- AÑADIR SOCIO --
 		btnNuevoSocio = new JButton("Añadir socio");
+		btnNuevoSocio.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (insertarSocio != null) {
+					insertarSocio.setVisible(true);
+				}
+			}
+		});
+		// ----------------------------------------------
+
 		btnNuevoSocio.setForeground(new Color(9, 3, 62));
 		btnNuevoSocio.setFont(new Font("Verdana", Font.PLAIN, 12));
 		btnNuevoSocio.setBorder(null);
 		btnNuevoSocio.setBackground(new Color(233, 210, 255));
-		btnNuevoSocio.setBounds(546, 655, 87, 37);
+		btnNuevoSocio.setBounds(519, 655, 87, 37);
 		add(btnNuevoSocio);
 
+		// -- EDITAR SOCIO --
 		btnEditarSocio = new JButton("Editar socio");
+		btnEditarSocio.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				filaTabla = jtResultados.getSelectedRow();
+				if (filaTabla != -1) { // Se ha seleccionado una fila
+					editarSocio = new Editar_Socio(socio, modeloTabla, filaTabla, idBib);
+					editarSocio.setVisible(true);
+
+				} else {
+					// No se ha seleccionado ningún socio por lo tanto se muestra un error.
+					JOptionPane.showMessageDialog(null, "Seleccione un libro para editarlo", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+		// ---------------------------------------
+
 		btnEditarSocio.setForeground(new Color(9, 3, 62));
 		btnEditarSocio.setFont(new Font("Verdana", Font.PLAIN, 12));
 		btnEditarSocio.setBorder(null);
 		btnEditarSocio.setBackground(new Color(233, 210, 255));
-		btnEditarSocio.setBounds(688, 655, 87, 37);
+		btnEditarSocio.setBounds(661, 655, 87, 37);
 		add(btnEditarSocio);
 
+		// -- BOTÓN ELIMINAR SOCIO --
 		btnBorrarSocio = new JButton("Borrar socio");
+		btnBorrarSocio.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				filaTabla = jtResultados.getSelectedRow();
+
+				if (filaTabla != -1) { // Se ha seleccionado una fila
+					eliminar(filaTabla, idBib);
+
+				} else {
+					// No se ha seleccionado ningún libro por lo tanto se muestra un error.
+					JOptionPane.showMessageDialog(null, "Seleccione un socio para poder eliminarlo.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+		// ----------------------------------------------------
+
 		btnBorrarSocio.setForeground(new Color(9, 3, 62));
 		btnBorrarSocio.setFont(new Font("Verdana", Font.PLAIN, 12));
 		btnBorrarSocio.setBorder(null);
 		btnBorrarSocio.setBackground(new Color(233, 210, 255));
-		btnBorrarSocio.setBounds(840, 655, 87, 37);
+		btnBorrarSocio.setBounds(813, 655, 87, 37);
 		add(btnBorrarSocio);
 
+		// -- RESTABLECER BÚSQUEDA --
 		btnBorrar = new JButton("Limpiar búsqueda");
+		btnBorrar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				modeloTabla.setRowCount(0);
+				textField.setText("");
+				rdbtNombre.setSelected(true);
+			}
+		});
+		// -----------------------------
+
 		btnBorrar.setForeground(Color.WHITE);
 		btnBorrar.setFont(new Font("Verdana", Font.PLAIN, 12));
 		btnBorrar.setBorder(null);
 		btnBorrar.setBackground(new Color(130, 72, 172));
 		btnBorrar.setBounds(1221, 655, 131, 37);
 		add(btnBorrar);
-		
+
 		// Agrupamos nuestros radio buttons:
 		radioButton.add(rdbtNombre);
 		radioButton.add(rdbtDni);
 		radioButton.add(rdbtEmail);
-		//-----------------------------------
 
 		// -------------------------- JTABLE --------------------------------------
-		jtResultados = new JTable();
 
 		// -- SELECCIONAR SOCIO DE LA TABLA --
-		// evento
+		jtResultados = new JTable();
+		jtResultados.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+
+				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 0) != null) {
+					socio.setNombre(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 0).toString());
+				}
+				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 1) != null) {
+					socio.setApellido(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 1).toString());
+				}
+				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 2) != null) {
+					socio.setDni(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 2).toString());
+				}
+				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 3) != null) {
+					socio.setDireccion(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 3).toString());
+				}
+				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 4) != null) {
+					socio.setTelefono(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 4).toString());
+				}
+				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 5) != null) {
+					socio.setEmail(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 5).toString());
+				}
+				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 6) != null) {
+					socio.setFechaNacimiento(modeloTabla.getValueAt(jtResultados.getSelectedRow(), 6).toString());
+				}
+				if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 7) != null) {
+					if (modeloTabla.getValueAt(jtResultados.getSelectedRow(), 7).equals("Sí")) {
+						socio.setListaNegra(true);
+					} else {
+						socio.setListaNegra(false);
+					}
+
+				}
+
+			}
+		});
 		// ------------------
 
 		jtResultados.setForeground(new Color(36, 54, 69));
@@ -206,17 +311,14 @@ public class Socios_Ventana extends JPanel {
 		jtResultados.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		jtResultados.getTableHeader().setReorderingAllowed(false);
 
-		// Cambiar la altura de las filas:
 		jtResultados.setRowHeight(30);
 		scrollPane.setViewportView(jtResultados);
 
-		// Le añadimos a nuestra tabla las columnas que va a tener:
 		modeloTabla.setColumnIdentifiers(new Object[] { "Nombre", "Apellidos", "DNI", "Dirección", "Teléfono", "Email",
 				"Fecha nacimiento", "Lista negra" });
-		// Le decimos que le establezca el modelo que hemos creado a nuestra tabla:
+
 		jtResultados.setModel(modeloTabla);
 
-		// Establecer el ancho de las columnas:
 		jtResultados.getColumnModel().getColumn(0).setPreferredWidth(100);
 		jtResultados.getColumnModel().getColumn(1).setPreferredWidth(100);
 		jtResultados.getColumnModel().getColumn(2).setPreferredWidth(100);
@@ -233,14 +335,12 @@ public class Socios_Ventana extends JPanel {
 		encabezado.setForeground(darkBlue);
 		encabezado.setFont(new Font("Verdana", Font.BOLD, 13));
 
-		// Que no se cambie el tamaño de las columnas.
 		jtResultados.getTableHeader().setResizingAllowed(false);
-		// Que no se cambie el orden de las columnas.
 		jtResultados.getTableHeader().setReorderingAllowed(false);
 
 		// -------------------------------------------------------------
 	}
-	
+
 	public void rellenaTabla(String consulta, String idBib) {
 		String aux = textField.getText().toString();
 		modeloTabla.setRowCount(0);
@@ -250,16 +350,94 @@ public class Socios_Ventana extends JPanel {
 		// BaseDeDatos:
 		for (Socios recorreSocios : bd.cargaSocios(consulta, aux, idBib)) {
 
-			if(recorreSocios.isListaNegra()) {
+			if (recorreSocios.isListaNegra()) {
 				lNegra = "Sí";
-			}else {
+			} else {
 				lNegra = "No";
 			}
-			
+
 			// Object puede coger todo tipo de datos, hasta imágenes.
-			modeloTabla.addRow(new Object[] {recorreSocios.getNombre(), recorreSocios.getApellido(), recorreSocios.getDni(),
-					recorreSocios.getDireccion(), recorreSocios.getTelefono(), recorreSocios.getEmail(),
-					recorreSocios.getFechaNacimiento(), lNegra});
+			modeloTabla.addRow(new Object[] { recorreSocios.getNombre(), recorreSocios.getApellido(),
+					recorreSocios.getDni(), recorreSocios.getDireccion(), recorreSocios.getTelefono(),
+					recorreSocios.getEmail(), recorreSocios.getFechaNacimiento(), lNegra });
+		}
+	}
+
+	public void eliminar(int filaTabla, String idBib) {
+		BaseDeDatos bd = new BaseDeDatos();
+		int opcion = 0;
+		String id;
+
+		opcion = err.preguntarEliminar();
+
+		if (opcion == 0) {
+			id = obtenerIdSocio(socio, idBib);
+			eliminarSocio(id, idBib);
+
+			// Eliminamos la fila del modelo.
+			modeloTabla.removeRow(filaTabla);
+		}
+	}
+
+	public String obtenerIdSocio(Socios socio, String idBib) {
+		String id = "";
+		Connection conexion = null;
+		Statement consulta = null;
+		ResultSet registro = null;
+
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
+
+			consulta = conexion.createStatement();
+			registro = consulta.executeQuery("SELECT id_socio" + " FROM socios" + " WHERE nombre_socio = '"
+					+ socio.getNombre() + "'" + " AND apellido_socio = '" + socio.getApellido() + "'"
+					+ " AND dni_socio = '" + socio.getDni() + "'" + " AND id_biblioteca = '" + idBib + "' ");
+
+			if (registro.next()) {
+				id = registro.getString("id_socio");
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			err.baseDatosNoConexion();
+		} finally {
+			try {
+				if (conexion != null) {
+					conexion.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+				err.baseDatosNoConexion();
+			} catch (NullPointerException e) {
+			}
+		}
+
+		return id;
+	}
+
+	public void eliminarSocio(String id, String idBib) {
+		Connection conexion = null;
+		Statement consulta = null;
+
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
+			consulta = conexion.createStatement();
+
+			consulta.executeUpdate(
+					"DELETE FROM socios WHERE id_socio = '" + id + "'" + " AND id_biblioteca = '" + idBib + "' ");
+
+			err.confirmarEliminar();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				conexion.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} catch (NullPointerException e) {
+				e.printStackTrace();
+			}
 		}
 
 	}
