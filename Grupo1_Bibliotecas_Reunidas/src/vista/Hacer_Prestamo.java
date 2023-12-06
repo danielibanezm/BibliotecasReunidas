@@ -45,6 +45,8 @@ public class Hacer_Prestamo extends JDialog {
 	private Prestamos prestamo = new Prestamos();
 	private BaseDeDatos bd = new BaseDeDatos();
 	private Errores err = new Errores();
+	private JTextField textField;
+	private boolean insertRealizado = false;
 	
 	//Con el boolean esAdmin no tienes que hacer nada, es para que al retornar al menú sepa qué tipo de usuario está en la app.
 	//Librito tiene toda la info del libro que se ha seleccionado en la tabla. A través del getter se obtienen sus datos.
@@ -61,25 +63,28 @@ public class Hacer_Prestamo extends JDialog {
 		contentPanel.setLayout(null);
 		
 		JLabel lblNombreSocio = new JLabel("NOMBRE DEL SOCIO");
-		lblNombreSocio.setBounds(64, 149, 111, 24);
+		lblNombreSocio.setFont(new Font("Verdana", Font.PLAIN, 11));
+		lblNombreSocio.setBounds(49, 149, 138, 24);
 		contentPanel.add(lblNombreSocio);
 		
 		JLabel lblApellidoSocio = new JLabel("APELLIDO DEL SOCIO");
-		lblApellidoSocio.setBounds(236, 149, 127, 24);
+		lblApellidoSocio.setFont(new Font("Verdana", Font.PLAIN, 11));
+		lblApellidoSocio.setBounds(221, 149, 142, 24);
 		contentPanel.add(lblApellidoSocio);
 		
 		JLabel lblCorreoSocio = new JLabel("CORREO DEL SOCIO");
-		lblCorreoSocio.setBounds(425, 149, 111, 24);
+		lblCorreoSocio.setFont(new Font("Verdana", Font.PLAIN, 11));
+		lblCorreoSocio.setBounds(415, 149, 142, 24);
 		contentPanel.add(lblCorreoSocio);
 		
 		txtNombreSocio = new JTextField();
 		txtNombreSocio.setColumns(10);
-		txtNombreSocio.setBounds(49, 200, 138, 37);
+		txtNombreSocio.setBounds(38, 200, 138, 37);
 		contentPanel.add(txtNombreSocio);
 		
 		txtApellidoSocio = new JTextField();
 		txtApellidoSocio.setColumns(10);
-		txtApellidoSocio.setBounds(221, 200, 138, 37);
+		txtApellidoSocio.setBounds(38, 200, 138, 37);
 		contentPanel.add(txtApellidoSocio);
 		
 		txtCorreoSocio = new JTextField();
@@ -88,6 +93,7 @@ public class Hacer_Prestamo extends JDialog {
 		contentPanel.add(txtCorreoSocio);
 		
 		JButton btnInsertar = new JButton("SOLICITAR NUEVO PRÉSTAMO");
+		btnInsertar.setFont(new Font("Verdana", Font.PLAIN, 11));
 		btnInsertar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				nombreSocio = txtNombreSocio.getText();
@@ -101,8 +107,11 @@ public class Hacer_Prestamo extends JDialog {
 					idSocio = bd.obtenerIdSocio(librito, nombreSocio, apellidoSocio, correoSocio, idBib);
 					idLibro = bd.obtenerIdLibro(librito, idBib);
 
-					bd.insertarPrestamo(idSocio, idLibro, idBib);
-					bd.borrarUnaUnidadStock(idLibro, idBib);
+					insertRealizado = bd.insertarPrestamo(idSocio, idLibro, idBib);
+					
+					if (insertRealizado) {
+						bd.borrarUnaUnidadStock(idLibro, idBib);
+					}
 				}								
 			}
 		});
@@ -110,6 +119,7 @@ public class Hacer_Prestamo extends JDialog {
 		contentPanel.add(btnInsertar);
 		
 		JButton btnVolver = new JButton("Volver");
+		btnVolver.setForeground(new Color(255, 255, 255));
 		btnVolver.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -117,9 +127,9 @@ public class Hacer_Prestamo extends JDialog {
 			}
 		});
 		btnVolver.setFont(new Font("Verdana", Font.PLAIN, 12));
-		btnVolver.setBackground(Color.WHITE);
+		btnVolver.setBackground(new Color(130, 72, 172));
 		btnVolver.setActionCommand("Cancel");
-		btnVolver.setBounds(75, 412, 111, 39);
+		btnVolver.setBounds(38, 414, 111, 39);
 		contentPanel.add(btnVolver);
 		
 		JLabel lblPrstamo = new JLabel("Préstamo");
@@ -127,7 +137,7 @@ public class Hacer_Prestamo extends JDialog {
 		lblPrstamo.setHorizontalAlignment(SwingConstants.LEFT);
 		lblPrstamo.setForeground(new Color(9, 3, 62));
 		lblPrstamo.setFont(new Font("Gabriola", Font.BOLD, 55));
-		lblPrstamo.setBounds(227, 51, 239, 81);
+		lblPrstamo.setBounds(221, 57, 239, 81);
 		contentPanel.add(lblPrstamo);
 		
 		JLabel lblRealizar = new JLabel("Realizar");
@@ -135,8 +145,13 @@ public class Hacer_Prestamo extends JDialog {
 		lblRealizar.setHorizontalAlignment(SwingConstants.LEFT);
 		lblRealizar.setForeground(new Color(130, 72, 172));
 		lblRealizar.setFont(new Font("Gabriola", Font.BOLD, 55));
-		lblRealizar.setBounds(176, 11, 239, 81);
+		lblRealizar.setBounds(170, 17, 239, 81);
 		contentPanel.add(lblRealizar);
+		
+		textField = new JTextField();
+		textField.setColumns(10);
+		textField.setBounds(213, 200, 138, 37);
+		contentPanel.add(textField);
 
 	}
 }

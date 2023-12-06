@@ -173,10 +173,11 @@ public class BaseDeDatos {
 		return apellido;
 	}
 
-	public String insertarPrestamo(String id_socio, String id_libro, String id_biblioteca) {
+	public boolean insertarPrestamo(String id_socio, String id_libro, String id_biblioteca) {
 		Connection conexion = null;
 		Statement consulta = null;
 		String fechaFormateada = null;
+		boolean insertRealizado = false;
 
 		try {
 			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
@@ -184,8 +185,7 @@ public class BaseDeDatos {
 
 			boolean prestamoExiste = false;
 
-			ResultSet resultSet = consulta
-					.executeQuery("SELECT id_prestamo FROM prestamos WHERE id_libro = '" + id_libro + "'");
+			ResultSet resultSet = consulta.executeQuery("SELECT id_prestamo FROM prestamos WHERE id_libro = '" + id_libro + "'");
 			prestamoExiste = resultSet.next();
 
 			if (!prestamoExiste) {
@@ -202,13 +202,14 @@ public class BaseDeDatos {
 				// Insertar la fecha actual en la base de datos
 				consulta.executeUpdate(
 						"INSERT INTO prestamos (id_biblioteca, id_socio, id_libro, fecha_prestamo, fecha_entrega_prevista, fecha_entrega) "
-								+ "VALUES ('" + id_biblioteca + "', '" + id_socio + "', '" + id_libro + "', '"
-								+ fechaFormateada + "', '" + fechaEntregaPrevista + "', NULL)");
+						+ "VALUES ('" + id_biblioteca + "', '" + id_socio + "', '" + id_libro + "', '"
+						+ fechaFormateada + "', '" + fechaEntregaPrevista + "', NULL)");
 
 				JOptionPane.showMessageDialog(null,
 						"Se han insertado correctamente la fecha de prestamo y la fecha de entrega prevista en la tabla.",
 						"Información", JOptionPane.INFORMATION_MESSAGE);
-
+				
+				insertRealizado = true;
 			} else {
 				JOptionPane.showMessageDialog(null,
 						"Este ejemplar ya está prestado. Por favor, espere a que el otro usuario lo devuelva o escoja otro libro.",
@@ -229,9 +230,9 @@ public class BaseDeDatos {
 			}
 		}
 
-		return fechaFormateada;
+		return insertRealizado;
 	}
-
+	
 	public static String calcularFechaEntregaPrevista(String fechaPrestamo) {
 		try {
 			// Convertir la fecha de préstamo a Date usando SimpleDateFormat
@@ -256,6 +257,20 @@ public class BaseDeDatos {
 			return null;
 		}
 	}
+	
+	public String calcularFechaActual() {
+		String fechaFormateada = null;
+
+		// Obtener la fecha actual con Calendar
+		Calendar calendar = Calendar.getInstance();
+		java.util.Date fechaActual = calendar.getTime();
+
+		// Formatear la fecha actual como 'YYYY-MM-DD'
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		fechaFormateada = dateFormat.format(fechaActual);
+		
+		return fechaFormateada;
+	}
 
 	public String obtenerIdSocio(Libros libro, String nombreSocio, String apellidoSocio, String correoSocio,
 			String idBib) {
@@ -270,7 +285,7 @@ public class BaseDeDatos {
 			consulta = conexion.createStatement();
 			registro = consulta.executeQuery("SELECT id_socio" + " FROM socios" + " WHERE id_biblioteca = '" + idBib
 					+ "' " + " AND nombre_socio = '" + nombreSocio + "'" + " AND apellido_socio = '" + apellidoSocio
-					+ "'" + " AND email_socio = '" + correoSocio + "'");
+					+ "' AND email_socio = '" + correoSocio + "'");
 
 			if (registro.next()) {
 				id = registro.getString("id_socio");
@@ -345,16 +360,13 @@ public class BaseDeDatos {
 
 			consulta = conexion.createStatement();
 
-			resultadoNombre = consulta
-					.executeQuery("SELECT nombre_socio FROM socios WHERE nombre_socio = '" + nombre + "'");
+			resultadoNombre = consulta.executeQuery("SELECT nombre_socio FROM socios WHERE nombre_socio = '" + nombre + "'");
 			nombreExiste = resultadoNombre.next();
 
-			resultadoApellido = consulta
-					.executeQuery("SELECT apellido_socio FROM socios WHERE apellido_socio = '" + apellido + "'");
+			resultadoApellido = consulta.executeQuery("SELECT apellido_socio FROM socios WHERE apellido_socio = '" + apellido + "'");
 			apellidoExiste = resultadoApellido.next();
 
-			resultadoCorreo = consulta
-					.executeQuery("SELECT email_socio FROM socios WHERE email_socio = '" + correo + "'");
+			resultadoCorreo = consulta.executeQuery("SELECT email_socio FROM socios WHERE email_socio = '" + correo + "'");
 			correoExiste = resultadoCorreo.next();
 
 		} catch (SQLException e) {
@@ -397,8 +409,8 @@ public class BaseDeDatos {
 		try {
 			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
 			consulta = conexion.createStatement();
-			consulta.executeUpdate("UPDATE libros SET stock_total = stock_total - 1 WHERE id_libro = '" + idLibro + "' "
-					+ "AND id_biblioteca = '" + idBib + "'");
+			consulta.executeUpdate("UPDATE libros SET stock_total = stock_total - 1 WHERE id_libro = '" + idLibro + 
+					"' AND id_biblioteca = '" + idBib + "'");
 
 		} catch (SQLException e) {
 		} finally {
@@ -533,11 +545,13 @@ public class BaseDeDatos {
 			consultita = conexion.createStatement();
 			// Lanzamos la consulta:
 			registro = consultita.executeQuery(
-					"SELECT id_libro, id_biblioteca, titulo_libro, autores_libro, isbn_libro, editorial_libro,"
-							+ "genero_libro, idioma_libro, edicion_libro, ubicacion_libro, publicacion_libro, pais_libro,"
-							+ "numPaginas_libro, SUM(stock_total) AS stock_total " + "FROM	libros " + "WHERE " + consulta
-							+ " LIKE '%" + aux + "%' " + "AND id_biblioteca = " + idBib
-							+ " GROUP BY " + consulta + " ORDER BY " + consulta);
+				    "SELECT id_libro, id_biblioteca, titulo_libro, autores_libro, isbn_libro, editorial_libro,"
+				    + "genero_libro, idioma_libro, edicion_libro, ubicacion_libro, publicacion_libro, pais_libro,"
+				    + "numPaginas_libro, SUM(stock_total) AS stock_total " 
+				    + "FROM libros " 
+				    + "WHERE LOWER(" + consulta + ") LIKE '%" + aux.toLowerCase() + "%' " 
+				    + "AND id_biblioteca = " + idBib
+				    + " GROUP BY " + consulta + " ORDER BY " + consulta);
 			
 			System.out.println("Consulta SQL: " + "SELECT id_libro, id_biblioteca, titulo_libro, autores_libro, isbn_libro, editorial_libro,"
 			        + "genero_libro, idioma_libro, edicion_libro, ubicacion_libro, publicacion_libro, pais_libro,"
@@ -547,7 +561,7 @@ public class BaseDeDatos {
 					+ consulta);
 
 			if (!registro.next()) {
-
+				//err.baseDatosVacia();
 			}
 			// While porque podría devolver más de una fila.
 			while (registro.next()) {
