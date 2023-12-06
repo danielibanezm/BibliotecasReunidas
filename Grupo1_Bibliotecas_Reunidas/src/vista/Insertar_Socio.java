@@ -19,6 +19,7 @@ import javax.swing.SwingConstants;
 import javax.swing.JTextField;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.Toolkit;
 
 public class Insertar_Socio extends JDialog {
 
@@ -37,6 +38,9 @@ public class Insertar_Socio extends JDialog {
 	private BaseDeDatos bd = new BaseDeDatos();
 
 	public Insertar_Socio(String idBib, DefaultTableModel modeloTabla, Ventana ventana, boolean esAdmin) {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(Insertar_Socio.class.getResource("/img/libro.png")));
+		setResizable(false);
+		setModal(true);
 		getContentPane().setBackground(new Color(191, 164, 217));
 		setBounds(100, 100, 1005, 491);
 		getContentPane().setLayout(null);
@@ -174,6 +178,7 @@ public class Insertar_Socio extends JDialog {
 		btnCancelar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				dispose();
 			}
 		});
 		//-------------------------------

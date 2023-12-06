@@ -21,6 +21,7 @@ import javax.swing.JTextField;
 import javax.swing.JCheckBox;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.Toolkit;
 
 public class Editar_Socio extends JDialog {
 
@@ -42,6 +43,9 @@ public class Editar_Socio extends JDialog {
 	private JCheckBox chckListaNegra;
 
 	public Editar_Socio(Socios socio, DefaultTableModel modeloTabla, int filaTabla, String idBib) {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(Editar_Socio.class.getResource("/img/libro.png")));
+		setModal(true);
+		setResizable(false);
 		setBounds(100, 100, 1146, 587);
 		getContentPane().setLayout(null);
 		contentPanel.setBackground(new Color(255, 255, 255));

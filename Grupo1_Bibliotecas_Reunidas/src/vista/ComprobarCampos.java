@@ -98,6 +98,20 @@ public class ComprobarCampos {
 
 		return true; //Todos los campos son válidos
 	}
+
+	public boolean validarCamposUsuarios(JTextField txtEmail, JTextField txtContrasenia) {
+		if (txtEmail.getText().length() > 50) {
+		    JOptionPane.showMessageDialog(null, "El campo de email no puede superar los 50 caracteres.", "Error", JOptionPane.ERROR_MESSAGE);
+		    return false;
+		}
+
+		if (txtContrasenia.getText().length() > 20) {
+		    JOptionPane.showMessageDialog(null, "El campo de contraseña no puede superar los 20 caracteres.", "Error", JOptionPane.ERROR_MESSAGE);
+		    return false;
+		}
+		
+		return true;
+	}
 	
 	
 }

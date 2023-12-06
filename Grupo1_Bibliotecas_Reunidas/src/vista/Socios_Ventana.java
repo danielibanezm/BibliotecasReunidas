@@ -157,15 +157,21 @@ public class Socios_Ventana extends JPanel {
 			@Override
 			public void keyReleased(KeyEvent e) {
 
-				if (rdbtNombre.isSelected()) {
-					consulta = "nombre_socio";
-				} else if (rdbtDni.isSelected()) {
-					consulta = "dni_libro";
-				} else if (rdbtEmail.isSelected()) {
-					consulta = "email_libro";
-				}
+				if (textField.getText().isEmpty()) {
+		            modeloTabla.setRowCount(0);
+		            
+				}else {
+					
+					if (rdbtNombre.isSelected()) {
+						consulta = "nombre_socio";
+					} else if (rdbtDni.isSelected()) {
+						consulta = "dni_libro";
+					} else if (rdbtEmail.isSelected()) {
+						consulta = "email_libro";
+					}
 
-				rellenaTabla(consulta, idBib);
+					rellenaTabla(consulta, idBib);
+				}	
 			}
 		});
 		// --------------------------------------
@@ -216,7 +222,7 @@ public class Socios_Ventana extends JPanel {
 
 				} else {
 					// No se ha seleccionado ningún socio por lo tanto se muestra un error.
-					JOptionPane.showMessageDialog(null, "Seleccione un libro para editarlo", "Error",
+					JOptionPane.showMessageDialog(null, "Seleccione un socio para editarlo", "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
 			}

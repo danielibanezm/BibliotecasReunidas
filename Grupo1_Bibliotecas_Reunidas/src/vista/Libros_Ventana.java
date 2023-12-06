@@ -137,16 +137,21 @@ public class Libros_Ventana extends JPanel {
 		textField.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
-
-				if (rdbtTitulo.isSelected()) {
-					consulta = "titulo_libro";
-				} else if (rdbtIsbn.isSelected()) {
-					consulta = "isbn_libro";
-				} else if (rdbtAutor.isSelected()) {
-					consulta = "autores_libro";
-				}
-
-				rellenaTabla(consulta, idBib);
+				
+				if (textField.getText().isEmpty()) {
+		            modeloTabla.setRowCount(0);
+		            
+				}else {
+					if (rdbtTitulo.isSelected()) {
+						consulta = "titulo_libro";
+					} else if (rdbtIsbn.isSelected()) {
+						consulta = "isbn_libro";
+					} else if (rdbtAutor.isSelected()) {
+						consulta = "autores_libro";
+					}
+					
+					rellenaTabla(consulta, idBib);
+				}	
 			}
 		});
 		// --------------------------------------
@@ -403,23 +408,17 @@ public class Libros_Ventana extends JPanel {
 	}
 
 	public void rellenaTabla(String consulta, String idBib) {
-		// Creamos una variable donde vamos a guardar lo que se haya escrito en el
-		// textField:
-		String aux = textField.getText().toString();
+	    String aux = textField.getText().toString();
+	    modeloTabla.setRowCount(0);
 
-		modeloTabla.setRowCount(0);
+	    for (Libros recorreLibros : bd.cargaLibros(consulta, aux, idBib)) {
+	        modeloTabla.addRow(new Object[] {recorreLibros.getIsbn(), recorreLibros.getTitulo(), recorreLibros.getAutores(),
+	                recorreLibros.getEditorial(), recorreLibros.getGenero(), recorreLibros.getIdioma(),
+	                recorreLibros.getEdicion(), recorreLibros.getPublicacion(), recorreLibros.getPais(),
+	                recorreLibros.getPaginas(), recorreLibros.getUbicacion(), recorreLibros.getStockTotal() });
+	    }
 
-		// Recorremos los objetos del ArrayList que nos retorna el método de la clase
-		// BaseDeDatos:
-		for (Libros recorreLibros : bd.cargaLibros(consulta, aux, idBib)) {
-
-			// Object puede coger todo tipo de datos, hasta imágenes.
-			modeloTabla.addRow(new Object[] {recorreLibros.getIsbn(), recorreLibros.getTitulo(), recorreLibros.getAutores(),
-					recorreLibros.getEditorial(), recorreLibros.getGenero(), recorreLibros.getIdioma(),
-					recorreLibros.getEdicion(), recorreLibros.getPublicacion(), recorreLibros.getPais(),
-					recorreLibros.getPaginas(), recorreLibros.getUbicacion(), recorreLibros.getStockTotal() });
-		}
-
+	    modeloTabla.fireTableDataChanged();
 	}
 
 	public void eliminar(int filaTabla, String idBib) {

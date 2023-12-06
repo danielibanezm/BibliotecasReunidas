@@ -16,6 +16,7 @@ import com.mysql.jdbc.CommunicationsException;
 import modelo.Libros;
 import modelo.Prestamos;
 import modelo.Socios;
+import modelo.Usuarios;
 import vista.Errores;
 
 public class BaseDeDatos {
@@ -400,7 +401,6 @@ public class BaseDeDatos {
 					+ "AND id_biblioteca = '" + idBib + "'");
 
 		} catch (SQLException e) {
-			err.baseDatosNoConexion();
 		} finally {
 			try {
 				if (consulta != null) {
@@ -412,7 +412,6 @@ public class BaseDeDatos {
 				JOptionPane.showMessageDialog(null, "Se ha modificado correctamente el stock de tomos de este libro.",
 						"Información", JOptionPane.INFORMATION_MESSAGE);
 			} catch (SQLException e) {
-				err.baseDatosNoConexion();
 			}
 		}
 	}
@@ -443,13 +442,10 @@ public class BaseDeDatos {
 			}
 
 		} catch (SQLException e) {
-			err.baseDatosNoConexion();
 		} finally {
 			try {
 				conexion.close();
 			} catch (SQLException e) {
-				err.baseDatosNoConexion();
-
 			} catch (NullPointerException e) {
 			}
 		}
@@ -480,12 +476,10 @@ public class BaseDeDatos {
 			}
 
 		} catch (SQLException e) {
-			err.baseDatosNoConexion();
 		} finally {
 			try {
 				conexion.close();
 			} catch (SQLException e) {
-				err.baseDatosNoConexion();
 			} catch (NullPointerException e) {
 			}
 		}
@@ -512,12 +506,10 @@ public class BaseDeDatos {
 			}
 
 		} catch (SQLException e) {
-			err.baseDatosNoConexion();
 		} finally {
 			try {
 				conexion.close();
 			} catch (SQLException e) {
-				err.baseDatosNoConexion();
 			} catch (NullPointerException e) {
 			}
 		}
@@ -544,44 +536,50 @@ public class BaseDeDatos {
 					"SELECT id_libro, id_biblioteca, titulo_libro, autores_libro, isbn_libro, editorial_libro,"
 							+ "genero_libro, idioma_libro, edicion_libro, ubicacion_libro, publicacion_libro, pais_libro,"
 							+ "numPaginas_libro, SUM(stock_total) AS stock_total " + "FROM	libros " + "WHERE " + consulta
-							+ " LIKE '%" + aux + "%' " + "AND id_biblioteca = '" + idBib + "' "
-							+ "GROUP BY id_biblioteca, titulo_libro, autores_libro, isbn_libro, editorial_libro, genero_libro, idioma_libro, edicion_libro, "
-							+ "ubicacion_libro, publicacion_libro, pais_libro, numPaginas_libro " + "ORDER BY "
-							+ consulta);
+							+ " LIKE '%" + aux + "%' " + "AND id_biblioteca = " + idBib
+							+ " GROUP BY " + consulta + " ORDER BY " + consulta);
+			
+			System.out.println("Consulta SQL: " + "SELECT id_libro, id_biblioteca, titulo_libro, autores_libro, isbn_libro, editorial_libro,"
+			        + "genero_libro, idioma_libro, edicion_libro, ubicacion_libro, publicacion_libro, pais_libro,"
+			        + "numPaginas_libro, SUM(stock_total) AS stock_total " + "FROM	libros " + "WHERE " + consulta
+			        + " LIKE '%" + aux + "%' " + "AND id_biblioteca = '" + idBib + "' "
+			        + " GROUP BY " + consulta + " ORDER BY "
+					+ consulta);
 
 			if (!registro.next()) {
 
 			}
 			// While porque podría devolver más de una fila.
 			while (registro.next()) {
+
 				Libros nuevoLibro = new Libros();
 				nuevoLibro.setIdLibro(registro.getString("id_libro"));
 				nuevoLibro.setIdBiblioteca(registro.getString("id_biblioteca"));
-				nuevoLibro.setIsbn(registro.getString("isbn_libro"));
 				nuevoLibro.setTitulo(registro.getString("titulo_libro"));
 				nuevoLibro.setAutores(registro.getString("autores_libro"));
+				nuevoLibro.setIsbn(registro.getString("isbn_libro"));
 				nuevoLibro.setEditorial(registro.getString("editorial_libro"));
 				nuevoLibro.setGenero(registro.getString("genero_libro"));
 				nuevoLibro.setIdioma(registro.getString("idioma_libro"));
 				nuevoLibro.setEdicion(registro.getString("edicion_libro"));
+				nuevoLibro.setUbicacion(registro.getString("ubicacion_libro"));
 				nuevoLibro.setPublicacion(registro.getString("publicacion_libro"));
 				nuevoLibro.setPais(registro.getString("pais_libro"));
 				nuevoLibro.setPaginas(registro.getString("numPaginas_libro"));
-				nuevoLibro.setUbicacion(registro.getString("ubicacion_libro"));
 				nuevoLibro.setStockTotal(registro.getInt("stock_total"));
 
 				arrlLibros.add(nuevoLibro);
 			}
 
 		} catch (SQLException e) {			
-
+			e.printStackTrace();
 		} finally {
 			try {
 				conexion.close();
 			} catch (SQLException e) {
-
+				e.printStackTrace();
 			} catch (NullPointerException e) {
-
+				e.printStackTrace();
 			}
 		}
 
@@ -614,7 +612,6 @@ public class BaseDeDatos {
 					conexion.close();
 				}
 			} catch (SQLException e) {
-				err.baseDatosNoConexion();
 			} catch (NullPointerException e) {
 			}
 		}
@@ -634,14 +631,11 @@ public class BaseDeDatos {
 			err.confirmarEliminar();
 
 		} catch (SQLException e) {
-			e.printStackTrace();
 		} finally {
 			try {
 				conexion.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
 			} catch (NullPointerException e) {
-				e.printStackTrace();
 			}
 		}
 
@@ -667,13 +661,11 @@ public class BaseDeDatos {
 			err.confirmarInsert();
 
 		} catch (SQLException e) {
-			e.printStackTrace();
 			err.baseDatosNoConexion();
 		} finally {
 			try {
 				conexion.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
 				err.baseDatosNoConexion();
 			} catch (NullPointerException e) {
 			}
@@ -723,14 +715,11 @@ public class BaseDeDatos {
 			}
 
 		} catch (SQLException e) {
-			// e.printStackTrace();
 			err.baseDatosNoConexion();
 		} finally {
 			try {
 				conexion.close();
 			} catch (SQLException e) {
-				// e.printStackTrace();
-				err.baseDatosNoConexion();
 			} catch (NullPointerException e) {
 
 			}
@@ -782,14 +771,14 @@ public class BaseDeDatos {
 			}
 
 		} catch (SQLException e) {
-
+			e.printStackTrace();
 		} finally {
 			try {
 				conexion.close();
 			} catch (SQLException e) {
-
+				e.printStackTrace();
 			} catch (NullPointerException e) {
-
+				e.printStackTrace();
 			}
 		}
 
@@ -815,16 +804,12 @@ public class BaseDeDatos {
 			}
 
 		} catch (SQLException e) {
-			e.printStackTrace();
-			err.baseDatosNoConexion();
 		} finally {
 			try {
 				if (conexion != null) {
 					conexion.close();
 				}
 			} catch (SQLException e) {
-				e.printStackTrace();
-				err.baseDatosNoConexion();
 			} catch (NullPointerException e) {
 			}
 		}
@@ -846,14 +831,11 @@ public class BaseDeDatos {
 			err.confirmarEliminar();
 
 		} catch (SQLException e) {
-			e.printStackTrace();
 		} finally {
 			try {
 				conexion.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
 			} catch (NullPointerException e) {
-				e.printStackTrace();
 			}
 		}
 
@@ -877,7 +859,6 @@ public class BaseDeDatos {
 			err.confirmarUpdate();
 
 		} catch (SQLException e) {
-			e.printStackTrace();
 			err.baseDatosNoConexion();
 		} finally {
 			try {
@@ -885,7 +866,6 @@ public class BaseDeDatos {
 					conexion.close();
 				}
 			} catch (SQLException e) {
-				err.baseDatosNoConexion();
 			} catch (NullPointerException e) {
 			}
 		}
@@ -909,20 +889,194 @@ public class BaseDeDatos {
 			err.confirmarInsert();
 
 		} catch (SQLException e) {
-			e.printStackTrace();
-			err.baseDatosNoConexion();
 		} finally {
 			try {
 				conexion.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
-				err.baseDatosNoConexion();
 			} catch (NullPointerException e) {
 			}
 		}
 
 	}
+	// ------------------------------------------------------------------------------------------
 
+	// -- USUARIOS --
+	public ArrayList<Usuarios> cargaUsuarios(String idBib) {
+		ArrayList<Usuarios> arrlUsers = new ArrayList<>();
+
+		Connection conexion = null;
+		Statement consultita = null;
+		ResultSet registro = null;
+
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
+			consultita = conexion.createStatement();
+			// Lanzamos la consulta:
+			registro = consultita.executeQuery(
+					 "SELECT u.id_usuario, u.id_biblioteca, u.email_usuario, o.material " +
+							    "FROM usuarios u, otros o " +
+							    "WHERE u.id_usuario = o.id_otro AND u.id_biblioteca = o.id_biblioteca " +
+							    "AND u.id_biblioteca = " + idBib);
+
+			if (!registro.next()) {
+				err.baseDatosVacia();
+			}
+			// While porque podría devolver más de una fila.
+			while (registro.next()) {
+				Usuarios nuevoUser = new Usuarios();
+
+				nuevoUser.setIdUsuario(registro.getString("u.id_usuario"));
+				nuevoUser.setIdBib(registro.getString("u.id_biblioteca"));
+				nuevoUser.setEmail(registro.getString("u.email_usuario"));
+				nuevoUser.setContrasenia(registro.getString("o.material"));
+				
+				arrlUsers.add(nuevoUser);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				conexion.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} catch (NullPointerException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return arrlUsers;
+	}
+
+	public String obtenerIdUser(Usuarios user, String idBib) {
+		String id = "";
+		Connection conexion = null;
+		Statement consulta = null;
+		ResultSet registro = null;
+
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
+
+			consulta = conexion.createStatement();
+			registro = consulta.executeQuery("SELECT id_usuario" + " FROM usuarios" + " WHERE email_usuarios = '"
+					+ user.getEmail() + " AND id_biblioteca = '" + idBib + "' ");
+
+			if (registro.next()) {
+				id = registro.getString("id_usuario");
+			}
+
+		} catch (SQLException e) {
+		} finally {
+			try {
+				if (conexion != null) {
+					conexion.close();
+				}
+			} catch (SQLException e) {
+			} catch (NullPointerException e) {
+			}
+		}
+
+		return id;
+	}
+
+	public void insertarUsuario(Usuarios nuevoUser, String idBib) {
+		Connection conexion = null;
+		Statement consulta = null;
+
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
+			consulta = conexion.createStatement();
+
+			consulta.executeUpdate(
+					"INSERT INTO USUARIOS (id_biblioteca, email_usuario) VALUES ('" + idBib + "', '" + nuevoUser.getEmail()+ "')");
+
+			err.confirmarInsert();
+
+		} catch (SQLException e) {
+			err.baseDatosNoConexion();
+		} finally {
+			try {
+				conexion.close();
+			} catch (SQLException e) {
+			} catch (NullPointerException e) {
+			}
+		}
+		
+	}
+
+	public void insertarContrasenia(Usuarios nuevoUser, String idBib) {
+		Connection conexion = null;
+		Statement consulta = null;
+
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
+			consulta = conexion.createStatement();
+
+			consulta.executeUpdate(
+					"INSERT INTO OTROS (id_biblioteca, material) VALUES ('" + idBib + "', '" + nuevoUser.getContrasenia() + "')");
+
+			err.confirmarInsert();
+
+		} catch (SQLException e) {
+		} finally {
+			try {
+				conexion.close();
+			} catch (SQLException e) {
+			} catch (NullPointerException e) {
+			}
+		}	
+	}
+
+	public void editarEmail(Usuarios user, String idBib) {
+		Connection conexion = null;
+		Statement consulta = null;
+
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
+			consulta = conexion.createStatement();
+
+			consulta.executeUpdate("UPDATE usuarios SET " + "email_usuario='" + user.getEmail() + "' WHERE id_usuario='"
+			        + user.getIdUsuario() + "' AND id_biblioteca = '" + idBib + "'");
+
+			err.confirmarUpdate();
+
+		} catch (SQLException e) {
+		} finally {
+			try {
+				if (conexion != null) {
+					conexion.close();
+				}
+			} catch (SQLException e) {
+			} catch (NullPointerException e) {
+			}
+		}
+		
+	}
+	
+	public void editarContrasenia(Usuarios user, String idBib) {
+		Connection conexion = null;
+		Statement consulta = null;
+
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
+			consulta = conexion.createStatement();
+
+			consulta.executeUpdate("UPDATE otros SET material='" + user.getContrasenia() + "' WHERE id_otro='"
+			        + user.getIdUsuario() + "' AND id_biblioteca = '" + idBib + "'");
+
+		} catch (SQLException e) {
+		} finally {
+			try {
+				if (conexion != null) {
+					conexion.close();
+				}
+			} catch (SQLException e) {
+			} catch (NullPointerException e) {
+			}
+		}
+		
+	}
 
 	// ------------------------------------------------------------------------------------------
+	
 }
