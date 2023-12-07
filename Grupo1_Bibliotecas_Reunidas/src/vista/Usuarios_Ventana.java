@@ -38,7 +38,7 @@ public class Usuarios_Ventana extends JPanel {
 	private Usuarios user = new Usuarios();
 	private BaseDeDatos bd = new BaseDeDatos();
 	private Errores err = new Errores();
-	private JButton btnCargar;
+
 	private int filaTabla;
 	private Editar_Usuario editarUsuario;
 
@@ -61,8 +61,7 @@ public class Usuarios_Ventana extends JPanel {
 			}
 		});
 		// --------------------------------------------------------
-		
-		btnMen.setToolTipText("");
+
 		btnMen.setForeground(Color.BLACK);
 		btnMen.setFont(new Font("Verdana", Font.PLAIN, 11));
 		btnMen.setBorder(new LineBorder(new Color(88, 49, 117), 2, true));
@@ -107,7 +106,7 @@ public class Usuarios_Ventana extends JPanel {
 		btnanadir.setFont(new Font("Verdana", Font.PLAIN, 12));
 		btnanadir.setBorder(null);
 		btnanadir.setBackground(new Color(233, 210, 255));
-		btnanadir.setBounds(579, 580, 106, 37);
+		btnanadir.setBounds(412, 563, 106, 37);
 		add(btnanadir);
 
 		// -- EDITAR USUARIO --
@@ -133,7 +132,7 @@ public class Usuarios_Ventana extends JPanel {
 		btnEditar.setFont(new Font("Verdana", Font.PLAIN, 12));
 		btnEditar.setBorder(null);
 		btnEditar.setBackground(new Color(233, 210, 255));
-		btnEditar.setBounds(796, 580, 106, 37);
+		btnEditar.setBounds(629, 563, 106, 37);
 		add(btnEditar);
 
 		//-- BORRAR USUARIO --
@@ -159,7 +158,7 @@ public class Usuarios_Ventana extends JPanel {
 		btnBorrar.setFont(new Font("Verdana", Font.PLAIN, 12));
 		btnBorrar.setBorder(null);
 		btnBorrar.setBackground(new Color(233, 210, 255));
-		btnBorrar.setBounds(1016, 580, 106, 37);
+		btnBorrar.setBounds(849, 563, 106, 37);
 		add(btnBorrar);
 
 		// -------------------------- JTABLE --------------------------------------
@@ -223,18 +222,19 @@ public class Usuarios_Ventana extends JPanel {
 	}
 
 	public void eliminar(int filaTabla, String idBib) {
-		int opcion = 0;
-		String id;
+	    int opcion = 0;
+	    String id;
 
-		opcion = err.preguntarEliminar();
+	    opcion = err.preguntarEliminar();
 
-		if (opcion == 0) {
-			id = bd.obtenerIdUser(user, idBib);
-			bd.eliminarSocio(id, idBib);
+	    if (opcion == 0) {
+	        id = bd.obtenerIdUser(user, idBib);
+	        bd.eliminarUsuario(id, idBib);
+	        bd.eliminarContrasenia(id, idBib);
 
-			// Eliminamos la fila del modelo.
-			modeloTabla.removeRow(filaTabla);
-		}
+	        // Eliminamos la fila del modelo.
+	        modeloTabla.removeRow(filaTabla);
+	    }
 	}
 
 }

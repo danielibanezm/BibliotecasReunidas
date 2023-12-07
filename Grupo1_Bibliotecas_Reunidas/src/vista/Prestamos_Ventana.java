@@ -47,7 +47,6 @@ public class Prestamos_Ventana extends JPanel {
 		});
 		//-------------------------------------------------------
 		
-		btnMen.setToolTipText("");
 		btnMen.setForeground(Color.BLACK);
 		btnMen.setFont(new Font("Verdana", Font.PLAIN, 11));
 		btnMen.setBorder(new LineBorder(new Color(88, 49, 117), 2, true));
@@ -56,7 +55,7 @@ public class Prestamos_Ventana extends JPanel {
 		add(btnMen);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(52, 147, 1215, 374);
+		scrollPane.setBounds(52, 164, 1278, 374);
 		add(scrollPane);
 		
 		jtPrestamos = new JTable();
@@ -74,7 +73,7 @@ public class Prestamos_Ventana extends JPanel {
 		lblConsultar.setHorizontalAlignment(SwingConstants.LEFT);
 		lblConsultar.setForeground(new Color(130, 72, 172));
 		lblConsultar.setFont(new Font("Gabriola", Font.BOLD, 55));
-		lblConsultar.setBounds(513, 15, 239, 81);
+		lblConsultar.setBounds(535, 32, 239, 81);
 		add(lblConsultar);
 		
 		JLabel lblPrstamos = new JLabel("Préstamos");
@@ -82,7 +81,7 @@ public class Prestamos_Ventana extends JPanel {
 		lblPrstamos.setHorizontalAlignment(SwingConstants.LEFT);
 		lblPrstamos.setForeground(new Color(9, 3, 62));
 		lblPrstamos.setFont(new Font("Gabriola", Font.BOLD, 55));
-		lblPrstamos.setBounds(564, 55, 239, 81);
+		lblPrstamos.setBounds(586, 72, 239, 81);
 		add(lblPrstamos);
 		
 		jtPrestamos.setForeground(new Color(36, 54, 69));
@@ -99,7 +98,7 @@ public class Prestamos_Ventana extends JPanel {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				filaTabla = jtPrestamos.getSelectedRow();
-				if (filaTabla != -1) { // Se ha seleccionado una fila
+				if (filaTabla != -1) { //Se ha seleccionado una fila
 					String idPrestamo = (String) jtPrestamos.getValueAt(filaTabla, 0);
 				    String idLibro = (String) jtPrestamos.getValueAt(filaTabla, 3);
 				    String nombreSocio = (String) jtPrestamos.getValueAt(filaTabla, 1);
@@ -120,7 +119,7 @@ public class Prestamos_Ventana extends JPanel {
 		btnRegistrarDevolucion.setFont(new Font("Verdana", Font.PLAIN, 12));
 		btnRegistrarDevolucion.setBorder(null);
 		btnRegistrarDevolucion.setBackground(new Color(130, 72, 172));
-		btnRegistrarDevolucion.setBounds(52, 551, 156, 37);
+		btnRegistrarDevolucion.setBounds(52, 583, 156, 37);
 		add(btnRegistrarDevolucion);
 	
 		

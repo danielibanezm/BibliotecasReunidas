@@ -11,6 +11,7 @@ import javax.swing.table.DefaultTableModel;
 
 import controlador.BaseDeDatos;
 import modelo.Libros;
+import modelo.Recibos;
 import modelo.Socios;
 import java.awt.Color;
 import java.awt.Font;
@@ -252,21 +253,22 @@ public class Editar_Socio extends JDialog {
 		Socios socioEditado = new Socios();
 		socioEditado = rellenaObjeto();
 		int opcion = 0;
-		String id = "";
+		String idSocio = "", idRecibo ="";
 		String listaNegra = "";
+		Recibos recibo = new Recibos();
 
 		opcion = err.preguntarEditar();
 
 		if (opcion == 0) {
-			id = bd.obtenerIdSocio(socioEditado, idBib);
-			bd.editarSocio(socioEditado, id, idBib);
+			idSocio = bd.obtenerIdSocio(socioEditado, idBib);
+			bd.editarSocio(socioEditado, idSocio, idBib);
 
 			modeloTabla.setValueAt(socioEditado.getNombre(), filaTabla, 0);
 			modeloTabla.setValueAt(socioEditado.getApellido(), filaTabla, 1);
 			modeloTabla.setValueAt(socioEditado.getDni(), filaTabla, 2);
 			modeloTabla.setValueAt(socioEditado.getDireccion(), filaTabla, 3);
-			modeloTabla.setValueAt(socioEditado.getEmail(), filaTabla, 4);
-			modeloTabla.setValueAt(socioEditado.getTelefono(), filaTabla, 5);
+			modeloTabla.setValueAt(socioEditado.getTelefono(), filaTabla, 4);
+			modeloTabla.setValueAt(socioEditado.getEmail(), filaTabla, 5);
 			modeloTabla.setValueAt(socioEditado.getFechaNacimiento(), filaTabla, 6);
 			
 			if(socioEditado.isListaNegra()) {
@@ -276,9 +278,33 @@ public class Editar_Socio extends JDialog {
 			}
 			
 			modeloTabla.setValueAt(listaNegra, filaTabla, 7);
-
-
+			
+			//--NO HA PAGADO: MOROSO --
+			if(socioEditado.isListaNegra()) {
+				recibo.setId_bib(idBib);
+				recibo.setId_socio(idSocio);
+				recibo.setPagado(false);
+				
+				// -- SÍ HA PAGADO: NO MOROSO --
+			}else {
+				recibo.setId_bib(idBib);
+				recibo.setId_socio(idSocio);
+				recibo.setPagado(true);	
+			}
+			
+			idRecibo = bd.obtenerIdRecibo(recibo);
+			
+			if(idRecibo == null) {
+				bd.generarRecibo(recibo);
+				
+			}else {
+				bd.editarRecibo(recibo, idRecibo);
+			}
+			
+			
 			dispose();
 		}
 	}
+	
+
 }

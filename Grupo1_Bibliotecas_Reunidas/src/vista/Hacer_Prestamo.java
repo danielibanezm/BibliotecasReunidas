@@ -64,35 +64,39 @@ public class Hacer_Prestamo extends JDialog {
 		
 		JLabel lblNombreSocio = new JLabel("NOMBRE DEL SOCIO");
 		lblNombreSocio.setFont(new Font("Verdana", Font.PLAIN, 11));
-		lblNombreSocio.setBounds(49, 149, 138, 24);
+		lblNombreSocio.setBounds(38, 163, 138, 24);
 		contentPanel.add(lblNombreSocio);
 		
 		JLabel lblApellidoSocio = new JLabel("APELLIDO DEL SOCIO");
 		lblApellidoSocio.setFont(new Font("Verdana", Font.PLAIN, 11));
-		lblApellidoSocio.setBounds(221, 149, 142, 24);
+		lblApellidoSocio.setBounds(213, 163, 142, 24);
 		contentPanel.add(lblApellidoSocio);
 		
 		JLabel lblCorreoSocio = new JLabel("CORREO DEL SOCIO");
 		lblCorreoSocio.setFont(new Font("Verdana", Font.PLAIN, 11));
-		lblCorreoSocio.setBounds(415, 149, 142, 24);
+		lblCorreoSocio.setBounds(391, 163, 142, 24);
 		contentPanel.add(lblCorreoSocio);
 		
 		txtNombreSocio = new JTextField();
+		txtNombreSocio.setFont(new Font("Verdana", Font.PLAIN, 11));
 		txtNombreSocio.setColumns(10);
-		txtNombreSocio.setBounds(38, 200, 138, 37);
+		txtNombreSocio.setBounds(38, 214, 138, 37);
 		contentPanel.add(txtNombreSocio);
 		
 		txtApellidoSocio = new JTextField();
 		txtApellidoSocio.setColumns(10);
-		txtApellidoSocio.setBounds(38, 200, 138, 37);
+		txtApellidoSocio.setBounds(213, 215, 138, 37);
 		contentPanel.add(txtApellidoSocio);
 		
 		txtCorreoSocio = new JTextField();
+		txtCorreoSocio.setFont(new Font("Verdana", Font.PLAIN, 11));
 		txtCorreoSocio.setColumns(10);
-		txtCorreoSocio.setBounds(391, 200, 178, 37);
+		txtCorreoSocio.setBounds(391, 214, 178, 37);
 		contentPanel.add(txtCorreoSocio);
 		
-		JButton btnInsertar = new JButton("SOLICITAR NUEVO PRÉSTAMO");
+		JButton btnInsertar = new JButton("Guardar");
+		btnInsertar.setForeground(new Color(255, 255, 255));
+		btnInsertar.setBackground(new Color(130, 72, 172));
 		btnInsertar.setFont(new Font("Verdana", Font.PLAIN, 11));
 		btnInsertar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -115,11 +119,12 @@ public class Hacer_Prestamo extends JDialog {
 				}								
 			}
 		});
-		btnInsertar.setBounds(193, 277, 216, 51);
+		btnInsertar.setBounds(38, 411, 111, 39);
 		contentPanel.add(btnInsertar);
 		
 		JButton btnVolver = new JButton("Volver");
-		btnVolver.setForeground(new Color(255, 255, 255));
+		btnVolver.setBorder(null);
+		btnVolver.setForeground(new Color(9, 3, 62));
 		btnVolver.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -127,9 +132,9 @@ public class Hacer_Prestamo extends JDialog {
 			}
 		});
 		btnVolver.setFont(new Font("Verdana", Font.PLAIN, 12));
-		btnVolver.setBackground(new Color(130, 72, 172));
+		btnVolver.setBackground(new Color(233, 210, 255));
 		btnVolver.setActionCommand("Cancel");
-		btnVolver.setBounds(38, 414, 111, 39);
+		btnVolver.setBounds(458, 411, 111, 39);
 		contentPanel.add(btnVolver);
 		
 		JLabel lblPrstamo = new JLabel("Préstamo");
@@ -147,11 +152,7 @@ public class Hacer_Prestamo extends JDialog {
 		lblRealizar.setFont(new Font("Gabriola", Font.BOLD, 55));
 		lblRealizar.setBounds(170, 17, 239, 81);
 		contentPanel.add(lblRealizar);
-		
-		textField = new JTextField();
-		textField.setColumns(10);
-		textField.setBounds(213, 200, 138, 37);
-		contentPanel.add(textField);
+	
 
 	}
 }

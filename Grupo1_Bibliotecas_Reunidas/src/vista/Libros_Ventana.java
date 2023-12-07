@@ -51,16 +51,9 @@ public class Libros_Ventana extends JPanel {
 			return false;
 		}
 	};
-
-	private JRadioButton rdbtIsbn;
-	private JRadioButton rdbtAutor;
-	private JLabel lblBuscar;
-	private JTextField textField;
 	private JLabel lblConsultar;
 	private JLabel lblLibros;
-	private JLabel lblResultados;
 	private JTable jtResultados;
-	private JRadioButton rdbtTitulo;
 	private JButton btnEditarLibro;
 	private JButton btnEliminar;
 	private JButton btnMen;
@@ -95,80 +88,9 @@ public class Libros_Ventana extends JPanel {
 		lblLibros.setBounds(584, 65, 239, 81);
 		add(lblLibros);
 
-		// ----------------- Radio Buttons ------------------------
-		rdbtTitulo = new JRadioButton("Título");
-		rdbtTitulo.setSelected(true);
-		rdbtTitulo.setContentAreaFilled(false);
-		rdbtTitulo.setBackground(new Color(237, 227, 244));
-		rdbtTitulo.setFont(new Font("Verdana", Font.PLAIN, 12));
-		rdbtTitulo.setBounds(469, 146, 109, 23);
-		add(rdbtTitulo);
-
-		rdbtIsbn = new JRadioButton("ISBN");
-		rdbtIsbn.setContentAreaFilled(false);
-		rdbtIsbn.setBackground(new Color(230, 217, 240));
-		rdbtIsbn.setFont(new Font("Verdana", Font.PLAIN, 12));
-		rdbtIsbn.setBounds(604, 146, 109, 23);
-		add(rdbtIsbn);
-
-		rdbtAutor = new JRadioButton("Autor");
-		rdbtAutor.setContentAreaFilled(false);
-		rdbtAutor.setBorder(null);
-		rdbtAutor.setBackground(new Color(230, 217, 240));
-		rdbtAutor.setFont(new Font("Verdana", Font.PLAIN, 12));
-		rdbtAutor.setBounds(738, 146, 109, 23);
-		add(rdbtAutor);
-
-		// Agrupamos nuestros radio buttons:
-		radioButton.add(rdbtTitulo);
-		radioButton.add(rdbtIsbn);
-		radioButton.add(rdbtAutor);
-
-		// -------------------------------------------------------------
-
-		lblBuscar = new JLabel("Buscar por:");
-		lblBuscar.setForeground(new Color(9, 3, 62));
-		lblBuscar.setFont(new Font("Verdana", Font.BOLD, 12));
-		lblBuscar.setBounds(290, 150, 109, 14);
-		add(lblBuscar);
-
-		// -- EVENTO TEXTFIELD --
-		textField = new JTextField();
-		textField.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyReleased(KeyEvent e) {
-				
-				if (textField.getText().isEmpty()) {
-		            modeloTabla.setRowCount(0);
-		            
-				}else {
-					if (rdbtTitulo.isSelected()) {
-						consulta = "titulo_libro";
-					} else if (rdbtIsbn.isSelected()) {
-						consulta = "isbn_libro";
-					} else if (rdbtAutor.isSelected()) {
-						consulta = "autores_libro";
-					}
-					
-					rellenaTabla(consulta, idBib);
-				}	
-			}
-		});
-		// --------------------------------------
-
-		textField.setBounds(469, 190, 428, 29);
-		add(textField);
-		textField.setColumns(10);
-
-		lblResultados = new JLabel("Resultados:");
-		lblResultados.setForeground(new Color(9, 3, 62));
-		lblResultados.setFont(new Font("Verdana", Font.BOLD, 12));
-		lblResultados.setBounds(290, 251, 109, 14);
-		add(lblResultados);
-
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBackground(new Color(255, 255, 255));
-		scrollPane.setBounds(23, 293, 1318, 327);
+		scrollPane.setBounds(23, 146, 1318, 467);
 		add(scrollPane);
 
 		// -- REALIZAR PRÉSTAMO --
@@ -199,29 +121,6 @@ public class Libros_Ventana extends JPanel {
 		btnPrestamo.setBounds(23, 652, 131, 37);
 		add(btnPrestamo);
 
-		// -- RESTABLECER BÚSQUEDA --
-		JButton btnBorrar = new JButton("Limpiar búsqueda");
-		btnBorrar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		btnBorrar.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				modeloTabla.setRowCount(0);
-				textField.setText("");
-				rdbtTitulo.setSelected(true);
-			}
-		});
-		// ------------------------------------------------------
-
-		btnBorrar.setForeground(Color.WHITE);
-		btnBorrar.setFont(new Font("Verdana", Font.PLAIN, 12));
-		btnBorrar.setBorder(null);
-		btnBorrar.setBackground(new Color(130, 72, 172));
-		btnBorrar.setBounds(1212, 652, 131, 37);
-		add(btnBorrar);
-
 		// -- EDITAR LIBRO --
 		btnEditarLibro = new JButton("Editar libro");
 		btnEditarLibro.addMouseListener(new MouseAdapter() {
@@ -246,7 +145,7 @@ public class Libros_Ventana extends JPanel {
 		btnEditarLibro.setFont(new Font("Verdana", Font.PLAIN, 12));
 		btnEditarLibro.setBorder(null);
 		btnEditarLibro.setBackground(new Color(233, 210, 255));
-		btnEditarLibro.setBounds(679, 652, 87, 37);
+		btnEditarLibro.setBounds(703, 652, 87, 37);
 		add(btnEditarLibro);
 
 		btnEliminar = new JButton("Borrar libro");
@@ -272,7 +171,7 @@ public class Libros_Ventana extends JPanel {
 		btnEliminar.setFont(new Font("Verdana", Font.PLAIN, 12));
 		btnEliminar.setBorder(null);
 		btnEliminar.setBackground(new Color(233, 210, 255));
-		btnEliminar.setBounds(831, 652, 87, 37);
+		btnEliminar.setBounds(960, 652, 87, 37);
 		add(btnEliminar);
 
 		// -- AÑADIR LIBRO --
@@ -291,7 +190,7 @@ public class Libros_Ventana extends JPanel {
 		btnNuevoLibro.setFont(new Font("Verdana", Font.PLAIN, 12));
 		btnNuevoLibro.setBorder(null);
 		btnNuevoLibro.setBackground(new Color(233, 210, 255));
-		btnNuevoLibro.setBounds(537, 652, 87, 37);
+		btnNuevoLibro.setBounds(484, 652, 87, 37);
 		add(btnNuevoLibro);
 
 		// -- VOLVER AL MENÚ --
@@ -308,7 +207,6 @@ public class Libros_Ventana extends JPanel {
 		});
 		// ------------------------------------------------------
 
-		btnMen.setToolTipText("");
 		btnMen.setForeground(Color.BLACK);
 		btnMen.setFont(new Font("Verdana", Font.PLAIN, 11));
 		btnMen.setBorder(new LineBorder(new Color(88, 49, 117), 2, true));
@@ -404,14 +302,15 @@ public class Libros_Ventana extends JPanel {
 		jtResultados.getTableHeader().setReorderingAllowed(false);
 
 		// -------------------------------------------------------------
+		
+		rellenaTabla(idBib);
 
 	}
 
-	public void rellenaTabla(String consulta, String idBib) {
-	    String aux = textField.getText().toString();
+	public void rellenaTabla(String idBib) {
 	    modeloTabla.setRowCount(0);
 
-	    for (Libros recorreLibros : bd.cargaLibros(consulta, aux, idBib)) {
+	    for (Libros recorreLibros : bd.cargaLibros(idBib)) {
 	        modeloTabla.addRow(new Object[] {recorreLibros.getIsbn(), recorreLibros.getTitulo(), recorreLibros.getAutores(),
 	                recorreLibros.getEditorial(), recorreLibros.getGenero(), recorreLibros.getIdioma(),
 	                recorreLibros.getEdicion(), recorreLibros.getPublicacion(), recorreLibros.getPais(),

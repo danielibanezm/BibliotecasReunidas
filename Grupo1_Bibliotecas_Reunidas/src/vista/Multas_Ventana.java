@@ -28,8 +28,7 @@ public class Multas_Ventana extends JPanel {
 			}
 		});
 		//----------------------------------------------------
-		
-		btnMen.setToolTipText("");
+
 		btnMen.setForeground(Color.BLACK);
 		btnMen.setFont(new Font("Verdana", Font.PLAIN, 11));
 		btnMen.setBorder(new LineBorder(new Color(88, 49, 117), 2, true));

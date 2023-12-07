@@ -50,16 +50,11 @@ public class Socios_Ventana extends JPanel {
 	private String consulta = "";
 
 	private static final long serialVersionUID = 1L;
-	private JRadioButton rdbtNombre;
-	private JRadioButton rdbtDni;
-	private JRadioButton rdbtEmail;
 	private JScrollPane scrollPane;
 	private JButton btnNuevoSocio;
 	private JButton btnEditarSocio;
 	private JButton btnBorrarSocio;
-	private JButton btnBorrar;
 	private JTable jtResultados;
-	private JTextField textField;
 	private Socios socio = new Socios();
 	private int filaTabla;
 
@@ -83,7 +78,6 @@ public class Socios_Ventana extends JPanel {
 		});
 		// ------------------------------------------------------------
 
-		btnMen.setToolTipText("");
 		btnMen.setForeground(Color.BLACK);
 		btnMen.setFont(new Font("Verdana", Font.PLAIN, 11));
 		btnMen.setBorder(new LineBorder(new Color(88, 49, 117), 2, true));
@@ -107,88 +101,9 @@ public class Socios_Ventana extends JPanel {
 		lblConsultar.setBounds(549, 24, 239, 81);
 		add(lblConsultar);
 
-		JLabel lblBuscar = new JLabel("Buscar por:");
-		lblBuscar.setForeground(new Color(9, 3, 62));
-		lblBuscar.setFont(new Font("Verdana", Font.BOLD, 12));
-		lblBuscar.setBounds(299, 153, 109, 14);
-		add(lblBuscar);
-
-		rdbtNombre = new JRadioButton("Nombre");
-		rdbtNombre.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				textField.setText("");
-			}
-		});
-		rdbtNombre.setSelected(true);
-		rdbtNombre.setFont(new Font("Verdana", Font.PLAIN, 12));
-		rdbtNombre.setContentAreaFilled(false);
-		rdbtNombre.setBackground(new Color(237, 227, 244));
-		rdbtNombre.setBounds(478, 149, 109, 23);
-		add(rdbtNombre);
-
-		rdbtDni = new JRadioButton("DNI");
-		rdbtDni.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				textField.setText("");
-			}
-		});
-		rdbtDni.setFont(new Font("Verdana", Font.PLAIN, 12));
-		rdbtDni.setContentAreaFilled(false);
-		rdbtDni.setBackground(new Color(230, 217, 240));
-		rdbtDni.setBounds(613, 149, 109, 23);
-		add(rdbtDni);
-
-		rdbtEmail = new JRadioButton("Email");
-		rdbtEmail.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				textField.setText("");
-			}
-		});
-		rdbtEmail.setFont(new Font("Verdana", Font.PLAIN, 12));
-		rdbtEmail.setContentAreaFilled(false);
-		rdbtEmail.setBorder(null);
-		rdbtEmail.setBackground(new Color(230, 217, 240));
-		rdbtEmail.setBounds(747, 149, 109, 23);
-		add(rdbtEmail);
-
-		// -- EVENTO TEXTFIELD --
-		textField = new JTextField();
-		textField.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyReleased(KeyEvent e) {
-
-				if (textField.getText().isEmpty()) {
-		            modeloTabla.setRowCount(0);
-		            
-				}else {
-					
-					if (rdbtNombre.isSelected()) {
-						consulta = "nombre_socio";
-					} else if (rdbtDni.isSelected()) {
-						consulta = "dni_libro";
-					} else if (rdbtEmail.isSelected()) {
-						consulta = "email_libro";
-					}
-
-					rellenaTabla(consulta, idBib);
-				}	
-			}
-		});
-		// --------------------------------------
-
-		textField.setColumns(10);
-		textField.setBounds(478, 193, 428, 29);
-		add(textField);
-
-		JLabel lblResultados = new JLabel("Resultados:");
-		lblResultados.setForeground(new Color(9, 3, 62));
-		lblResultados.setFont(new Font("Verdana", Font.BOLD, 12));
-		lblResultados.setBounds(299, 254, 109, 14);
-		add(lblResultados);
-
 		scrollPane = new JScrollPane();
 		scrollPane.setBackground(Color.WHITE);
-		scrollPane.setBounds(32, 296, 1318, 327);
+		scrollPane.setBounds(32, 160, 1318, 463);
 		add(scrollPane);
 
 		// -- AÑADIR SOCIO --
@@ -207,7 +122,7 @@ public class Socios_Ventana extends JPanel {
 		btnNuevoSocio.setFont(new Font("Verdana", Font.PLAIN, 12));
 		btnNuevoSocio.setBorder(null);
 		btnNuevoSocio.setBackground(new Color(233, 210, 255));
-		btnNuevoSocio.setBounds(519, 655, 87, 37);
+		btnNuevoSocio.setBounds(387, 655, 87, 37);
 		add(btnNuevoSocio);
 
 		// -- EDITAR SOCIO --
@@ -233,7 +148,7 @@ public class Socios_Ventana extends JPanel {
 		btnEditarSocio.setFont(new Font("Verdana", Font.PLAIN, 12));
 		btnEditarSocio.setBorder(null);
 		btnEditarSocio.setBackground(new Color(233, 210, 255));
-		btnEditarSocio.setBounds(661, 655, 87, 37);
+		btnEditarSocio.setBounds(667, 655, 87, 37);
 		add(btnEditarSocio);
 
 		// -- BOTÓN ELIMINAR SOCIO --
@@ -259,32 +174,8 @@ public class Socios_Ventana extends JPanel {
 		btnBorrarSocio.setFont(new Font("Verdana", Font.PLAIN, 12));
 		btnBorrarSocio.setBorder(null);
 		btnBorrarSocio.setBackground(new Color(233, 210, 255));
-		btnBorrarSocio.setBounds(813, 655, 87, 37);
+		btnBorrarSocio.setBounds(977, 655, 87, 37);
 		add(btnBorrarSocio);
-
-		// -- RESTABLECER BÚSQUEDA --
-		btnBorrar = new JButton("Limpiar búsqueda");
-		btnBorrar.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				modeloTabla.setRowCount(0);
-				textField.setText("");
-				rdbtNombre.setSelected(true);
-			}
-		});
-		// -----------------------------
-
-		btnBorrar.setForeground(Color.WHITE);
-		btnBorrar.setFont(new Font("Verdana", Font.PLAIN, 12));
-		btnBorrar.setBorder(null);
-		btnBorrar.setBackground(new Color(130, 72, 172));
-		btnBorrar.setBounds(1221, 655, 131, 37);
-		add(btnBorrar);
-
-		// Agrupamos nuestros radio buttons:
-		radioButton.add(rdbtNombre);
-		radioButton.add(rdbtDni);
-		radioButton.add(rdbtEmail);
 
 		// -------------------------- JTABLE --------------------------------------
 
@@ -360,18 +251,19 @@ public class Socios_Ventana extends JPanel {
 
 		jtResultados.getTableHeader().setResizingAllowed(false);
 		jtResultados.getTableHeader().setReorderingAllowed(false);
+		
+		rellenaTabla(idBib);
 
 		// -------------------------------------------------------------
 	}
 
-	public void rellenaTabla(String consulta, String idBib) {
-		String aux = textField.getText().toString();
+	public void rellenaTabla(String idBib) {
 		modeloTabla.setRowCount(0);
 		String lNegra = "";
 
 		// Recorremos los objetos del ArrayList que nos retorna el método de la clase
 		// BaseDeDatos:
-		for (Socios recorreSocios : bd.cargaSocios(consulta, aux, idBib)) {
+		for (Socios recorreSocios : bd.cargaSocios(idBib)) {
 
 			if (recorreSocios.isListaNegra()) {
 				lNegra = "Sí";

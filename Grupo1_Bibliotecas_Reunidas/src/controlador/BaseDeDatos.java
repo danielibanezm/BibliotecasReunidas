@@ -17,6 +17,7 @@ import com.mysql.jdbc.CommunicationsException;
 
 import modelo.Libros;
 import modelo.Prestamos;
+import modelo.Recibos;
 import modelo.Socios;
 import modelo.Usuarios;
 import vista.Errores;
@@ -671,7 +672,7 @@ public class BaseDeDatos {
 
 	// -- MÉTODOS LIBROS --
 
-	public ArrayList<Libros> cargaLibros(String consulta, String aux, String idBib) {
+	public ArrayList<Libros> cargaLibros(String idBib) {
 		ArrayList<Libros> arrlLibros = new ArrayList<>();
 
 		Connection conexion = null;
@@ -687,17 +688,9 @@ public class BaseDeDatos {
 				    + "genero_libro, idioma_libro, edicion_libro, ubicacion_libro, publicacion_libro, pais_libro,"
 				    + "numPaginas_libro, SUM(stock_total) AS stock_total " 
 				    + "FROM libros " 
-				    + "WHERE LOWER(" + consulta + ") LIKE '%" + aux.toLowerCase() + "%' " 
-				    + "AND id_biblioteca = " + idBib
-				    + " GROUP BY " + consulta + " ORDER BY " + consulta);
+				    + "WHERE id_biblioteca = " + idBib
+				    + " GROUP BY titulo_libro ORDER BY titulo_libro");
 			
-			System.out.println("Consulta SQL: " + "SELECT id_libro, id_biblioteca, titulo_libro, autores_libro, isbn_libro, editorial_libro,"
-			        + "genero_libro, idioma_libro, edicion_libro, ubicacion_libro, publicacion_libro, pais_libro,"
-			        + "numPaginas_libro, SUM(stock_total) AS stock_total " + "FROM	libros " + "WHERE " + consulta
-			        + " LIKE '%" + aux + "%' " + "AND id_biblioteca = '" + idBib + "' "
-			        + " GROUP BY " + consulta + " ORDER BY "
-					+ consulta);
-
 			if (!registro.next()) {
 				//err.baseDatosVacia();
 			}
@@ -845,7 +838,6 @@ public class BaseDeDatos {
 			if (!registro.next()) {
 				err.baseDatosVacia();
 			}
-			// While porque podría devolver más de una fila.
 			while (registro.next()) {
 				Libros nuevoLibro = new Libros();
 				nuevoLibro.setIdLibro(registro.getString("id_libro"));
@@ -884,7 +876,7 @@ public class BaseDeDatos {
 
 	// -- MÉTODOS SOCIOS --
 
-	public ArrayList<Socios> cargaSocios(String consulta, String aux, String idBib) {
+	public ArrayList<Socios> cargaSocios(String idBib) {
 		ArrayList<Socios> arrlSocios = new ArrayList<>();
 
 		Connection conexion = null;
@@ -898,8 +890,7 @@ public class BaseDeDatos {
 			registro = consultita.executeQuery(
 					"SELECT id_socio, id_biblioteca, nombre_socio, apellido_socio, dni_socio, direccion_socio,"
 							+ "tlf_socio, email_socio, lista_negra, fechaNad_socio" + " FROM socios " + "WHERE "
-							+ consulta + " LIKE '%" + aux + "%' " + "AND id_biblioteca = '" + idBib + "' " + "ORDER BY "
-							+ consulta);
+							+ "id_biblioteca = '" + idBib + "' " + "ORDER BY nombre_socio");
 
 			if (!registro.next()) {
 				err.baseDatosVacia();
@@ -1103,34 +1094,34 @@ public class BaseDeDatos {
 	}
 
 	public String obtenerIdUser(Usuarios user, String idBib) {
-		String id = "";
-		Connection conexion = null;
-		Statement consulta = null;
-		ResultSet registro = null;
+	    String id = null; // Inicializar el ID como nulo
+	    Connection conexion = null;
+	    Statement consulta = null;
+	    ResultSet registro = null;
 
-		try {
-			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
+	    try {
+	        conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
 
-			consulta = conexion.createStatement();
-			registro = consulta.executeQuery("SELECT id_usuario" + " FROM usuarios" + " WHERE email_usuarios = '"
-					+ user.getEmail() + " AND id_biblioteca = '" + idBib + "' ");
+	        consulta = conexion.createStatement();
+	        registro = consulta.executeQuery("SELECT id_usuario FROM usuarios WHERE email_usuario = '"
+	                + user.getEmail() + "' AND id_biblioteca = '" + idBib + "' ");
 
-			if (registro.next()) {
-				id = registro.getString("id_usuario");
-			}
+	        if (registro.next()) {
+	            id = registro.getString("id_usuario");
+	        }
 
-		} catch (SQLException e) {
-		} finally {
-			try {
-				if (conexion != null) {
-					conexion.close();
-				}
-			} catch (SQLException e) {
-			} catch (NullPointerException e) {
-			}
-		}
+	    } catch (SQLException e) {
+	    } finally {
+	        try {
+	            if (conexion != null) {
+	                conexion.close();
+	            }
+	        } catch (SQLException e) {
+	        } catch (NullPointerException e) {
+	        }
+	    }
 
-		return id;
+	    return id;
 	}
 
 	public void insertarUsuario(Usuarios nuevoUser, String idBib) {
@@ -1168,8 +1159,6 @@ public class BaseDeDatos {
 
 			consulta.executeUpdate(
 					"INSERT INTO OTROS (id_biblioteca, material) VALUES ('" + idBib + "', '" + nuevoUser.getContrasenia() + "')");
-
-			err.confirmarInsert();
 
 		} catch (SQLException e) {
 		} finally {
@@ -1231,6 +1220,144 @@ public class BaseDeDatos {
 		
 	}
 
+	public void eliminarUsuario(String id, String idBib) {
+		Connection conexion = null;
+		Statement consulta = null;
+
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
+			consulta = conexion.createStatement();
+
+			consulta.executeUpdate(
+					"DELETE FROM usuarios WHERE id_usuario = '" + id + "'" + " AND id_biblioteca = '" + idBib + "' ");
+			
+			err.confirmarEliminar();
+
+		} catch (SQLException e) {
+		} finally {
+			try {
+				conexion.close();
+			} catch (SQLException e) {
+			} catch (NullPointerException e) {
+			}
+		}
+		
+	}
+
+	public void eliminarContrasenia(String id, String idBib) {
+		Connection conexion = null;
+		Statement consulta = null;
+
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
+			consulta = conexion.createStatement();
+
+			consulta.executeUpdate(
+					"DELETE FROM otros WHERE id_otro = '" + id + "'" + " AND id_biblioteca = '" + idBib + "' ");
+
+		} catch (SQLException e) {
+		} finally {
+			try {
+				conexion.close();
+			} catch (SQLException e) {
+			} catch (NullPointerException e) {
+			}
+		}
+		
+	}
+	
 	// ------------------------------------------------------------------------------------------
 	
+	// -- MÉTODOS RECIBOS --
+
+	public void generarRecibo(Recibos recibo) {
+	    Connection conexion = null;
+	    Statement consulta = null;
+
+	    try {
+	        conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
+	        consulta = conexion.createStatement();
+
+	        consulta.executeUpdate(
+	        	    "INSERT INTO recibos (id_biblioteca, id_socio, pagado) VALUES (" + recibo.getId_bib() + ", "
+	        	            + recibo.getId_socio() + ", " + recibo.isPagado() + ")");
+	        
+	    } catch (SQLException e) {
+	    } finally {
+	        try {
+	            if (conexion != null) {
+	            	String titulo = "Aviso";
+	        		JOptionPane.showMessageDialog(null, "Recibo insertado correctamente.", titulo, JOptionPane.INFORMATION_MESSAGE);
+	                conexion.close();
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        } catch (NullPointerException e) {
+	            e.printStackTrace();
+	        }
+	    }
+	}
+
+	public String obtenerIdRecibo(Recibos recibo) {
+		String idRecibo = null;
+		
+		Connection conexion = null;
+		Statement consulta = null;
+		ResultSet registro = null;
+
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
+
+			consulta = conexion.createStatement();
+			registro = consulta.executeQuery("SELECT id_recibo" + " FROM recibos" + " WHERE id_socio = "
+					+ recibo.getId_socio() + " AND id_biblioteca = " + recibo.getId_bib());
+
+			if (registro.next()) {
+				idRecibo = registro.getString("id_recibo");
+			}else {
+				return idRecibo;
+			}
+
+		} catch (SQLException e) {
+		} finally {
+			try {
+				if (conexion != null) {
+					conexion.close();
+				}
+			} catch (SQLException e) {
+			} catch (NullPointerException e) {
+			}
+		}
+		
+		return idRecibo;
+	}
+
+	public void editarRecibo(Recibos recibo, String id) {
+		Connection conexion = null;
+		Statement consulta = null;
+
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
+			consulta = conexion.createStatement();
+
+			consulta.executeUpdate("UPDATE recibos SET pagado= " + recibo.isPagado() + " WHERE id_recibo= "
+			        + id + " AND id_biblioteca = " + recibo.getId_bib());
+
+		} catch (SQLException e) {
+		} finally {
+			try {
+				if (conexion != null) {
+					String titulo = "Aviso";
+					JOptionPane.showMessageDialog(null, "Recibo editado correctamente.", titulo, JOptionPane.INFORMATION_MESSAGE);
+					conexion.close();
+				}
+			} catch (SQLException e) {
+			} catch (NullPointerException e) {
+			}
+		}
+		
+	}
+
+	
+	// ------------------------------------------------------------------------------------------
 }
