@@ -24,6 +24,8 @@ import modelo.Prestamos;
 
 import java.awt.Color;
 import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableModel;
+
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
@@ -50,7 +52,7 @@ public class Hacer_Prestamo extends JDialog {
 	
 	//Con el boolean esAdmin no tienes que hacer nada, es para que al retornar al menú sepa qué tipo de usuario está en la app.
 	//Librito tiene toda la info del libro que se ha seleccionado en la tabla. A través del getter se obtienen sus datos.
-	public Hacer_Prestamo(Libros librito, String idBib) {
+	public Hacer_Prestamo(Libros librito, String idBib, DefaultTableModel modeloTabla, int filaTabla, int stock) {
 		setResizable(false);
 		setModal(true);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Editar_Libro.class.getResource("/img/libro.png")));
@@ -115,6 +117,8 @@ public class Hacer_Prestamo extends JDialog {
 					
 					if (insertRealizado) {
 						bd.borrarUnaUnidadStock(idLibro, idBib);
+						
+						modeloTabla.setValueAt((stock -1), filaTabla, 11);
 					}
 				}								
 			}
@@ -153,6 +157,6 @@ public class Hacer_Prestamo extends JDialog {
 		lblRealizar.setBounds(170, 17, 239, 81);
 		contentPanel.add(lblRealizar);
 	
-
 	}
+	
 }

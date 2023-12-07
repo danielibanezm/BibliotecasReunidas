@@ -101,7 +101,8 @@ public class Libros_Ventana extends JPanel {
 
 				filaTabla = jtResultados.getSelectedRow();
 				if (filaTabla != -1) { // Se ha seleccionado una fila
-					prestamo = new Hacer_Prestamo(librito, idBib);
+					int stock = (int) modeloTabla.getValueAt(filaTabla, 11);
+					prestamo = new Hacer_Prestamo(librito, idBib, modeloTabla, filaTabla, stock);
 					prestamo.setVisible(true);
 
 				} else {
