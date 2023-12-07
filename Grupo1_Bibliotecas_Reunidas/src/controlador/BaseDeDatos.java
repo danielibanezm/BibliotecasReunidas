@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -209,6 +211,7 @@ public class BaseDeDatos {
 						"Se han insertado correctamente la fecha de prestamo y la fecha de entrega prevista en la tabla.",
 						"Información", JOptionPane.INFORMATION_MESSAGE);
 				
+				err.confirmarInsert();
 				insertRealizado = true;
 			} else {
 				JOptionPane.showMessageDialog(null,
@@ -258,21 +261,156 @@ public class BaseDeDatos {
 		}
 	}
 	
-	public String calcularFechaActual() {
-		String fechaFormateada = null;
+	public void verificarFechaDevolucion(String idPrestamo, String idSocio, String idBiblioteca, String idLibro) {
+		Connection conexion = null;
+		Statement consulta = null;
+		ResultSet registro = null;		
+		try {
+            conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
 
-		// Obtener la fecha actual con Calendar
-		Calendar calendar = Calendar.getInstance();
-		java.util.Date fechaActual = calendar.getTime();
+            consulta = conexion.createStatement();
 
-		// Formatear la fecha actual como 'YYYY-MM-DD'
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		fechaFormateada = dateFormat.format(fechaActual);
+            registro = consulta.executeQuery(
+            		"SELECT fecha_entrega_prevista FROM prestamos WHERE id_prestamo ='" + idPrestamo 
+            		+ "' AND id_biblioteca ='" + idBiblioteca + "' AND id_libro = '" + idLibro + "'");
+           
+            if (registro.next()) {
+                String fechaEntregaPrevista = registro.getString("fecha_entrega_prevista");
+                
+                // Convertir la fecha de entrega prevista a LocalDate
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate fechaEntrega = LocalDate.parse(fechaEntregaPrevista, formatter);
+
+                // Obtener la fecha actual
+                LocalDate fechaActual = LocalDate.now();
+                
+                // Comparar las fechas
+                if (fechaActual.isAfter(fechaEntrega)) {
+                	JOptionPane.showMessageDialog(null,
+    						"Este ejemplar se ha devuelto fuera de plazo. El usuario tendrá un recargo del doble de mensualidad en la próxima cuota.",
+    						"Aviso", JOptionPane.WARNING_MESSAGE);
+                	
+                	insertarMulta(idSocio, idBiblioteca);
+                } else {
+                	JOptionPane.showMessageDialog(null,
+    						"El libro se ha devuelto correctamente dentro del plazo.",
+    						"Información", JOptionPane.INFORMATION_MESSAGE);
+                }
+                
+                borrarPrestamo(idPrestamo, idSocio, idBiblioteca, idLibro);
+            }
+		} catch (SQLException e) {
+			e.printStackTrace();
+			err.baseDatosNoConexion();
+		} finally {
+			try {
+				if (registro != null) {
+					registro.close();
+				}
+				if (consulta != null) {
+					consulta.close();
+				}
+				if (conexion != null) {
+					conexion.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+				err.baseDatosNoConexion();
+			} catch (NullPointerException e) {
+			}
+		}
+    }
+	
+	public void borrarPrestamo(String idPrestamo, String idSocio, String idBiblioteca, String idLibro) {
+		Connection conexion = null;
+		Statement consulta = null;
 		
-		return fechaFormateada;
-	}
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
+			consulta = conexion.createStatement();
 
-	public String obtenerIdSocio(Libros libro, String nombreSocio, String apellidoSocio, String correoSocio,
+			consulta.executeUpdate(
+					"DELETE FROM prestamos WHERE id_prestamo = '" + idPrestamo + "' AND id_biblioteca = '" + idBiblioteca
+					+ "' AND id_libro = '" + idLibro + "'");
+
+			err.confirmarDeletePrestamos();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			err.baseDatosNoConexion();
+		} finally {
+			try {
+				conexion.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				err.baseDatosNoConexion();
+			} catch (NullPointerException e) {
+			}
+		}
+	}		
+	
+	public void insertarMulta(String idSocio, String idBiblioteca) {
+		Connection conexion = null;
+		Statement consulta = null;
+
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
+			consulta = conexion.createStatement();
+
+			consulta.executeUpdate(
+					"INSERT INTO multas (id_socio, id_biblioteca, multa_obtenida) "
+					+ "VALUES ('" + idSocio + "', '" + idBiblioteca + "', '1')");
+
+			err.confirmarInsert();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			err.baseDatosNoConexion();
+		} finally {
+			try {
+				conexion.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				err.baseDatosNoConexion();
+			} catch (NullPointerException e) {
+			}
+		}
+	}
+	
+	public String obtenerIdSocioDesdeNombre(String nombreSocio, String apellidoSocio, String idBib) {
+		String id = "";
+		Connection conexion = null;
+		Statement consulta = null;
+		ResultSet registro = null;
+
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
+
+			consulta = conexion.createStatement();
+			registro = consulta.executeQuery("SELECT id_socio" + " FROM socios" + " WHERE id_biblioteca = '" + idBib
+					+ "' AND nombre_socio = '" + nombreSocio + "' AND apellido_socio = '" + apellidoSocio + "'");
+
+			if (registro.next()) {
+				id = registro.getString("id_socio");
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			err.baseDatosNoConexion();
+		} finally {
+			try {
+				if (conexion != null) {
+					conexion.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+				err.baseDatosNoConexion();
+			} catch (NullPointerException e) {
+			}
+		}
+
+		return id;
+	}
+	
+	public String obtenerIdSocioDesdeLibro(Libros libro, String nombreSocio, String apellidoSocio, String correoSocio,
 			String idBib) {
 		String id = "";
 		Connection conexion = null;
@@ -903,10 +1041,12 @@ public class BaseDeDatos {
 			err.confirmarInsert();
 
 		} catch (SQLException e) {
+			err.baseDatosNoConexion();
 		} finally {
 			try {
 				conexion.close();
 			} catch (SQLException e) {
+				err.baseDatosNoConexion();
 			} catch (NullPointerException e) {
 			}
 		}

@@ -104,7 +104,7 @@ public class Hacer_Prestamo extends JDialog {
 					JOptionPane.showMessageDialog(null, "Los datos introducidos son incorrectos y no se encuentran en la Base de Datos. Por favor, inténtelo de nuevo.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 				} else{
-					idSocio = bd.obtenerIdSocio(librito, nombreSocio, apellidoSocio, correoSocio, idBib);
+					idSocio = bd.obtenerIdSocioDesdeLibro(librito, nombreSocio, apellidoSocio, correoSocio, idBib);
 					idLibro = bd.obtenerIdLibro(librito, idBib);
 
 					insertRealizado = bd.insertarPrestamo(idSocio, idLibro, idBib);

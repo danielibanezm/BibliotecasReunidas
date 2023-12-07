@@ -75,4 +75,10 @@ public class Errores {
 		String titulo = "Aviso";
 		JOptionPane.showMessageDialog(null, "Registro insertado correctamente.", titulo, JOptionPane.INFORMATION_MESSAGE);
 	}
+	
+
+	public void confirmarDeletePrestamos() {
+		String titulo = "Aviso";
+		JOptionPane.showMessageDialog(null, "Registro de la tabla Préstamos borrado correctamente.", titulo, JOptionPane.INFORMATION_MESSAGE);
+	}
 }
