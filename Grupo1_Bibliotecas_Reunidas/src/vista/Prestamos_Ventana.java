@@ -146,7 +146,7 @@ public class Prestamos_Ventana extends JPanel {
 		
 		//Variable para hacer el if de población.
 		//Recorremos los objetos del ArrayList que nos retorna el método de la clase BaseDatos:
-		for(Prestamos recorrePrestamos : bd.cargaPrestamos()) {
+		for(Prestamos recorrePrestamos : bd.cargaPrestamos(idBib)) {
 			String idBiblioteca = recorrePrestamos.getId_biblioteca();
 			String idLibro = recorrePrestamos.getId_libro();			
 			String tituloLibro = bd.obtenerTituloLibro(idLibro, idBiblioteca);

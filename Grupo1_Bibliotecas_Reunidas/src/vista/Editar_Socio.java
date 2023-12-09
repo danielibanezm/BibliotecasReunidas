@@ -11,7 +11,7 @@ import javax.swing.table.DefaultTableModel;
 
 import controlador.BaseDeDatos;
 import modelo.Libros;
-import modelo.Recibos;
+import modelo.InformacionRecibo;
 import modelo.Socios;
 import java.awt.Color;
 import java.awt.Font;
@@ -255,7 +255,7 @@ public class Editar_Socio extends JDialog {
 		int opcion = 0;
 		String idSocio = "", idRecibo ="";
 		String listaNegra = "";
-		Recibos recibo = new Recibos();
+		InformacionRecibo recibo = new InformacionRecibo();
 
 		opcion = err.preguntarEditar();
 

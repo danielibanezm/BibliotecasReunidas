@@ -17,7 +17,7 @@ import com.mysql.jdbc.CommunicationsException;
 
 import modelo.Libros;
 import modelo.Prestamos;
-import modelo.Recibos;
+import modelo.InformacionRecibo;
 import modelo.Socios;
 import modelo.Usuarios;
 import vista.Errores;
@@ -26,7 +26,7 @@ public class BaseDeDatos {
 	private Errores err = new Errores();
 
 	// -- MÉTODOS PRÉSTAMOS --
-	public ArrayList<Prestamos> cargaPrestamos() {
+	public ArrayList<Prestamos> cargaPrestamos(String idBiblioteca) {
 		ArrayList<Prestamos> arrlPrestamos = new ArrayList<>();
 
 		Connection conexion = null;
@@ -36,7 +36,9 @@ public class BaseDeDatos {
 		try {
 			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bibliotecas_reunidas", "root", "");
 			consulta = conexion.createStatement();
-			registro = consulta.executeQuery("select * from prestamos");
+			registro = consulta.executeQuery("select id_prestamo, id_biblioteca, id_socio, id_libro, fecha_prestamo, fecha_entrega_prevista"
+					+ " FROM prestamos"
+					+ " WHERE id_biblioteca = '" + idBiblioteca + "' order by id_prestamo");
 
 			if (registro == null) {
 				err.baseDatosVacia();
@@ -175,6 +177,43 @@ public class BaseDeDatos {
 
 		return apellido;
 	}
+	
+	public int comprobarNumeroPrestamos (String idBiblioteca, String idSocio, String idLibro) {		
+		int numPrestamos = 0;
+		Connection conexion = null;
+		Statement consulta = null;
+		ResultSet registro = null;
+
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
+
+			consulta = conexion.createStatement();
+			registro = consulta.executeQuery("SELECT id_socio, id_biblioteca, COUNT(*) as cantidad_prestamos FROM prestamos"
+					+ " WHERE id_socio = '" + idSocio + "' AND id_biblioteca = '" + idBiblioteca + "'"
+					+ " GROUP BY id_socio, id_biblioteca");
+
+			if (registro.next()) {
+				numPrestamos = Integer.parseInt(registro.getString("cantidad_prestamos"));
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			err.baseDatosNoConexion();
+		} finally {
+			try {
+				if (conexion != null) {
+					conexion.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+				err.baseDatosNoConexion();
+			} catch (NullPointerException e) {
+			}
+		}
+
+		return numPrestamos;
+		
+	}
 
 	public boolean insertarPrestamo(String id_socio, String id_libro, String id_biblioteca) {
 		Connection conexion = null;
@@ -237,7 +276,7 @@ public class BaseDeDatos {
 		return insertRealizado;
 	}
 	
-	public static String calcularFechaEntregaPrevista(String fechaPrestamo) {
+	public String calcularFechaEntregaPrevista(String fechaPrestamo) {
 		try {
 			// Convertir la fecha de préstamo a Date usando SimpleDateFormat
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -256,70 +295,81 @@ public class BaseDeDatos {
 			// Formatear la fecha como una cadena
 			return dateFormat.format(fechaEntregaPrevista);
 
-		} catch (Exception e) {
-			// e.printStackTrace();
+		} catch (java.text.ParseException e) {
+			e.printStackTrace();
 			return null;
 		}
 	}
 	
 	public void verificarFechaDevolucion(String idPrestamo, String idSocio, String idBiblioteca, String idLibro) {
-		Connection conexion = null;
-		Statement consulta = null;
-		ResultSet registro = null;		
-		try {
+        Connection conexion = null;
+        Statement consulta = null;
+        ResultSet registro = null;
+        try {
             conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
 
             consulta = conexion.createStatement();
 
             registro = consulta.executeQuery(
-            		"SELECT fecha_entrega_prevista FROM prestamos WHERE id_prestamo ='" + idPrestamo 
-            		+ "' AND id_biblioteca ='" + idBiblioteca + "' AND id_libro = '" + idLibro + "'");
-           
+                    "SELECT fecha_entrega_prevista FROM prestamos WHERE id_prestamo ='" + idPrestamo
+                            + "' AND id_biblioteca ='" + idBiblioteca + "' AND id_libro = '" + idLibro + "'");
+            System.out.println(registro);
+            
+            System.out.println("SELECT fecha_entrega_prevista FROM prestamos WHERE id_prestamo ='" + idPrestamo
+                            + "' AND id_biblioteca ='" + idBiblioteca + "' AND id_libro = '" + idLibro + "'");
+
             if (registro.next()) {
                 String fechaEntregaPrevista = registro.getString("fecha_entrega_prevista");
-                
-                // Convertir la fecha de entrega prevista a LocalDate
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                LocalDate fechaEntrega = LocalDate.parse(fechaEntregaPrevista, formatter);
 
                 // Obtener la fecha actual
-                LocalDate fechaActual = LocalDate.now();
+                Calendar calendar = Calendar.getInstance();
+                java.util.Date fechaActual = calendar.getTime();
+
+                // Convertir la fecha de entrega prevista a Date
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                java.util.Date fechaEntrega = dateFormat.parse(fechaEntregaPrevista);
                 
+                System.out.println(fechaActual);
+                System.out.println(fechaEntrega);
+
                 // Comparar las fechas
-                if (fechaActual.isAfter(fechaEntrega)) {
-                	JOptionPane.showMessageDialog(null,
-    						"Este ejemplar se ha devuelto fuera de plazo. El usuario tendrá un recargo del doble de mensualidad en la próxima cuota.",
-    						"Aviso", JOptionPane.WARNING_MESSAGE);
-                	
-                	insertarMulta(idSocio, idBiblioteca);
+                if (fechaActual.after(fechaEntrega)) {
+                	System.out.println("Hola");
+                    JOptionPane.showMessageDialog(null,
+                            "Este ejemplar se ha devuelto fuera de plazo. El socio tendrá un recargo del doble de mensualidad en la próxima cuota.",
+                            "Aviso", JOptionPane.WARNING_MESSAGE);
+
+                    insertarMulta(idSocio, idBiblioteca);
                 } else {
-                	JOptionPane.showMessageDialog(null,
-    						"El libro se ha devuelto correctamente dentro del plazo.",
-    						"Información", JOptionPane.INFORMATION_MESSAGE);
+                	System.out.println("Adios");
+                    JOptionPane.showMessageDialog(null, "El libro se ha devuelto correctamente dentro del plazo.",
+                            "Información", JOptionPane.INFORMATION_MESSAGE);
                 }
-                
+
                 borrarPrestamo(idPrestamo, idSocio, idBiblioteca, idLibro);
             }
-		} catch (SQLException e) {
+        } catch (SQLException e) {
+            e.printStackTrace();
+            err.baseDatosNoConexion();
+        } catch (java.text.ParseException e) {
 			e.printStackTrace();
-			err.baseDatosNoConexion();
 		} finally {
-			try {
-				if (registro != null) {
-					registro.close();
-				}
-				if (consulta != null) {
-					consulta.close();
-				}
-				if (conexion != null) {
-					conexion.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-				err.baseDatosNoConexion();
-			} catch (NullPointerException e) {
-			}
-		}
+            try {
+                if (registro != null) {
+                    registro.close();
+                }
+                if (consulta != null) {
+                    consulta.close();
+                }
+                if (conexion != null) {
+                    conexion.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                err.baseDatosNoConexion();
+            } catch (NullPointerException e) {
+            }
+        }
     }
 	
 	public void borrarPrestamo(String idPrestamo, String idSocio, String idBiblioteca, String idLibro) {
@@ -1269,8 +1319,61 @@ public class BaseDeDatos {
 	// ------------------------------------------------------------------------------------------
 	
 	// -- MÉTODOS RECIBOS --
+	
+	
+	public ArrayList<InformacionRecibo> cargaInfoRecibos(String idBiblioteca) {
+		ArrayList<InformacionRecibo> arrlRecibos = new ArrayList<>();
 
-	public void generarRecibo(Recibos recibo) {
+		Connection conexion = null;
+		Statement consulta = null;
+		ResultSet registro = null;
+
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bibliotecas_reunidas", "root", "");
+			consulta = conexion.createStatement();
+			registro = consulta.executeQuery("SELECT r.id_recibo, s.nombre_socio, s.apellido_socio, s.dni_socio, b.calle_biblioteca, b.provincia_biblioteca, b.codigoPostal_biblioteca, b.tlf_biblioteca, r.pagado, s.lista_negra"
+					+ " FROM recibos r, bibliotecas b, socios s"
+					+ " WHERE r.id_biblioteca = '" + idBiblioteca + "' AND r.id_biblioteca = b.id_biblioteca AND r.id_socio = s.id_socio AND r.id_biblioteca = s.id_biblioteca"
+					+ " ORDER BY r.id_recibo");
+
+			if (registro == null) {
+				err.baseDatosVacia();
+			}
+			// While se pone porque podría devolver más de una fila.
+			while (registro.next()) {
+				InformacionRecibo nuevoRecibo = new InformacionRecibo();
+				nuevoRecibo.setId_recibo(registro.getString("id_recibo"));
+				nuevoRecibo.setNombre_socio(registro.getString("nombre_socio"));
+				nuevoRecibo.setApellido_socio(registro.getString("apellido_socio"));
+				nuevoRecibo.setDni_socio(registro.getString("dni_socio"));
+				nuevoRecibo.setCalle_biblioteca(registro.getString("calle_biblioteca"));
+				nuevoRecibo.setProvincia_biblioteca(registro.getString("provincia_biblioteca"));
+				nuevoRecibo.setCodigo_postal_biblioteca(registro.getString("codigoPostal_biblioteca"));
+				nuevoRecibo.setTelefono_biblioteca(registro.getString("tlf_biblioteca"));
+				nuevoRecibo.setPagado(registro.getBoolean("pagado"));
+				nuevoRecibo.setLista_negra(registro.getBoolean("lista_negra"));
+
+				arrlRecibos.add(nuevoRecibo);
+			}
+
+		} catch (SQLException e) {
+			// e.printStackTrace();
+			err.baseDatosNoConexion();
+		} finally {
+			try {
+				conexion.close();
+			} catch (SQLException e) {
+				// e.printStackTrace();
+				err.baseDatosNoConexion();
+			} catch (NullPointerException e) {
+
+			}
+		}
+
+		return arrlRecibos;
+	}
+
+	public void generarRecibo(InformacionRecibo recibo) {
 	    Connection conexion = null;
 	    Statement consulta = null;
 
@@ -1298,7 +1401,7 @@ public class BaseDeDatos {
 	    }
 	}
 
-	public String obtenerIdRecibo(Recibos recibo) {
+	public String obtenerIdRecibo(InformacionRecibo recibo) {
 		String idRecibo = null;
 		
 		Connection conexion = null;
@@ -1332,7 +1435,7 @@ public class BaseDeDatos {
 		return idRecibo;
 	}
 
-	public void editarRecibo(Recibos recibo, String id) {
+	public void editarRecibo(InformacionRecibo recibo, String id) {
 		Connection conexion = null;
 		Statement consulta = null;
 
@@ -1344,6 +1447,8 @@ public class BaseDeDatos {
 			        + id + " AND id_biblioteca = " + recibo.getId_bib());
 
 		} catch (SQLException e) {
+			e.printStackTrace();
+			err.baseDatosNoConexion();
 		} finally {
 			try {
 				if (conexion != null) {
@@ -1352,11 +1457,38 @@ public class BaseDeDatos {
 					conexion.close();
 				}
 			} catch (SQLException e) {
+				e.printStackTrace();
+				err.baseDatosNoConexion();
 			} catch (NullPointerException e) {
 			}
 		}
 		
 	}
+	
+	public void confirmarPagoRecibo(String idRecibo) {
+		Connection conexion = null;
+		Statement consulta = null;
+
+        try {
+            conexion = DriverManager.getConnection("jdbc:mysql://localhost/bibliotecas_reunidas", "root", "");
+			consulta = conexion.createStatement();
+			
+            consulta.executeUpdate ("UPDATE recibos SET pagado = 1 WHERE id_recibo = '" + idRecibo + "'");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            err.baseDatosVacia();
+        } finally {
+            try {
+                if (conexion != null) {
+                	String titulo = "Aviso";
+					JOptionPane.showMessageDialog(null, "Recibo editado correctamente.", titulo, JOptionPane.INFORMATION_MESSAGE);
+					conexion.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
 	
 	// ------------------------------------------------------------------------------------------

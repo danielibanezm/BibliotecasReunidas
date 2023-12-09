@@ -100,11 +100,11 @@ public class Menu extends JPanel {
 		add(btnPrestamos);
 		
 		//-- ACCIÓN BOTÓN MULTAS --
-		JButton btnReciMul = new JButton("Recibos y Multas");
+		JButton btnReciMul = new JButton("Recibos");
 		btnReciMul.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				ventana.nuevoPanel(new Multas_Ventana(ventana, esAdmin, idBib));
+				ventana.nuevoPanel(new Recibos_Ventana(ventana, esAdmin, idBib));
 			}
 		});
 		//-------------------------------------------------------

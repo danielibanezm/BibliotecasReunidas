@@ -112,14 +112,21 @@ public class Hacer_Prestamo extends JDialog {
 				} else{
 					idSocio = bd.obtenerIdSocioDesdeLibro(librito, nombreSocio, apellidoSocio, correoSocio, idBib);
 					idLibro = bd.obtenerIdLibro(librito, idBib);
-
-					insertRealizado = bd.insertarPrestamo(idSocio, idLibro, idBib);
 					
-					if (insertRealizado) {
-						bd.borrarUnaUnidadStock(idLibro, idBib);
+					if (bd.comprobarNumeroPrestamos(idBib, idSocio, idLibro) > 3){
+						JOptionPane.showMessageDialog(null, "Este socio no puede realizar más préstamos debido a que ha alcanzado el número máximo de ellos simultáneos.", "Error",
+								JOptionPane.ERROR_MESSAGE);
 						
-						modeloTabla.setValueAt((stock -1), filaTabla, 11);
-					}
+						System.out.println(bd.comprobarNumeroPrestamos(idBib, idSocio, idLibro));
+					} else {
+						insertRealizado = bd.insertarPrestamo(idSocio, idLibro, idBib);
+						
+						if (insertRealizado) {
+							bd.borrarUnaUnidadStock(idLibro, idBib);
+							
+							modeloTabla.setValueAt((stock -1), filaTabla, 11);
+						}
+					}				
 				}								
 			}
 		});
