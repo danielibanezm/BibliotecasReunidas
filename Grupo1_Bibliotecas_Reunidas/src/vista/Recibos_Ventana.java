@@ -69,7 +69,7 @@ public class Recibos_Ventana extends JPanel {
 		scrollPane.setViewportView(jtRecibos);
 		
 		// ----- CREAR TABLA ----
-		modeloTabla.setColumnIdentifiers(new Object[]{"ID Recibo", "Nombre Socio", "Apellido Socio", "DNI Socio", "Recibo Pagado"});
+		modeloTabla.setColumnIdentifiers(new Object[]{"ID Recibo", "Nombre Socio", "Apellido Socio", "DNI Socio", "Multado/a", "Recibo Pagado"});
 		jtRecibos.setModel(modeloTabla);
 		
 		JLabel lblConsultar = new JLabel("Consultar");
@@ -154,6 +154,7 @@ public class Recibos_Ventana extends JPanel {
 		jtRecibos.getColumnModel().getColumn(2).setPreferredWidth(60);
 		jtRecibos.getColumnModel().getColumn(3).setPreferredWidth(60);
 		jtRecibos.getColumnModel().getColumn(4).setPreferredWidth(60);
+		jtRecibos.getColumnModel().getColumn(4).setPreferredWidth(60);
 		
 		JTableHeader encabezado = jtRecibos.getTableHeader();
 		Color violeta = new Color(230, 217, 240);
@@ -166,6 +167,7 @@ public class Recibos_Ventana extends JPanel {
 		jtRecibos.getTableHeader().setReorderingAllowed(false);
 		
 		String pagado = "";
+		String multado = "";
 
 		// -- Cargar información en la tabla --
 		for(InformacionRecibo recorreRecibos : bd.cargaInfoRecibos(idBib)) {	
@@ -175,12 +177,19 @@ public class Recibos_Ventana extends JPanel {
 			} else {
 				pagado = "No";
 			}
+			
+			if (recorreRecibos.isMulta_obtenida()) {
+				multado = "Sí";
+			} else {
+				multado = "No";
+			}
 
 			modeloTabla.addRow(new Object[] {
 				recorreRecibos.getId_recibo(),
 				recorreRecibos.getNombre_socio(),
 				recorreRecibos.getApellido_socio(),
 				recorreRecibos.getDni_socio(),
+				multado,
 				pagado
 			});
 		}
