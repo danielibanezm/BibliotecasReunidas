@@ -17,9 +17,6 @@ public class Ventana extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 
-	/**
-	 * Launch the application.
-	 */
 	public void ventana(Ventana frame) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -32,9 +29,7 @@ public class Ventana extends JFrame {
 		});
 	}
 
-	/**
-	 * Create the frame.
-	 */
+
 	public Ventana() {
 		setResizable(false);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Ventana.class.getResource("/img/libro.png")));

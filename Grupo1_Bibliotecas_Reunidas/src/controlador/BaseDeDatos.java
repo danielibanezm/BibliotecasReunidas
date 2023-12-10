@@ -334,7 +334,6 @@ public class BaseDeDatos {
 
                     insertarMulta(idSocio, idBiblioteca);
                 } else {
-                	System.out.println("Adios");
                     JOptionPane.showMessageDialog(null, "El libro se ha devuelto correctamente dentro del plazo.",
                             "Información", JOptionPane.INFORMATION_MESSAGE);
                 }
@@ -342,7 +341,6 @@ public class BaseDeDatos {
                 borrarPrestamo(idPrestamo, idSocio, idBiblioteca, idLibro);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
             err.baseDatosNoConexion();
         } catch (java.text.ParseException e) {
 			e.printStackTrace();
@@ -358,8 +356,6 @@ public class BaseDeDatos {
                     conexion.close();
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
-                err.baseDatosNoConexion();
             } catch (NullPointerException e) {
             }
         }
@@ -379,14 +375,11 @@ public class BaseDeDatos {
 
 			err.confirmarDeletePrestamos();
 		} catch (SQLException e) {
-			e.printStackTrace();
 			err.baseDatosNoConexion();
 		} finally {
 			try {
 				conexion.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
-				err.baseDatosNoConexion();
 			} catch (NullPointerException e) {
 			}
 		}
@@ -406,14 +399,11 @@ public class BaseDeDatos {
 
 			err.confirmarInsert();
 		} catch (SQLException e) {
-			e.printStackTrace();
 			err.baseDatosNoConexion();
 		} finally {
 			try {
 				conexion.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
-				err.baseDatosNoConexion();
 			} catch (NullPointerException e) {
 			}
 		}
@@ -437,16 +427,12 @@ public class BaseDeDatos {
 			}
 
 		} catch (SQLException e) {
-			e.printStackTrace();
-			err.baseDatosNoConexion();
 		} finally {
 			try {
 				if (conexion != null) {
 					conexion.close();
 				}
 			} catch (SQLException e) {
-				e.printStackTrace();
-				err.baseDatosNoConexion();
 			} catch (NullPointerException e) {
 			}
 		}
@@ -474,16 +460,12 @@ public class BaseDeDatos {
 			}
 
 		} catch (SQLException e) {
-			e.printStackTrace();
-			err.baseDatosNoConexion();
 		} finally {
 			try {
 				if (conexion != null) {
 					conexion.close();
 				}
 			} catch (SQLException e) {
-				// e.printStackTrace();
-				err.baseDatosNoConexion();
 			} catch (NullPointerException e) {
 			}
 		}
@@ -510,16 +492,12 @@ public class BaseDeDatos {
 			}
 
 		} catch (SQLException e) {
-			e.printStackTrace();
-			err.baseDatosNoConexion();
 		} finally {
 			try {
 				if (conexion != null) {
 					conexion.close();
 				}
 			} catch (SQLException e) {
-				// e.printStackTrace();
-				err.baseDatosNoConexion();
 			} catch (NullPointerException e) {
 			}
 		}
@@ -552,7 +530,6 @@ public class BaseDeDatos {
 			correoExiste = resultadoCorreo.next();
 
 		} catch (SQLException e) {
-			e.printStackTrace();
 			err.baseDatosNoConexion();
 		} finally {
 			try {
@@ -572,8 +549,6 @@ public class BaseDeDatos {
 					conexion.close();
 				}
 			} catch (SQLException e) {
-				// e.printStackTrace();
-				err.baseDatosNoConexion();
 			}
 		}
 
@@ -610,10 +585,35 @@ public class BaseDeDatos {
 		}
 	}
 
+	public void actualizarStock(String idLibro, String idBib) {
+		Connection conexion = null;
+		Statement consulta = null;
+
+		try {
+			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
+			consulta = conexion.createStatement();
+			consulta.executeUpdate("UPDATE libros SET stock_total = stock_total + 1 WHERE id_libro = '" + idLibro + 
+					"' AND id_biblioteca = '" + idBib + "'");
+
+		} catch (SQLException e) {
+		} finally {
+			try {
+				if (consulta != null) {
+					consulta.close();
+				}
+				if (conexion != null) {
+					conexion.close();
+				}
+				JOptionPane.showMessageDialog(null, "Se ha modificado correctamente el stock de tomos de este libro.",
+						"Información", JOptionPane.INFORMATION_MESSAGE);
+			} catch (SQLException e) {
+			}
+		}
+		
+	}
 	// ------------------------------------------------------------------------------------------
 
 	// -- MÉTODOS LOGIN --
-
 	public boolean compruebaUsuario(String usuario, String contrasenia) {
 		String id = "";
 		boolean correcto = false;
@@ -714,7 +714,6 @@ public class BaseDeDatos {
 	// ------------------------------------------------------------------------------------------
 
 	// -- MÉTODOS LIBROS --
-
 	public ArrayList<Libros> cargaLibros(String idBib) {
 		ArrayList<Libros> arrlLibros = new ArrayList<>();
 
@@ -914,11 +913,9 @@ public class BaseDeDatos {
 
 		return arrlLibros;
 	}
-
 	// ------------------------------------------------------------------------------------------
 
 	// -- MÉTODOS SOCIOS --
-
 	public ArrayList<Socios> cargaSocios(String idBib) {
 		ArrayList<Socios> arrlSocios = new ArrayList<>();
 
@@ -929,7 +926,7 @@ public class BaseDeDatos {
 		try {
 			conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotecas_reunidas", "root", "");
 			consultita = conexion.createStatement();
-			// Lanzamos la consulta:
+		
 			registro = consultita.executeQuery(
 					"SELECT id_socio, id_biblioteca, nombre_socio, apellido_socio, dni_socio, direccion_socio,"
 							+ "tlf_socio, email_socio, lista_negra, fechaNad_socio" + " FROM socios " + "WHERE "
@@ -938,7 +935,7 @@ public class BaseDeDatos {
 			if (!registro.next()) {
 				err.baseDatosVacia();
 			}
-			// While porque podría devolver más de una fila.
+	
 			while (registro.next()) {
 				Socios nuevoSocio = new Socios();
 
@@ -1312,8 +1309,6 @@ public class BaseDeDatos {
 	// ------------------------------------------------------------------------------------------
 	
 	// -- MÉTODOS RECIBOS --
-	
-	
 	public ArrayList<InformacionRecibo> cargaInfoRecibos(String idBiblioteca) {
 		ArrayList<InformacionRecibo> arrlRecibos = new ArrayList<>();
 
@@ -1483,6 +1478,5 @@ public class BaseDeDatos {
         }
     }
 
-	
 	// ------------------------------------------------------------------------------------------
 }

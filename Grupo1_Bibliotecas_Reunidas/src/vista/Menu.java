@@ -32,7 +32,7 @@ public class Menu extends JPanel {
 		lblTitulo.setHorizontalAlignment(SwingConstants.LEFT);
 		lblTitulo.setForeground(new Color(130, 72, 172));
 		lblTitulo.setFont(new Font("Gabriola", Font.BOLD, 55));
-		lblTitulo.setBounds(656, 70, 239, 81);
+		lblTitulo.setBounds(672, 69, 239, 81);
 		add(lblTitulo);
 		
 		JLabel lblMen = new JLabel("Menú");
@@ -40,7 +40,7 @@ public class Menu extends JPanel {
 		lblMen.setHorizontalAlignment(SwingConstants.LEFT);
 		lblMen.setForeground(new Color(9, 3, 62));
 		lblMen.setFont(new Font("Gabriola", Font.BOLD, 55));
-		lblMen.setBounds(656, 112, 239, 81);
+		lblMen.setBounds(672, 111, 239, 81);
 		add(lblMen);
 		
 		JLabel lblNewLabel = new JLabel("");
@@ -68,6 +68,7 @@ public class Menu extends JPanel {
 		
 		//-- ACCIÓN BOTÓN SOCIOS --
 		JButton btnSocios = new JButton("Socios");
+		btnSocios.setForeground(new Color(9, 3, 62));
 		btnSocios.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -84,6 +85,7 @@ public class Menu extends JPanel {
 		
 		//-- ACCIÓN BOTÓN PRÉSTAMOS --
 		JButton btnPrestamos = new JButton("Préstamos");
+		btnPrestamos.setForeground(new Color(9, 3, 62));
 		btnPrestamos.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -119,6 +121,7 @@ public class Menu extends JPanel {
 		
 		//-- ACCIÓN BOTÓN usuarios --
 		JButton btnUsuarios = new JButton("Usuarios");
+		btnUsuarios.setForeground(new Color(9, 3, 62));
 		btnUsuarios.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {

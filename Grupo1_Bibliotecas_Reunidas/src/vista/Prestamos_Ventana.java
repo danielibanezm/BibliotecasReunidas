@@ -62,10 +62,7 @@ public class Prestamos_Ventana extends JPanel {
 		scrollPane.setViewportView(jtPrestamos);
 		
 		// ----- CREAR TABLA ----
-		
-		//Le añadimos a nuestra tabla las columnas que va a tener:
 		modeloTabla.setColumnIdentifiers(new Object[]{"ID Prestamo", "Nombre Socio", "Apellido Socio", "ID Libro", "Titulo Libro", "Fecha Préstamo","Fecha Entrega prevista"});
-		//Le decimos que le establezca el modelo que hemos creado a nuestra tabla:
 		jtPrestamos.setModel(modeloTabla);
 		
 		JLabel lblConsultar = new JLabel("Consultar");
@@ -89,10 +86,7 @@ public class Prestamos_Ventana extends JPanel {
 		jtPrestamos.setBackground(new Color(255, 255, 255));
 		jtPrestamos.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		jtPrestamos.getTableHeader().setReorderingAllowed(false);
-		
-		//Cambiar la altura de las filas:
 		jtPrestamos.setRowHeight(30);
-		
 		JButton btnRegistrarDevolucion = new JButton("Registrar devolución");
 		btnRegistrarDevolucion.addMouseListener(new MouseAdapter() {
 			@Override
@@ -107,6 +101,11 @@ public class Prestamos_Ventana extends JPanel {
 				    String idSocio = bd.obtenerIdSocioDesdeNombre(nombreSocio, apellidoSocio, idBib);
 				    
 				    bd.verificarFechaDevolucion (idPrestamo, idSocio, idBib, idLibro);
+				    
+				    // Eliminamos la fila del modelo.
+					modeloTabla.removeRow(filaTabla);
+					
+				    bd.actualizarStock(idLibro, idBib);
 
 				} else {
 					JOptionPane.showMessageDialog(null, "Seleccione un préstamo para proceder con la devolución", "Error",
@@ -115,15 +114,14 @@ public class Prestamos_Ventana extends JPanel {
 
 			}
 		});
+		
 		btnRegistrarDevolucion.setForeground(Color.WHITE);
 		btnRegistrarDevolucion.setFont(new Font("Verdana", Font.PLAIN, 12));
 		btnRegistrarDevolucion.setBorder(null);
 		btnRegistrarDevolucion.setBackground(new Color(130, 72, 172));
 		btnRegistrarDevolucion.setBounds(52, 583, 156, 37);
 		add(btnRegistrarDevolucion);
-	
-		
-		//Establecer el ancho de las columnas:
+
 		jtPrestamos.getColumnModel().getColumn(0).setPreferredWidth(60);
 		jtPrestamos.getColumnModel().getColumn(1).setPreferredWidth(60);
 		jtPrestamos.getColumnModel().getColumn(2).setPreferredWidth(60);
@@ -138,14 +136,10 @@ public class Prestamos_Ventana extends JPanel {
 		encabezado.setBackground(violeta);
 		encabezado.setForeground(darkBlue);
 		encabezado.setFont(new Font("Verdana", Font.BOLD, 13));
-		
-		//Que no se cambie el tamaño de las columnas.
+
 		jtPrestamos.getTableHeader().setResizingAllowed(false);
-		//Que no se cambie el orden de las columnas.
 		jtPrestamos.getTableHeader().setReorderingAllowed(false);
 		
-		//Variable para hacer el if de población.
-		//Recorremos los objetos del ArrayList que nos retorna el método de la clase BaseDatos:
 		for(Prestamos recorrePrestamos : bd.cargaPrestamos(idBib)) {
 			String idBiblioteca = recorrePrestamos.getId_biblioteca();
 			String idLibro = recorrePrestamos.getId_libro();			
@@ -153,7 +147,6 @@ public class Prestamos_Ventana extends JPanel {
 			String nombreSocio = bd.obtenerNombreSocio(recorrePrestamos.getId_socio(), idBiblioteca);
 			String apellidoSocio = bd.obtenerApellidoSocio(recorrePrestamos.getId_socio(), idBiblioteca);
 			
-			//Object puede coger todo tipo de datos, hasta imágenes.
 			modeloTabla.addRow(new Object[] {
 				recorrePrestamos.getId_prestamo(),
 				nombreSocio,

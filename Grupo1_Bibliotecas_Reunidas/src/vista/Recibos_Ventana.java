@@ -69,10 +69,7 @@ public class Recibos_Ventana extends JPanel {
 		scrollPane.setViewportView(jtRecibos);
 		
 		// ----- CREAR TABLA ----
-		
-		//Le añadimos a nuestra tabla las columnas que va a tener:
 		modeloTabla.setColumnIdentifiers(new Object[]{"ID Recibo", "Nombre Socio", "Apellido Socio", "DNI Socio", "Recibo Pagado"});
-		//Le decimos que le establezca el modelo que hemos creado a nuestra tabla:
 		jtRecibos.setModel(modeloTabla);
 		
 		JLabel lblConsultar = new JLabel("Consultar");
@@ -152,8 +149,6 @@ public class Recibos_Ventana extends JPanel {
 		btnConfirmarPago.setBounds(1174, 583, 156, 37);
 		add(btnConfirmarPago);
 	
-		
-		//Establecer el ancho de las columnas:
 		jtRecibos.getColumnModel().getColumn(0).setPreferredWidth(60);
 		jtRecibos.getColumnModel().getColumn(1).setPreferredWidth(60);
 		jtRecibos.getColumnModel().getColumn(2).setPreferredWidth(60);
@@ -166,15 +161,13 @@ public class Recibos_Ventana extends JPanel {
 		encabezado.setBackground(violeta);
 		encabezado.setForeground(darkBlue);
 		encabezado.setFont(new Font("Verdana", Font.BOLD, 13));
-		
-		//Que no se cambie el tamaño de las columnas.
+
 		jtRecibos.getTableHeader().setResizingAllowed(false);
-		//Que no se cambie el orden de las columnas.
 		jtRecibos.getTableHeader().setReorderingAllowed(false);
 		
 		String pagado = "";
-		
-		//Recorremos los objetos del ArrayList que nos retorna el método de la clase BaseDatos:
+
+		// -- Cargar información en la tabla --
 		for(InformacionRecibo recorreRecibos : bd.cargaInfoRecibos(idBib)) {	
 			
 			if (recorreRecibos.isPagado()) {
@@ -183,7 +176,6 @@ public class Recibos_Ventana extends JPanel {
 				pagado = "No";
 			}
 
-			//Object puede coger todo tipo de datos, hasta imágenes.
 			modeloTabla.addRow(new Object[] {
 				recorreRecibos.getId_recibo(),
 				recorreRecibos.getNombre_socio(),
