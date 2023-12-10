@@ -107,11 +107,11 @@ public class Recibos_Ventana extends JPanel {
 		        imprimirCuotas(true, idBib); // true indica que es solo un usuario específico
 			}
 		});
-		btnRegistrarDevolucion.setForeground(Color.WHITE);
+		btnRegistrarDevolucion.setForeground(new Color(9, 3, 62));
 		btnRegistrarDevolucion.setFont(new Font("Verdana", Font.PLAIN, 12));
 		btnRegistrarDevolucion.setBorder(null);
-		btnRegistrarDevolucion.setBackground(new Color(130, 72, 172));
-		btnRegistrarDevolucion.setBounds(52, 583, 208, 37);
+		btnRegistrarDevolucion.setBackground(new Color(233, 210, 255));
+		btnRegistrarDevolucion.setBounds(52, 583, 186, 37);
 		add(btnRegistrarDevolucion);
 		
 		JButton btnImprimirTodosLos = new JButton("Imprimir todos los recibos");
@@ -120,11 +120,11 @@ public class Recibos_Ventana extends JPanel {
 		        imprimirCuotas(false, idBib); // false indica que no es solo un usuario específico
 			}
 		});
-		btnImprimirTodosLos.setForeground(Color.WHITE);
+		btnImprimirTodosLos.setForeground(new Color(9, 3, 62));
 		btnImprimirTodosLos.setFont(new Font("Verdana", Font.PLAIN, 12));
 		btnImprimirTodosLos.setBorder(null);
-		btnImprimirTodosLos.setBackground(new Color(130, 72, 172));
-		btnImprimirTodosLos.setBounds(634, 583, 191, 37);
+		btnImprimirTodosLos.setBackground(new Color(233, 210, 255));
+		btnImprimirTodosLos.setBounds(619, 583, 170, 37);
 		add(btnImprimirTodosLos);
 		
 		JButton btnConfirmarPago = new JButton("Confirmar pago recibo");
@@ -149,7 +149,7 @@ public class Recibos_Ventana extends JPanel {
 		btnConfirmarPago.setFont(new Font("Verdana", Font.PLAIN, 12));
 		btnConfirmarPago.setBorder(null);
 		btnConfirmarPago.setBackground(new Color(130, 72, 172));
-		btnConfirmarPago.setBounds(1139, 583, 191, 37);
+		btnConfirmarPago.setBounds(1174, 583, 156, 37);
 		add(btnConfirmarPago);
 	
 		

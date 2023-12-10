@@ -231,17 +231,17 @@ public class BaseDeDatos {
 			prestamoExiste = resultSet.next();
 
 			if (!prestamoExiste) {
-				// Obtener la fecha actual con Calendar
+				//Obtener la fecha actual con Calendar
 				Calendar calendar = Calendar.getInstance();
 				java.util.Date fechaActual = calendar.getTime();
 
-				// Formatear la fecha actual como 'YYYY-MM-DD'
+				//Formatear la fecha actual como 'YYYY-MM-DD'
 				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 				fechaFormateada = dateFormat.format(fechaActual);
 
 				String fechaEntregaPrevista = calcularFechaEntregaPrevista(fechaFormateada);
 
-				// Insertar la fecha actual en la base de datos
+				//Insertar la fecha actual en la base de datos
 				consulta.executeUpdate(
 						"INSERT INTO prestamos (id_biblioteca, id_socio, id_libro, fecha_prestamo, fecha_entrega_prevista, fecha_entrega) "
 						+ "VALUES ('" + id_biblioteca + "', '" + id_socio + "', '" + id_libro + "', '"
@@ -260,7 +260,7 @@ public class BaseDeDatos {
 			}
 
 		} catch (SQLException error) {
-			// error.printStackTrace();
+			error.printStackTrace();
 			err.baseDatosNoConexion();
 		} finally {
 			try {
@@ -481,7 +481,7 @@ public class BaseDeDatos {
 			}
 
 		} catch (SQLException e) {
-			// e.printStackTrace();
+			e.printStackTrace();
 			err.baseDatosNoConexion();
 		} finally {
 			try {
@@ -517,7 +517,7 @@ public class BaseDeDatos {
 			}
 
 		} catch (SQLException e) {
-			// e.printStackTrace();
+			e.printStackTrace();
 			err.baseDatosNoConexion();
 		} finally {
 			try {
@@ -559,7 +559,7 @@ public class BaseDeDatos {
 			correoExiste = resultadoCorreo.next();
 
 		} catch (SQLException e) {
-			// e.printStackTrace();
+			e.printStackTrace();
 			err.baseDatosNoConexion();
 		} finally {
 			try {

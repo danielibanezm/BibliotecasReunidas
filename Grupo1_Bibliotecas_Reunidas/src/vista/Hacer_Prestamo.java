@@ -56,7 +56,7 @@ public class Hacer_Prestamo extends JDialog {
 		setResizable(false);
 		setModal(true);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Editar_Libro.class.getResource("/img/libro.png")));
-		setBounds(180, 130, 625, 528);
+		setBounds(400, 250, 625, 528);
 		getContentPane().setLayout(null);
 		contentPanel.setBounds(0, 0, 609, 489);
 		contentPanel.setBackground(new Color(255, 255, 255));

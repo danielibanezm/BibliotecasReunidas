@@ -100,7 +100,7 @@ public class Libros_Ventana extends JPanel {
 			public void mouseClicked(MouseEvent e) {
 
 				filaTabla = jtResultados.getSelectedRow();
-				if (filaTabla != -1) { // Se ha seleccionado una fila
+				if (filaTabla != -1) { //Se ha seleccionado una fila
 					int stock = (int) modeloTabla.getValueAt(filaTabla, 11);
 					prestamo = new Hacer_Prestamo(librito, idBib, modeloTabla, filaTabla, stock);
 					prestamo.setVisible(true);
@@ -271,7 +271,7 @@ public class Libros_Ventana extends JPanel {
 
 		// Le añadimos a nuestra tabla las columnas que va a tener:
 		modeloTabla.setColumnIdentifiers(new Object[] {"ISBN", "Título", "Autores", "Editorial",
-				"Género", "Idioma", "Edición", "Publicación", "Pais", "Nº Páginas", "Ubicación", "Stock" });
+				"Género", "Idioma", "Edición", "Publicación", "Pais", "Páginas", "Ubicación", "Stock" });
 		// Le decimos que le establezca el modelo que hemos creado a nuestra tabla:
 		jtResultados.setModel(modeloTabla);
 

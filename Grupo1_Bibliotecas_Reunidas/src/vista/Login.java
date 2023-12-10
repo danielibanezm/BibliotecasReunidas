@@ -58,7 +58,7 @@ public class Login extends JPanel{
 		
 		img = new JLabel("");
 		img.setIcon(new ImageIcon(Login.class.getResource("/img/Bib.png")));
-		img.setBounds(517, 80, 171, 177);
+		img.setBounds(493, 80, 171, 177);
 		add(img);
 		
 		lblTitulo = new JLabel("Librarium");
@@ -66,7 +66,7 @@ public class Login extends JPanel{
 		lblTitulo.setVerticalAlignment(SwingConstants.TOP);
 		lblTitulo.setHorizontalAlignment(SwingConstants.LEFT);
 		lblTitulo.setFont(new Font("Gabriola", Font.BOLD, 55));
-		lblTitulo.setBounds(693, 162, 239, 81);
+		lblTitulo.setBounds(669, 162, 239, 81);
 		add(lblTitulo);
 		
 		txtUsuario = new JTextField();
@@ -79,7 +79,7 @@ public class Login extends JPanel{
 		});
 		
 		txtUsuario.setBorder(new LineBorder(new Color(130, 72, 172), 3));
-		txtUsuario.setBounds(546, 331, 342, 37);
+		txtUsuario.setBounds(522, 331, 342, 37);
 		add(txtUsuario);
 		txtUsuario.setColumns(10);
 		
@@ -94,19 +94,19 @@ public class Login extends JPanel{
 		
 		txtContrasenia.setBorder(new LineBorder(new Color(130, 72, 172), 3));
 		txtContrasenia.setColumns(10);
-		txtContrasenia.setBounds(546, 428, 342, 37);
+		txtContrasenia.setBounds(522, 428, 342, 37);
 		add(txtContrasenia);
 		
 		JLabel lblUsuario = new JLabel("Usuario:");
 		lblUsuario.setForeground(new Color(9, 3, 62));
 		lblUsuario.setFont(new Font("Verdana", Font.PLAIN, 12));
-		lblUsuario.setBounds(546, 306, 117, 14);
+		lblUsuario.setBounds(522, 306, 117, 14);
 		add(lblUsuario);
 		
 		JLabel lblContrasenia = new JLabel("Contraseña:");
 		lblContrasenia.setForeground(new Color(9, 3, 62));
 		lblContrasenia.setFont(new Font("Verdana", Font.PLAIN, 12));
-		lblContrasenia.setBounds(546, 403, 153, 14);
+		lblContrasenia.setBounds(522, 403, 153, 14);
 		add(lblContrasenia);
 		
 		//-- ACCIÓN ACEPTAR --
@@ -140,7 +140,7 @@ public class Login extends JPanel{
 		btnAceptar.setBorder(null);
 		btnAceptar.setForeground(new Color(255, 255, 255));
 		btnAceptar.setBackground(new Color(130, 72, 172));
-		btnAceptar.setBounds(546, 516, 117, 37);
+		btnAceptar.setBounds(522, 516, 117, 37);
 		add(btnAceptar);
 		
 		lblerror = new JLabel("");
