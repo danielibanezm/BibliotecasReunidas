@@ -394,8 +394,8 @@ public class BaseDeDatos {
 			consulta = conexion.createStatement();
 
 			consulta.executeUpdate(
-					"INSERT INTO multas (id_socio, id_biblioteca, multa_obtenida) "
-					+ "VALUES ('" + idSocio + "', '" + idBiblioteca + "', '1')");
+					"UPDATE multas SET multa_obtenida = '1' " +
+					"WHERE id_socio = '" + idSocio + "' AND id_biblioteca = '" + idBiblioteca + "'");
 
 			err.confirmarInsert();
 		} catch (SQLException e) {
@@ -1319,10 +1319,17 @@ public class BaseDeDatos {
 		try {
 			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bibliotecas_reunidas", "root", "");
 			consulta = conexion.createStatement();
-			registro = consulta.executeQuery("SELECT r.id_recibo, s.nombre_socio, s.apellido_socio, s.dni_socio, b.calle_biblioteca, b.provincia_biblioteca, b.codigoPostal_biblioteca, b.tlf_biblioteca, r.pagado, m.multa_obtenida"
-					+ " FROM recibos r, bibliotecas b, socios s, multas m"
-					+ " WHERE r.id_biblioteca = '" + idBiblioteca + "' AND r.id_biblioteca = b.id_biblioteca AND r.id_biblioteca = m.id_biblioteca AND r.id_biblioteca = s.id_biblioteca AND r.id_socio = s.id_socio AND r.id_socio = m.id_socio"
-					+ " ORDER BY r.id_recibo");
+			registro = consulta.executeQuery("SELECT r.id_recibo, s.nombre_socio, s.apellido_socio, s.dni_socio, " +
+	                   "b.calle_biblioteca, b.provincia_biblioteca, b.codigoPostal_biblioteca, " +
+	                   "b.tlf_biblioteca, r.pagado, m.multa_obtenida " +
+	                   "FROM recibos r, bibliotecas b, socios s, multas m " +
+	                   "WHERE r.id_biblioteca = '" + idBiblioteca + "' " +
+	                   "AND r.id_biblioteca = b.id_biblioteca " +
+	                   "AND r.id_biblioteca = m.id_biblioteca " +
+	                   "AND r.id_socio = s.id_socio " +
+	                   "AND r.id_socio = m.id_socio " +
+	                   "AND r.id_biblioteca = s.id_biblioteca " +
+	                   "ORDER BY r.id_recibo");
 
 			if (registro == null) {
 				err.baseDatosVacia();
