@@ -243,9 +243,9 @@ public class BaseDeDatos {
 
 				//Insertar la fecha actual en la base de datos
 				consulta.executeUpdate(
-						"INSERT INTO prestamos (id_biblioteca, id_socio, id_libro, fecha_prestamo, fecha_entrega_prevista, fecha_entrega) "
+						"INSERT INTO prestamos (id_biblioteca, id_socio, id_libro, fecha_prestamo, fecha_entrega_prevista) "
 						+ "VALUES ('" + id_biblioteca + "', '" + id_socio + "', '" + id_libro + "', '"
-						+ fechaFormateada + "', '" + fechaEntregaPrevista + "', NULL)");
+						+ fechaFormateada + "', '" + fechaEntregaPrevista + "')");
 
 				JOptionPane.showMessageDialog(null,
 						"Se han insertado correctamente la fecha de prestamo y la fecha de entrega prevista en la tabla.",
@@ -255,7 +255,7 @@ public class BaseDeDatos {
 				insertRealizado = true;
 			} else {
 				JOptionPane.showMessageDialog(null,
-						"Este ejemplar ya está prestado. Por favor, espere a que el otro usuario lo devuelva o escoja otro libro.",
+						"No queda stock de este libro en la biblioteca. Por favor, escoja otro libro o espere a que otro socio devuelva un ejemplar.",
 						"Aviso", JOptionPane.WARNING_MESSAGE);
 			}
 
@@ -313,11 +313,7 @@ public class BaseDeDatos {
             registro = consulta.executeQuery(
                     "SELECT fecha_entrega_prevista FROM prestamos WHERE id_prestamo ='" + idPrestamo
                             + "' AND id_biblioteca ='" + idBiblioteca + "' AND id_libro = '" + idLibro + "'");
-            System.out.println(registro);
-            
-            System.out.println("SELECT fecha_entrega_prevista FROM prestamos WHERE id_prestamo ='" + idPrestamo
-                            + "' AND id_biblioteca ='" + idBiblioteca + "' AND id_libro = '" + idLibro + "'");
-
+           
             if (registro.next()) {
                 String fechaEntregaPrevista = registro.getString("fecha_entrega_prevista");
 
@@ -329,9 +325,6 @@ public class BaseDeDatos {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 java.util.Date fechaEntrega = dateFormat.parse(fechaEntregaPrevista);
                 
-                System.out.println(fechaActual);
-                System.out.println(fechaEntrega);
-
                 // Comparar las fechas
                 if (fechaActual.after(fechaEntrega)) {
                 	System.out.println("Hola");
@@ -1331,9 +1324,9 @@ public class BaseDeDatos {
 		try {
 			conexion = DriverManager.getConnection("jdbc:mysql://localhost/bibliotecas_reunidas", "root", "");
 			consulta = conexion.createStatement();
-			registro = consulta.executeQuery("SELECT r.id_recibo, s.nombre_socio, s.apellido_socio, s.dni_socio, b.calle_biblioteca, b.provincia_biblioteca, b.codigoPostal_biblioteca, b.tlf_biblioteca, r.pagado, s.lista_negra"
-					+ " FROM recibos r, bibliotecas b, socios s"
-					+ " WHERE r.id_biblioteca = '" + idBiblioteca + "' AND r.id_biblioteca = b.id_biblioteca AND r.id_socio = s.id_socio AND r.id_biblioteca = s.id_biblioteca"
+			registro = consulta.executeQuery("SELECT r.id_recibo, s.nombre_socio, s.apellido_socio, s.dni_socio, b.calle_biblioteca, b.provincia_biblioteca, b.codigoPostal_biblioteca, b.tlf_biblioteca, r.pagado, m.multa_obtenida"
+					+ " FROM recibos r, bibliotecas b, socios s, multas m"
+					+ " WHERE r.id_biblioteca = '" + idBiblioteca + "' AND r.id_biblioteca = b.id_biblioteca AND r.id_biblioteca = m.id_biblioteca AND r.id_biblioteca = s.id_biblioteca AND r.id_socio = s.id_socio AND r.id_socio = m.id_socio"
 					+ " ORDER BY r.id_recibo");
 
 			if (registro == null) {
@@ -1351,19 +1344,19 @@ public class BaseDeDatos {
 				nuevoRecibo.setCodigo_postal_biblioteca(registro.getString("codigoPostal_biblioteca"));
 				nuevoRecibo.setTelefono_biblioteca(registro.getString("tlf_biblioteca"));
 				nuevoRecibo.setPagado(registro.getBoolean("pagado"));
-				nuevoRecibo.setLista_negra(registro.getBoolean("lista_negra"));
+				nuevoRecibo.setMulta_obtenida(registro.getBoolean("multa_obtenida"));
 
 				arrlRecibos.add(nuevoRecibo);
 			}
 
 		} catch (SQLException e) {
-			// e.printStackTrace();
+			e.printStackTrace();
 			err.baseDatosNoConexion();
 		} finally {
 			try {
 				conexion.close();
 			} catch (SQLException e) {
-				// e.printStackTrace();
+				e.printStackTrace();
 				err.baseDatosNoConexion();
 			} catch (NullPointerException e) {
 

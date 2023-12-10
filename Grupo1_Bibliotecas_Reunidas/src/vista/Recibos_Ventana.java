@@ -196,6 +196,8 @@ public class Recibos_Ventana extends JPanel {
 	
 	private void imprimirCuotas(boolean esUsuarioEspecifico, String idBib) {
 	    BaseDeDatos bd = new BaseDeDatos();
+	    Errores err = new Errores();
+	    
 	    int filaSeleccionada = jtRecibos.getSelectedRow();
 
 	    if (esUsuarioEspecifico && filaSeleccionada == -1) {
@@ -205,7 +207,7 @@ public class Recibos_Ventana extends JPanel {
 
 	    ArrayList<InformacionRecibo> listaRecibos = new ArrayList<>();
 	    if (esUsuarioEspecifico) {
-	        // Obtener información solo del usuario seleccionado
+	        // Obtener información solo del socio seleccionado
 	        InformacionRecibo reciboUsuario = bd.cargaInfoRecibos(idBib).get(filaSeleccionada);
 	        listaRecibos.add(reciboUsuario);
 	    } else {
@@ -213,7 +215,6 @@ public class Recibos_Ventana extends JPanel {
 	        listaRecibos = bd.cargaInfoRecibos(idBib);
 	    }
 
-	    // Crear archivo y escribir la información
 	    String nombreFichero;
 	    
 	    if (esUsuarioEspecifico) {
@@ -226,13 +227,12 @@ public class Recibos_Ventana extends JPanel {
 	    	PrintWriter writer = new PrintWriter(new FileWriter(nombreFichero));
 	        for (InformacionRecibo recibo : listaRecibos) {
 	            int cuota;
-	            if (recibo.isLista_negra()) {
+	            if (recibo.isMulta_obtenida()) {
 	                cuota = 10;
 	            } else {
 	                cuota = 5;
 	            }
 
-	            // Escribir en el archivo
 	            writer.println("ID Recibo: " + recibo.getId_recibo());
 	            writer.println("Nombre Socio: " + recibo.getNombre_socio());
 	            writer.println("Apellido Socio: " + recibo.getApellido_socio());
@@ -252,6 +252,7 @@ public class Recibos_Ventana extends JPanel {
 	        JOptionPane.showMessageDialog(null, "Error al crear el archivo.", "Error", JOptionPane.ERROR_MESSAGE);
 	    } catch (IOException e) {
 			e.printStackTrace();
+			err.baseDatosNoConexion();
 	    }
 	}
 }

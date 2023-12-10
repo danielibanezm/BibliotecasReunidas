@@ -12,7 +12,7 @@ public class InformacionRecibo {
     private String codigo_postal_biblioteca;
     private String telefono_biblioteca;
     private boolean pagado;
-    private boolean lista_negra;
+    private boolean multa_obtenida;
 	
 	public InformacionRecibo() {
 		id_recibo = "";
@@ -26,12 +26,12 @@ public class InformacionRecibo {
 		codigo_postal_biblioteca = "";
 		telefono_biblioteca = "";
 		pagado = true;
-		lista_negra = true;
+		multa_obtenida = true;
 	}
 
 	public InformacionRecibo(String id_recibo, String id_bib, String id_socio, String nombre_socio,
 			String apellido_socio, String dni_socio, String calle_biblioteca, String provincia_biblioteca,
-			String codigo_postal_biblioteca, String telefono_biblioteca, boolean pagado, boolean lista_negra) {
+			String codigo_postal_biblioteca, String telefono_biblioteca, boolean pagado, boolean multa_obtenida) {
 		super();
 		this.id_recibo = id_recibo;
 		this.id_bib = id_bib;
@@ -44,7 +44,7 @@ public class InformacionRecibo {
 		this.codigo_postal_biblioteca = codigo_postal_biblioteca;
 		this.telefono_biblioteca = telefono_biblioteca;
 		this.pagado = pagado;
-		this.lista_negra = lista_negra;
+		this.multa_obtenida = multa_obtenida;
 	}
 
 	public String getId_recibo() {
@@ -134,12 +134,12 @@ public class InformacionRecibo {
 	public void setPagado(boolean pagado) {
 		this.pagado = pagado;
 	}
-	
-	public boolean isLista_negra() {
-		return lista_negra;
+
+	public boolean isMulta_obtenida() {
+		return multa_obtenida;
 	}
 
-	public void setLista_negra(boolean lista_negra) {
-		this.lista_negra = lista_negra;
+	public void setMulta_obtenida(boolean multa_obtenida) {
+		this.multa_obtenida = multa_obtenida;
 	}
 }
