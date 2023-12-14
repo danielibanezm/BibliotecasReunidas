@@ -195,19 +195,19 @@ public class Recibos_Ventana extends JPanel {
 		}
 	}
 	
-	private void imprimirCuotas(boolean esUsuarioEspecifico, String idBib) {
+	private void imprimirCuotas(boolean esSocioEspecifico, String idBib) {
 	    BaseDeDatos bd = new BaseDeDatos();
 	    Errores err = new Errores();
 	    
 	    int filaSeleccionada = jtRecibos.getSelectedRow();
 
-	    if (esUsuarioEspecifico && filaSeleccionada == -1) {
+	    if (esSocioEspecifico && filaSeleccionada == -1) {
 	        JOptionPane.showMessageDialog(null, "Seleccione un socio para imprimir la cuota.", "Error", JOptionPane.ERROR_MESSAGE);
 	        return;
 	    }
 
 	    ArrayList<InformacionRecibo> listaRecibos = new ArrayList<>();
-	    if (esUsuarioEspecifico) {
+	    if (esSocioEspecifico) {
 	        // Obtener información solo del socio seleccionado
 	        InformacionRecibo reciboUsuario = bd.cargaInfoRecibos(idBib).get(filaSeleccionada);
 	        listaRecibos.add(reciboUsuario);
@@ -218,8 +218,8 @@ public class Recibos_Ventana extends JPanel {
 
 	    String nombreFichero;
 	    
-	    if (esUsuarioEspecifico) {
-	        nombreFichero = "Recibo_Usuario.txt";
+	    if (esSocioEspecifico) {
+	        nombreFichero = "Recibo_Socio.txt";
 	    } else {
 	        nombreFichero = "Recibo_Todos.txt";
 	    }

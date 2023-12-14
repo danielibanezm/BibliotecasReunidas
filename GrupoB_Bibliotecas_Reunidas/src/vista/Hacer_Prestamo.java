@@ -66,7 +66,7 @@ public class Hacer_Prestamo extends JDialog {
 		
 		JLabel lblNombreSocio = new JLabel("NOMBRE DEL SOCIO");
 		lblNombreSocio.setFont(new Font("Verdana", Font.PLAIN, 11));
-		lblNombreSocio.setBounds(38, 163, 138, 24);
+		lblNombreSocio.setBounds(48, 163, 138, 24);
 		contentPanel.add(lblNombreSocio);
 		
 		JLabel lblApellidoSocio = new JLabel("APELLIDO DEL SOCIO");
@@ -76,7 +76,7 @@ public class Hacer_Prestamo extends JDialog {
 		
 		JLabel lblCorreoSocio = new JLabel("CORREO DEL SOCIO");
 		lblCorreoSocio.setFont(new Font("Verdana", Font.PLAIN, 11));
-		lblCorreoSocio.setBounds(391, 163, 142, 24);
+		lblCorreoSocio.setBounds(416, 163, 142, 24);
 		contentPanel.add(lblCorreoSocio);
 		
 		txtNombreSocio = new JTextField();
@@ -117,7 +117,6 @@ public class Hacer_Prestamo extends JDialog {
 						JOptionPane.showMessageDialog(null, "Este socio no puede realizar más préstamos debido a que ha alcanzado el número máximo de ellos simultáneos.", "Error",
 								JOptionPane.ERROR_MESSAGE);
 						
-						System.out.println(bd.comprobarNumeroPrestamos(idBib, idSocio, idLibro));
 					} else {
 						insertRealizado = bd.insertarPrestamo(idSocio, idLibro, idBib);
 						

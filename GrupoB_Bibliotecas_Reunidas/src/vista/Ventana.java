@@ -66,11 +66,11 @@ public class Ventana extends JFrame {
 	 * 2- Le añadimos el panel que se nos pasa en ese momento por parámetros.
 	 * 3- Método para que el componente se repinte.
 	 * 4- Método que obliga a que todos los componentes que hayan sido borrados o modificados aparezcan correctamente.
-	 * @param panelAsctual
+	 * @param panelActual
 	 */
-	public void nuevoPanel(JPanel panelAsctual) {
+	public void nuevoPanel(JPanel panelActual) {
 		contentPane.removeAll();
-		contentPane.add(panelAsctual);
+		contentPane.add(panelActual);
 		contentPane.repaint();
 		contentPane.revalidate();
 	}

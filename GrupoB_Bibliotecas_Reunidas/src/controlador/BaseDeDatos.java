@@ -305,7 +305,6 @@ public class BaseDeDatos {
 
 				// Comparar las fechas
 				if (fechaActual.after(fechaEntrega)) {
-					System.out.println("Hola");
 					JOptionPane.showMessageDialog(null,
 							"Este ejemplar se ha devuelto fuera de plazo. El socio tendrá un recargo del doble de mensualidad en la próxima cuota.",
 							"Aviso", JOptionPane.WARNING_MESSAGE);
@@ -507,7 +506,9 @@ public class BaseDeDatos {
 			correoExiste = resultadoCorreo.next();
 
 		} catch (SQLException e) {
-			err.baseDatosNoConexion();
+			JOptionPane.showMessageDialog(null, "Los datos introducidos son incorrectos y no se encuentran en la Base de Datos. Por favor, inténtelo de nuevo.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			//err.baseDatosNoConexion();
 		} finally {
 			try {
 				if (resultadoNombre != null) {
